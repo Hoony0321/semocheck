@@ -44,3 +44,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// "-plain"이 붙은 jar는 생성되지 않도록 아래와 같은 코드가 필요하다.
+jar {
+	enabled = false
+}
