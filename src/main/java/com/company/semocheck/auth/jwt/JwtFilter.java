@@ -1,6 +1,5 @@
 package com.company.semocheck.auth.jwt;
 
-import com.company.semocheck.exception.BaseException;
 import com.company.semocheck.exception.FilterException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

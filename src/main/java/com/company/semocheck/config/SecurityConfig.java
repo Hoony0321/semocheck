@@ -2,6 +2,7 @@ package com.company.semocheck.config;
 
 import com.company.semocheck.auth.jwt.*;
 import com.company.semocheck.auth.oauth2.CustomOAuth2UserService;
+import com.company.semocheck.auth.oauth2.OAuth2FailureHandler;
 import com.company.semocheck.auth.oauth2.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,7 @@ public class SecurityConfig{
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FailureHandler oAuth2FailureHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -41,15 +43,16 @@ public class SecurityConfig{
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
 
-//                .and()
-//                    .authorizeHttpRequests()
-//                    .requestMatchers("/api/v1/guest").hasRole("GUEST")
-//                    .requestMatchers("/api/v1/admin").hasRole("ADMIN")
-//                    .requestMatchers("/api/v1/auth/login/*").permitAll()
-//                    .requestMatchers("/api/v1/test/*").permitAll()
-//                    .requestMatchers("/logout").permitAll()
-//                    .requestMatchers("/login?logout").permitAll()
-//                    .anyRequest().authenticated()
+                .and()
+                    .authorizeHttpRequests()
+                    .requestMatchers("/api/guest").hasRole("GUEST")
+                    .requestMatchers("/api/admin").hasRole("ADMIN")
+
+                    .requestMatchers("/api/auth/refresh").permitAll()
+                    .requestMatchers("/api/test/**").permitAll()
+                    .requestMatchers("/logout").permitAll()
+                    .requestMatchers("/login?logout").permitAll()
+                    .anyRequest().authenticated()
 
                 .and()
                     .logout()
@@ -57,14 +60,20 @@ public class SecurityConfig{
 
                 .and()
                     .oauth2Login()
+                    .authorizationEndpoint()
+                    .baseUri("/oauth2/authorization")
+                    .and()
+                    .redirectionEndpoint()
+                    .baseUri("/*/oauth2/code/*")
+                    .and()
                     .successHandler(oAuth2SuccessHandler)
+                    .failureHandler(oAuth2FailureHandler)
                     .userInfoEndpoint()
-                    .userService(customOAuth2UserService);
+                    .userService(customOAuth2UserService)
 
-
-//                .and()
-//                .and()
-//                .apply(new JwtSecurityConfig(jwtProvider));
+                .and()
+                .and()
+                .apply(new JwtSecurityConfig(jwtProvider));
 
 
         return http.build();

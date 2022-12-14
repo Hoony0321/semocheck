@@ -1,10 +1,11 @@
 package com.company.semocheck.auth.jwt;
 
 import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.RefreshToken;
 import com.company.semocheck.dto.Token;
-import com.company.semocheck.exception.BaseException;
 import com.company.semocheck.exception.ErrorCode;
 import com.company.semocheck.exception.FilterException;
+import com.company.semocheck.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -12,7 +13,6 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,9 +33,11 @@ import java.util.stream.Collectors;
 public class JwtProvider {
     @Value("${spring.jwt.secret-key}")
     private String SECRET_KEY;
-    private static final String AUTHORITIES_KEY = "auth";
+    private static final String AUTHORITIES_KEY = "authority";
     private static final Long ACCESS_TOKEN_VALID_TIME = 60 * 60 * 1000L; // 60min -> 추후에 10min으로 변경할 것
     private static final Long REFRESH_TOKEN_VALID_TIME = 24 * 60 * 60 * 1000L; // 24hours
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private Key key;
 
@@ -66,9 +68,16 @@ public class JwtProvider {
         // Refresh Token 생성
         Date refreshTokenExpireTime = new Date(now + REFRESH_TOKEN_VALID_TIME);
         String refreshToken = Jwts.builder()
+                .setSubject("refresh_token")
                 .setExpiration(refreshTokenExpireTime)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+
+        // Refresh Token Repository에 저장
+        refreshTokenRepository.save(RefreshToken.builder()
+                        .key(member.getEmail())
+                        .value(refreshToken)
+                        .build());
 
         return new Token(accessToken, refreshToken);
     }
