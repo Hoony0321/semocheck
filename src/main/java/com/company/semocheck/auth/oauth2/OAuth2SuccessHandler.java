@@ -6,35 +6,32 @@ import com.company.semocheck.domain.Role;
 import com.company.semocheck.dto.MemberDto;
 import com.company.semocheck.dto.Token;
 import com.company.semocheck.repository.MemberRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
-public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
+@Slf4j
+public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+    private final String REDIRECT_URL = "http://localhost:8080/api/test/auth";
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-    private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository; //TODO : SERVICE로 바꾸기
-
-
+    private final JwtProvider jwtProvider;
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
         MemberDto memberDto = MemberDto.createDto(oAuth2User);
 
@@ -52,9 +49,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         }
         else{ member = findOne.get(); }
 
-        String targetUrl = UriComponentsBuilder
-                        .fromUriString("/api/auth/success")
-                        .queryParam("email", member.getEmail())
+        //JWT token 발급
+        Token token = jwtProvider.generateToken(member);
+
+        String targetUrl = UriComponentsBuilder //TODO : query 말고 header에 넣는 방법 찾아보기
+                        .fromUriString(REDIRECT_URL)
+                        .queryParam("access", token.getAccessToken())
+                        .queryParam("refresh", token.getRefreshToken())
                         .build().toUriString();
 
         redirectStrategy.sendRedirect(request, response, targetUrl);

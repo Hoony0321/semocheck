@@ -1,10 +1,9 @@
 package com.company.semocheck.auth.oauth2;
 
-import com.company.semocheck.exception.BaseException;
+import com.company.semocheck.exception.ApiException;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -24,7 +23,7 @@ public class OAuth2Attributes {
             case "google" -> ofGoogle(attributes);
             case "kakao" -> ofKakao(attributes);
             case "naver" -> ofNaver(attributes);
-            default -> throw new BaseException(HttpStatus.UNAUTHORIZED, "허가되지 않은 인증 방법입니다.");
+            default -> throw new ApiException(HttpStatus.UNAUTHORIZED, "허가되지 않은 인증 방법입니다.");
         };
 
 
