@@ -6,11 +6,11 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public class BaseException extends RuntimeException{
+public class ApiException extends RuntimeException{
     private HttpStatus status;
     private String message;
 
-    public BaseException(ErrorCode errorCode){
+    public ApiException(ErrorCode errorCode){
         this.status = errorCode.getHttpStatus();
         this.message = errorCode.getMessage();
     }
