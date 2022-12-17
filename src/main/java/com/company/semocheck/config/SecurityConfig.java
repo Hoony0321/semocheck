@@ -28,13 +28,11 @@ public class SecurityConfig{
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         // CSRF 설정 disable
         http.csrf().disable()
-                .headers().frameOptions().disable()
 
                 // exception handling 할 때 만든 에러 헨들링 클래스 추가
-                .and()
-                    .exceptionHandling()
-                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                    .accessDeniedHandler(jwtAccessDeniedHandler)
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
 
                 // 시큐리티는 기본적으로 세션을 사용
                 // 하지만 JWT 세션을 사용하지 않기때문에 stateless로 설정
@@ -42,16 +40,30 @@ public class SecurityConfig{
                     .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
+                // h2-console을 위한 설정 추가
+                .and()
+                    .headers()
+                    .frameOptions()
+                    .disable()
 
+                // swagger url 모음
+                .and()
+                    .authorizeHttpRequests()
+                    .requestMatchers("/swagger-ui/**").permitAll()
+                    .requestMatchers("/v3/api-docs/**").permitAll()
+
+                // 허용 url 모음
+                .and()
+                    .authorizeHttpRequests()
+                    .requestMatchers("/api/auth/refresh").permitAll()
+                    .requestMatchers("/api/test/**").permitAll()
+                    .requestMatchers("/logout").permitAll()
+
+                // ROLE url 모음
                 .and()
                     .authorizeHttpRequests()
                     .requestMatchers("/api/guest").hasRole("GUEST")
                     .requestMatchers("/api/admin").hasRole("ADMIN")
-
-                    .requestMatchers("/api/auth/refresh").permitAll()
-                    .requestMatchers("/api/test/**").permitAll()
-                    .requestMatchers("/logout").permitAll()
-                    .requestMatchers("/login?logout").permitAll()
                     .anyRequest().authenticated()
 
                 .and()
