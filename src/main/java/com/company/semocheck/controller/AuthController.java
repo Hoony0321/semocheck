@@ -1,7 +1,7 @@
 package com.company.semocheck.controller;
 
 import com.company.semocheck.auth.jwt.JwtUtils;
-import com.company.semocheck.common.ApiResponse;
+import com.company.semocheck.common.response.DataResponseDto;
 import com.company.semocheck.dto.Token;
 import com.company.semocheck.repository.MemberRepository;
 import com.company.semocheck.service.AuthService;
@@ -24,15 +24,15 @@ public class AuthController {
 
     //OAuth Login 성공 시
     @GetMapping("/access")
-    public String oAuthSuccess(HttpServletRequest request){
+    public DataResponseDto<String> oAuthSuccess(HttpServletRequest request){
         String accessToken = jwtUtils.getAccessToken(request);
         Claims claims1 = jwtUtils.parseClaims(accessToken);
 
-        return "success";
+        return DataResponseDto.of(accessToken, "JWT token access 성공");
     }
 
     @GetMapping("/refresh")
-    public ApiResponse<Object> refresh(HttpServletRequest request){
+    public DataResponseDto<Token> refresh(HttpServletRequest request){
         String accessToken = jwtUtils.getAccessToken(request);
         String refreshToken = jwtUtils.getRefreshToken(request);
 
@@ -42,7 +42,7 @@ public class AuthController {
 
         Token newToken = authService.reissueToken(token);
 
-        return ApiResponse.success("refresh token 발급 완료", newToken);
+        return DataResponseDto.of(newToken, "JWT token access 성공");
     }
 
 }

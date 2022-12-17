@@ -1,9 +1,9 @@
 package com.company.semocheck.auth.jwt;
 
+import com.company.semocheck.common.response.Code;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.RefreshToken;
 import com.company.semocheck.dto.Token;
-import com.company.semocheck.exception.ErrorCode;
 import com.company.semocheck.exception.FilterException;
 import com.company.semocheck.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
@@ -88,7 +88,7 @@ public class JwtProvider {
         Claims claims = parseClaims(accessToken);
 
         if(claims.get(AUTHORITIES_KEY) == null){
-            throw new FilterException(ErrorCode.JWT_INVALID);
+            throw new FilterException(Code.JWT_INVALID);
         }
 
         //클레임에서 권한 정보 가져오기
@@ -109,22 +109,22 @@ public class JwtProvider {
         }
         catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e){
             log.info("잘못된 JWT 서명입니다.");
-            throw new FilterException(ErrorCode.JWT_INVALID_SIGN);
+            throw new FilterException(Code.JWT_INVALID_SIGN);
         }
         catch (ExpiredJwtException e){
             log.info("만료된 JWT 토큰입니다.");
-            throw new FilterException(ErrorCode.JWT_EXPIRED);
+            throw new FilterException(Code.JWT_EXPIRED);
         }
         catch (UnsupportedJwtException e){
             log.info("지원되지 않는 JWT 토큰입니다.");
-            throw new FilterException(ErrorCode.JWT_UNSUPPORTED);
+            throw new FilterException(Code.JWT_UNSUPPORTED);
         }
         catch (IllegalArgumentException e){
             log.info("올바른 JWT 토큰이 아닙니다.");
-            throw new FilterException(ErrorCode.JWT_INVALID);
+            throw new FilterException(Code.JWT_INVALID);
         }
         catch (Exception e){
-            throw new FilterException(ErrorCode.JWT_PROCESS_ERROR);}
+            throw new FilterException(Code.JWT_PROCESS_ERROR);}
     }
 
     private Claims parseClaims(String accessToken){

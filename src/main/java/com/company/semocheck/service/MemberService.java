@@ -1,7 +1,8 @@
 package com.company.semocheck.service;
 
+import com.company.semocheck.common.response.Code;
 import com.company.semocheck.domain.Member;
-import com.company.semocheck.exception.ApiException;
+import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class MemberService {
 
     public Member findByEmail(String email){
         Optional<Member> findOne = memberRepository.findByEmail(email);
-        if(findOne.isEmpty()) throw new ApiException(HttpStatus.NOT_FOUND, "해당 이메일 회원은 존재하지 않습니다.");
+        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND);
 
         return findOne.get();
     }

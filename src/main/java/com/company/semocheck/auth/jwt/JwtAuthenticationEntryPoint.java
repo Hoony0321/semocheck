@@ -1,6 +1,5 @@
 package com.company.semocheck.auth.jwt;
 
-import com.company.semocheck.exception.ErrorCode;
 import com.company.semocheck.exception.FilterException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,10 +24,11 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType("application/json;charset=UTF-8");
         response.setHeader("Access-Control-Allow-Origin", "*");
 
-        response.setStatus(exception.getStatus().value());
+        response.setStatus(exception.getErrorCode().getCode());
 
         JSONObject responseJson = new JSONObject();
-        responseJson.put("code", exception.getStatus().name());
+        responseJson.put("success", false);
+        responseJson.put("code", exception.getErrorCode().getCode());
         responseJson.put("message", exception.getMessage());
 
 
