@@ -3,7 +3,7 @@ package com.company.semocheck.auth.jwt;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.RefreshToken;
-import com.company.semocheck.dto.Token;
+import com.company.semocheck.domain.dto.Token;
 import com.company.semocheck.exception.FilterException;
 import com.company.semocheck.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
@@ -108,19 +108,19 @@ public class JwtProvider {
             return true;
         }
         catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e){
-            log.info("잘못된 JWT 서명입니다.");
+            //log.info("잘못된 JWT 서명입니다.");
             throw new FilterException(Code.JWT_INVALID_SIGN);
         }
         catch (ExpiredJwtException e){
-            log.info("만료된 JWT 토큰입니다.");
+            //log.info("만료된 JWT 토큰입니다.");
             throw new FilterException(Code.JWT_EXPIRED);
         }
         catch (UnsupportedJwtException e){
-            log.info("지원되지 않는 JWT 토큰입니다.");
+            //log.info("지원되지 않는 JWT 토큰입니다.");
             throw new FilterException(Code.JWT_UNSUPPORTED);
         }
         catch (IllegalArgumentException e){
-            log.info("올바른 JWT 토큰이 아닙니다.");
+            //log.info("올바른 JWT 토큰이 아닙니다.");
             throw new FilterException(Code.JWT_INVALID);
         }
         catch (Exception e){
