@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -26,7 +27,8 @@ import java.util.Optional;
 @Slf4j
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final String REDIRECT_URL = "http://localhost:8080/api/test/auth/success";
+    @Value("${spring.url.host}")
+    private String HOST_URL;
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     private final MemberRepository memberRepository; //TODO : SERVICE로 바꾸기
     private final JwtProvider jwtProvider;
@@ -34,6 +36,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
         MemberDto memberDto = MemberDto.createDto(oAuth2User);
+        String redirect_url =  String.format("http://%s/api/test/auth/success", HOST_URL);
 
         //TODO : refactoring & 최초 로그인 시 어떻게 할지 결정
         Optional<Member> findOne = memberRepository.findByEmail(memberDto.getEmail());
@@ -53,7 +56,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Token token = jwtProvider.generateToken(member);
 
         String targetUrl = UriComponentsBuilder //TODO : query 말고 header에 넣는 방법 찾아보기
-                        .fromUriString(REDIRECT_URL)
+                        .fromUriString(redirect_url)
                         .queryParam("access", token.getAccessToken())
                         .queryParam("refresh", token.getRefreshToken())
                         .build().toUriString();
