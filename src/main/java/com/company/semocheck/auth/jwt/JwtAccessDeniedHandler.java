@@ -29,7 +29,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
         JSONObject responseJson = new JSONObject();
         responseJson.put("success", false);
-        responseJson.put("code", exception.getErrorCode().getCode());
+        responseJson.put("code", exception.getErrorCode().name());
         responseJson.put("message", exception.getMessage());
 
 
