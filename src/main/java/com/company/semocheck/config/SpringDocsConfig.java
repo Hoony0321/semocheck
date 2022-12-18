@@ -29,7 +29,7 @@ public class SpringDocsConfig {
                 .name(HttpHeaders.AUTHORIZATION);
 
         // Security 요청 설정
-        SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList("JWT");
 
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("JWT", bearerAuth))
