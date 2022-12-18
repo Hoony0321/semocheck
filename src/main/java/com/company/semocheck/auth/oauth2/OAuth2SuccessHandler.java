@@ -3,8 +3,8 @@ package com.company.semocheck.auth.oauth2;
 import com.company.semocheck.auth.jwt.JwtProvider;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.Role;
-import com.company.semocheck.dto.MemberDto;
-import com.company.semocheck.dto.Token;
+import com.company.semocheck.domain.dto.MemberDto;
+import com.company.semocheck.domain.dto.Token;
 import com.company.semocheck.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,7 +26,7 @@ import java.util.Optional;
 @Slf4j
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final String REDIRECT_URL = "http://localhost:8080/api/test/auth";
+    private final String REDIRECT_URL = "http://localhost:8080/api/test/auth/success";
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     private final MemberRepository memberRepository; //TODO : SERVICE로 바꾸기
     private final JwtProvider jwtProvider;

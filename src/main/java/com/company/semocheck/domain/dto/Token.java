@@ -1,4 +1,4 @@
-package com.company.semocheck.dto;
+package com.company.semocheck.domain.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;

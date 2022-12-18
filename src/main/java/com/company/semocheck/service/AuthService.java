@@ -4,7 +4,7 @@ import com.company.semocheck.auth.jwt.JwtProvider;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.RefreshToken;
-import com.company.semocheck.dto.Token;
+import com.company.semocheck.domain.dto.Token;
 import com.company.semocheck.exception.AuthException;
 import com.company.semocheck.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
