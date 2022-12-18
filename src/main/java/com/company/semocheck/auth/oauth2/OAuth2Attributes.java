@@ -23,7 +23,7 @@ public class OAuth2Attributes {
             case "google" -> ofGoogle(attributes);
             case "kakao" -> ofKakao(attributes);
             case "naver" -> ofNaver(attributes);
-            default -> throw new GeneralException(Code.ILLEGAL_ARGUMENT, "허가되지 않은 요청입니다.");
+            default -> throw new GeneralException(Code.BAD_REQUEST);
         };
 
 
