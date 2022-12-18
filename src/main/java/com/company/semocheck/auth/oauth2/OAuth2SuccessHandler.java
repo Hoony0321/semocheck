@@ -36,7 +36,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
         MemberDto memberDto = MemberDto.createDto(oAuth2User);
-        String redirect_url =  String.format("http://%s/api/test/auth/success", HOST_URL);
+        String redirect_url =  String.format("http://%s/api/auth/token", HOST_URL);
 
         //TODO : refactoring & 최초 로그인 시 어떻게 할지 결정
         Optional<Member> findOne = memberRepository.findByEmail(memberDto.getEmail());

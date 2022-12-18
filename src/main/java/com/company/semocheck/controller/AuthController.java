@@ -13,9 +13,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Authorization", description = "인증 관련 API 모음입니다.")
+@Tag(name = "인증", description = "인증 관련 API 모음입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -24,6 +25,14 @@ public class AuthController {
     private final AuthService authService;
     private final JwtUtils jwtUtils;
 
+    @ApiDocumentResponse
+    @Operation(summary = "Token generate API", description = "OAuth2 로그인 성공 후 Token을 생성해서 반환하는 API입니다.")
+    @GetMapping("/token")
+    public DataResponseDto<Token> generateToken(@RequestParam("access") String accessToken, @RequestParam("refresh") String refreshToken){
+        Token token = new Token(accessToken, refreshToken);
+
+        return DataResponseDto.of(token);
+    }
 
     @ApiDocumentResponse
     @Operation(summary = "OAuth login test API", description = "OAuth2 JWT 토큰 체크하는 테스트 API입니다.")
