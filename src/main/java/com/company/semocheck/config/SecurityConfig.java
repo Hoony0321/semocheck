@@ -57,8 +57,10 @@ public class SecurityConfig{
                 .and()
                     .authorizeHttpRequests()
                     .requestMatchers("/api/auth/refresh").permitAll()
+                    .requestMatchers("/api/auth/login").permitAll()
                     .requestMatchers("/api/test/**").permitAll()
                     .requestMatchers(HttpMethod.GET,"/api/auth/token").permitAll()
+                    .requestMatchers(HttpMethod.GET,"/api/auth/token/fail").permitAll()
                     .requestMatchers("/logout").permitAll()
 
                 // ROLE url 모음

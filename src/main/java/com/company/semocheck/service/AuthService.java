@@ -27,15 +27,15 @@ public class AuthService {
         Authentication authentication = jwtProvider.getAuthentication(token.getAccessToken());
         String memberEmail = authentication.getName();
 
+        Member member = memberService.findByEmail(memberEmail);
+
         // Refresh repository에서 Member email 통해 refresh token entity 획득
-        RefreshToken refreshToken = refreshTokenRepository.findByKey(memberEmail)
+        RefreshToken refreshToken = refreshTokenRepository.findByKey(member.getId())
                 .orElseThrow(() -> new AuthException(Code.JWT_EXPIRED, "로그아웃 된 사용자입니다."));
 
         // Refresh token 일치하는지 확인
         if(!refreshToken.getValue().equals(token.getRefreshToken()))
             throw new AuthException(Code.BAD_REQUEST, "토큰의 유저 정보가 일치하지 않습니다.");
-
-        Member member = memberService.findByEmail(memberEmail);
 
         // 새로운 토큰 생성
         Token newToken = jwtProvider.generateToken(member);
