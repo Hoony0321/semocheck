@@ -75,7 +75,7 @@ public class JwtProvider {
 
         // Refresh Token Repository에 저장
         refreshTokenRepository.save(RefreshToken.builder()
-                        .key(member.getEmail())
+                        .key(member.getId())
                         .value(refreshToken)
                         .build());
 
