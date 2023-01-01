@@ -1,5 +1,7 @@
 package com.company.semocheck.domain;
 
+import com.company.semocheck.auth.oauth2.OAuth2Attributes;
+import com.company.semocheck.domain.dto.Role;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

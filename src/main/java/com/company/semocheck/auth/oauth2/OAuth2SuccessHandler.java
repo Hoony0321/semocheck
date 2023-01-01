@@ -2,7 +2,7 @@ package com.company.semocheck.auth.oauth2;
 
 import com.company.semocheck.auth.jwt.JwtProvider;
 import com.company.semocheck.domain.Member;
-import com.company.semocheck.domain.Role;
+import com.company.semocheck.domain.dto.Role;
 import com.company.semocheck.domain.dto.MemberDto;
 import com.company.semocheck.domain.dto.Token;
 import com.company.semocheck.repository.MemberRepository;
