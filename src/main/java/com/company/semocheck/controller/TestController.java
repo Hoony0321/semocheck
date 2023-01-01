@@ -1,69 +1,62 @@
 package com.company.semocheck.controller;
 
-import com.company.semocheck.common.response.ApiDocumentResponse;
-import com.company.semocheck.common.response.Code;
-import com.company.semocheck.common.response.DataResponseDto;
-import com.company.semocheck.common.response.ErrorResponseDto;
-import com.company.semocheck.domain.dto.TestDto;
-import com.company.semocheck.domain.dto.Token;
-import com.company.semocheck.exception.GeneralException;
-import io.jsonwebtoken.Claims;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-@Tag(name = "테스트", description = "테스트용 API 모음입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/test")
 public class TestController {
 
-    //OAuth Login Redirection Test
-    @Operation(summary = "OAuth login success API", description = "OAuth2 Login 성공 시 토큰 체크하는 테스트 API입니다.")
-    @GetMapping("/auth/success")
-    public DataResponseDto<Token> oAuthSuccess(@RequestParam("access") String accessToken, @RequestParam("refresh") String refreshToken){
+    @GetMapping("/code/kakao")
+    public ResponseEntity<String> codeKakao(@RequestParam("code") String code, @RequestParam("state") String state){
+        RestTemplate restTemplate = new RestTemplate();
 
-        Token token = new Token(accessToken, refreshToken);
+        // 헤더 만들기
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        return DataResponseDto.of(token, "login 성공");
+        // HTTP Body로 들어갈 것들 만들기
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", "617e6fd9bd129dd5c62945bf7fd8ea95");
+        params.add("redirect_uri", "http://localhost:8080/api/test/code/kakao");
+        params.add("code", code);
+        params.add("state", state);
+
+        // Set http entity -> Body 데이터와 헤더 묶기
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity("https://kauth.kakao.com/oauth/token", request, String.class);
+
+        return response;
     }
 
-    @Operation(summary = "test api 호출1", description = "test api 호출 메서드입니다.")
-    @GetMapping("/1")
-    public DataResponseDto<List> test1(HttpServletRequest request){
+    @GetMapping("/code/google")
+    public ResponseEntity<String> codeGoogle(@RequestParam("code") String code, @RequestParam("state") String state){
+        RestTemplate restTemplate = new RestTemplate();
 
-        List testData = new ArrayList<>(Arrays.asList(1,2,3,4,5));
+        // 헤더 만들기
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        return DataResponseDto.of(testData, "테스트 API입니다.");
+        // HTTP Body로 들어갈 것들 만들기
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("code", code);
+        params.add("client_id", "983039958847-rma5uoq5atl44ch82t9a0k3cga7vs6p2.apps.googleusercontent.com");
+        params.add("client_secret", "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");
+        params.add("redirect_uri", "http://localhost:8080/api/test/code/google");
+        params.add("grant_type", "authorization_code");
+        params.add("state", state);
+
+        // Set http entity -> Body 데이터와 헤더 묶기
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity("https://oauth2.googleapis.com/token", request, String.class);
+
+        return response;
     }
-
-    @Operation(summary = "test api 호출 2", description = "test api 호출 메서드입니다.")
-    @ApiDocumentResponse
-    @GetMapping("/2")
-    public DataResponseDto<TestDto> test2(HttpServletRequest request){
-
-        TestDto data = new TestDto("test", 5, 5);
-
-        double random = Math.random();
-
-        if(random > 0.5) throw new GeneralException(Code.INTERNAL_ERROR, "데이터 전송 실패");
-
-        return DataResponseDto.of(data, "테스트 API입니다.");
-    }
-
-
-
 
 }

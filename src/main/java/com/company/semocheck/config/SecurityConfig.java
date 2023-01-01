@@ -56,6 +56,7 @@ public class SecurityConfig{
                 // 허용 url 모음
                 .and()
                     .authorizeHttpRequests()
+                    .requestMatchers("/").permitAll()
                     .requestMatchers("/api/auth/refresh").permitAll()
                     .requestMatchers("/api/auth/login").permitAll()
                     .requestMatchers("/api/test/**").permitAll()
