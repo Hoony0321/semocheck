@@ -32,91 +32,78 @@ import java.util.Optional;
 public class AuthController {
 
     private final AuthService authService;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     private final JwtProvider jwtProvider;
     private final JwtUtils jwtUtils;
 
 
     @ApiDocumentResponse
-    @Operation(summary = "Login API", description = "OAuth Token 받아서 JWT Token을 반환하는 API입니다.")
+    @Operation(summary = "Login API", description = "OAuth Token 받아서 JWT access & refresh Token을 반환합니다.")
     @GetMapping("/login")
-    public DataResponseDto<Token> login(@RequestParam("token") String token, @RequestParam("provider") String provider){
+    public DataResponseDto<Token> login(@RequestParam("token") String oAuthToken, @RequestParam("provider") String provider){
         RestTemplate restTemplate = new RestTemplate();
+        Member member;
+        URI requestUrl;
+        ResponseEntity<Object> responseEntity;
+        RequestEntity requestEntity = null;
 
-        URI requestUrl = switch (provider) {
-            case "kakao" -> UriComponentsBuilder.newInstance()
+        // TODO : apple sns login 추가하기
+        switch (provider) {
+            case "kakao" :
+                requestUrl = UriComponentsBuilder.newInstance()
                     .scheme("https")
                     .host("kapi.kakao.com")
                     .path("/v2/user/me")
                     .encode().build().toUri();
-            case "google" -> UriComponentsBuilder.newInstance()
+
+                //OAuth token을 통해 리소스 서버로 사용자 정보 요청
+                requestEntity = RequestEntity
+                        .post(requestUrl)
+                        .header("Authorization", "Bearer " + oAuthToken)
+                        .body(null);
+                break;
+            case "google" :
+                requestUrl = UriComponentsBuilder.newInstance()
                     .scheme("https")
-                    .host("kapi.kakao.com")
-                    .path("/v2/user/me")
+                    .host("www.googleapis.com")
+                    .path("/userinfo/v2/me")
+                    .queryParam("access_token", oAuthToken)
                     .encode().build().toUri();
-            default -> throw new GeneralException(Code.BAD_REQUEST, "잘못된 provider 요청");
-        };
+                break;
+            default :
+                throw new GeneralException(Code.BAD_REQUEST, "지원하지 않는 provider 입니다.");
+        }
 
-        RequestEntity<Object> requestEntity = RequestEntity
-                .post(requestUrl)
-                .header("Authorization", "Bearer " + token)
-                .body(null);
+        try{
+            if(requestEntity == null) responseEntity = restTemplate.getForEntity(requestUrl, Object.class);
+            else responseEntity = restTemplate.postForEntity(requestUrl, requestEntity, Object.class);}
+        catch (Exception e){
+            throw new GeneralException(Code.BAD_REQUEST, "OAuth 인증 실패");}
 
-
-        ResponseEntity<Object> responseEntity = restTemplate.postForEntity(requestUrl, requestEntity, Object.class);
-
+        //받아온 사용자 정보를 동일한 form으로 변환
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> oAuth2Info = objectMapper.convertValue(responseEntity.getBody(), Map.class);
         OAuth2Attributes attributes = OAuth2Attributes.of(provider, oAuth2Info);
 
-        //TODO : refactoring & 최초 로그인 시 어떻게 할지 결정
-        Optional<Member> findOne = memberRepository.findByEmail(attributes.getEmail());
-        Member member = null;
-        if(findOne.isEmpty()){ //최초 로그인 시
-            member = Member.builder()
-                    .email(attributes.getEmail())
-                    .name(attributes.getName())
-                    .picture(attributes.getPicture())
-                    .role(Role.USER)
-                    .build();
-            memberRepository.save(member);
+        //해당 oauth_id로 가입된 계정 있는지 확인 -> 없으면 회원가입 진행
+        Optional<Member> findOne = memberService.findByOAuthIdAndProvider(attributes.getId(), provider);
+        if(findOne.isEmpty()){ //최초 로그인하는 경우 -> member 생성
+            Long member_id = memberService.joinMember(attributes, provider);
+            member = memberService.findById(member_id);
         }
-        else{ member = findOne.get(); }
+        else{ //기존 계정 존재하는 경우 -> db에 있는 memeber 반환
+            member = findOne.get();
+        }
 
         //JWT token 발급
         Token jwtToken = jwtProvider.generateToken(member);
-
 
         return DataResponseDto.of(jwtToken);
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Token generate API", description = "OAuth2 로그인 성공 후 Token을 생성해서 반환하는 API입니다.")
-    @GetMapping("/token")
-    public DataResponseDto<Token> generateToken(@RequestParam("access") String accessToken, @RequestParam("refresh") String refreshToken){
-        Token token = new Token(accessToken, refreshToken);
-
-        return DataResponseDto.of(token);
-    }
-
-    @ApiDocumentResponse
-    @Operation(summary = "Token generate API", description = "OAuth2 로그인 성공 후 Token을 생성해서 반환하는 API입니다.")
-    @GetMapping("/token/fail")
-    public DataResponseDto<Token> failOAuth(HttpServletRequest request){
-        Enumeration<String> names = request.getHeaderNames();
-        throw new GeneralException(Code.INTERNAL_ERROR, "OAuth 인증 실패");
-    }
-
-    @ApiDocumentResponse
-    @Operation(summary = "OAuth login test API", description = "OAuth2 JWT 토큰 체크하는 테스트 API입니다.")
-    @GetMapping("/access")
-    public DataResponseDto<String> oAuthSuccess(HttpServletRequest request){
-        String accessToken = jwtUtils.getAccessToken(request);
-
-        return DataResponseDto.of(accessToken, "JWT token access 성공");
-    }
-
+    @Operation(summary = "Refresh Token API", description = "refresh token을 받아 새로운 access token을 반환합니다.")
     @GetMapping("/refresh")
     public DataResponseDto<Token> refresh(HttpServletRequest request){
         String accessToken = jwtUtils.getAccessToken(request);

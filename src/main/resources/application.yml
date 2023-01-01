@@ -35,3 +35,6 @@ springdoc:
   paths-to-match:
     - /**
   model-and-view-allowed: true
+
+server:
+  forward-headers-strategy: framework
