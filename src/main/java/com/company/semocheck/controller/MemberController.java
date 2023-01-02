@@ -78,7 +78,9 @@ public class MemberController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Update member API", description = "member id를 통해 해당 회원 정보를 수정합니다.")
+    @Operation(summary = "Update member API", description = "member id를 통해 해당 회원 정보를 수정합니다.\n" +
+            "모든 정보 수정이 가능한 API입니다.\n" +
+            "만약 수정을 원치 않는 정보는 null로 넣어주시면 됩니다.")
     @PutMapping("/{id}")
     public DataResponseDto<MemberDto> updateMember(@PathVariable("id") Long id, HttpServletRequest request, @RequestBody UpdateRequestDto requestDto) {
         String accessToken = jwtUtils.getAccessToken(request);
