@@ -2,8 +2,6 @@ package com.company.semocheck.config;
 
 import com.company.semocheck.auth.jwt.*;
 import com.company.semocheck.auth.oauth2.CustomOAuth2UserService;
-import com.company.semocheck.auth.oauth2.OAuth2FailureHandler;
-import com.company.semocheck.auth.oauth2.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,9 +20,6 @@ public class SecurityConfig{
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
-    private final OAuth2FailureHandler oAuth2FailureHandler;
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         // CSRF 설정 disable
@@ -57,6 +52,7 @@ public class SecurityConfig{
                 .and()
                     .authorizeHttpRequests()
                     .requestMatchers("/").permitAll()
+                    .requestMatchers(HttpMethod.POST,"/api/members").permitAll()
                     .requestMatchers("/api/auth/refresh").permitAll()
                     .requestMatchers("/api/auth/login").permitAll()
                     .requestMatchers("/api/test/**").permitAll()
@@ -83,8 +79,6 @@ public class SecurityConfig{
                     .redirectionEndpoint()
                     .baseUri("/*/oauth2/code/*")
                     .and()
-                    .successHandler(oAuth2SuccessHandler)
-                    .failureHandler(oAuth2FailureHandler)
                     .userInfoEndpoint()
                     .userService(customOAuth2UserService)
 
