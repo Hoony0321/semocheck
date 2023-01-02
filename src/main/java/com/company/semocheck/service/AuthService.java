@@ -1,12 +1,14 @@
 package com.company.semocheck.service;
 
 import com.company.semocheck.auth.jwt.JwtProvider;
+import com.company.semocheck.auth.jwt.JwtUtils;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.RefreshToken;
 import com.company.semocheck.domain.dto.Token;
 import com.company.semocheck.exception.AuthException;
 import com.company.semocheck.repository.RefreshTokenRepository;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -20,14 +22,14 @@ public class AuthService {
     private final MemberService memberService;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProvider jwtProvider;
+    private final JwtUtils jwtUtils;
 
     @Transactional
     public Token reissueToken(Token token){ //TODO : refresh token은 기한이 조금 남았을 경우에만 update
         // Access token에서 Member 정보 가져오기
-        Authentication authentication = jwtProvider.getAuthentication(token.getAccessToken());
-        String memberEmail = authentication.getName();
+        Claims claims = jwtUtils.parseClaims(token.getAccessToken());
+        Member member = memberService.findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
 
-        Member member = memberService.findByEmail(memberEmail);
 
         // Refresh repository에서 Member email 통해 refresh token entity 획득
         RefreshToken refreshToken = refreshTokenRepository.findByKey(member.getId())

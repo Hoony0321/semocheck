@@ -25,6 +25,11 @@ public class ExceptionController {
         return ErrorResponseDto.of(Code.NOT_FOUND, exception);
     }
 
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity handleAuthException(HttpServletRequest request, AuthException exception){
+        return ErrorResponseDto.of(exception.getErrorCode(), exception);
+    }
+
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity handleBaseException(HttpServletRequest request, BadCredentialsException exception){
         return ErrorResponseDto.of(Code.UNAUTHORIZED, exception);
