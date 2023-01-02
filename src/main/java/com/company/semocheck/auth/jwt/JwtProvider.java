@@ -58,9 +58,9 @@ public class JwtProvider {
         // Access Token 생성
         Date accessTokenExpireTime = new Date(now + ACCESS_TOKEN_VALID_TIME);
         String accessToken = Jwts.builder()
-                .setSubject("access_token")    // payload "sub" : "access_token"
                 .claim(AUTHORITIES_KEY, member.getRoleKey())     // payload : "auth" : "ROLE_USER" or "ROLE_AUTH"
-                .claim("email", member.getEmail()) // payload : "email" : "ROLE_USER" or "ROLE_ADMIN"
+                .claim("oAuthId", member.getOAuthId()) // payload : "oAuthId"
+                .claim("provider", member.getProvider()) // payload : "provider"
                 .setExpiration(accessTokenExpireTime)    // payload : "exp" : 1516239022(에시)
                 .signWith(key, SignatureAlgorithm.HS256) // header "alg" : "HS256"
                 .compact();
@@ -98,7 +98,7 @@ public class JwtProvider {
                         .collect(Collectors.toList());
 
         // UserDetails 객체를 만들어서 Authentication 리턴
-        UserDetails principal = new User(claims.get("email").toString(), "", authorities);
+        UserDetails principal = new User(claims.get("oAuthId").toString(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
