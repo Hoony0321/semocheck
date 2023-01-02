@@ -1,9 +1,16 @@
 package com.company.semocheck.auth.oauth2;
 
 import com.company.semocheck.common.response.Code;
+import com.company.semocheck.domain.Member;
 import com.company.semocheck.exception.GeneralException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.Map;
 
 @Getter
@@ -19,6 +26,52 @@ public class OAuth2Attributes {
         this.name = name;
         this.email = email;
         this.picture = picture;
+    }
+
+    public static Map<String, Object> getOAuthInfo(String oAuthToken, String provider){
+        RestTemplate restTemplate = new RestTemplate();
+        URI requestUrl;
+        ResponseEntity<Object> responseEntity;
+        RequestEntity requestEntity = null;
+
+        // TODO : apple sns login 추가하기
+        switch (provider) {
+            case "kakao" :
+                requestUrl = UriComponentsBuilder.newInstance()
+                        .scheme("https")
+                        .host("kapi.kakao.com")
+                        .path("/v2/user/me")
+                        .encode().build().toUri();
+
+                //OAuth token을 통해 리소스 서버로 사용자 정보 요청
+                requestEntity = RequestEntity
+                        .post(requestUrl)
+                        .header("Authorization", "Bearer " + oAuthToken)
+                        .body(null);
+                break;
+            case "google" :
+                requestUrl = UriComponentsBuilder.newInstance()
+                        .scheme("https")
+                        .host("www.googleapis.com")
+                        .path("/userinfo/v2/me")
+                        .queryParam("access_token", oAuthToken)
+                        .encode().build().toUri();
+                break;
+            default :
+                throw new GeneralException(Code.BAD_REQUEST, "지원하지 않는 provider 입니다.");
+        }
+
+        try{
+            if(requestEntity == null) responseEntity = restTemplate.getForEntity(requestUrl, Object.class);
+            else responseEntity = restTemplate.postForEntity(requestUrl, requestEntity, Object.class);}
+        catch (Exception e){
+            throw new GeneralException(Code.BAD_REQUEST, "OAuth 인증 실패");}
+
+        //받아온 사용자 정보를 동일한 form으로 변환
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> oAuth2Info = objectMapper.convertValue(responseEntity.getBody(), Map.class);
+
+        return oAuth2Info;
     }
 
     public static OAuth2Attributes of(String registrationId, Map<String, Object> attributes){

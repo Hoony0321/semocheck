@@ -1,33 +1,48 @@
 package com.company.semocheck.domain.dto;
 
+import com.company.semocheck.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-
-import java.util.Map;
 
 @Getter
 @NoArgsConstructor
 public class MemberDto {
+
+    private Long id;
+    private String oAuthId;
+    private String provider;
     private String email;
     private String name;
     private String picture;
+    private Boolean agree_notify;
+    private Boolean sex;
+    private Integer age;
 
     @Builder
-    public MemberDto(String email, String name, String picture) {
+    public MemberDto(Long id, String oAuthId, String provider, String email, String name, String picture, Boolean agree_notify, Boolean sex, Integer age) {
+        this.id = id;
+        this.oAuthId = oAuthId;
+        this.provider = provider;
         this.email = email;
         this.name = name;
         this.picture = picture;
+        this.agree_notify = agree_notify;
+        this.sex = sex;
+        this.age = age;
     }
 
-    static public MemberDto createDto(OAuth2User oAuth2User){
-        Map<String, Object> attributes = oAuth2User.getAttributes();
+    static public MemberDto createDto(Member member){
         return MemberDto.builder()
-                .email((String) attributes.get("email"))
-                .name((String) attributes.get("name"))
-                .picture((String) attributes.get("picture"))
+                .id(member.getId())
+                .oAuthId(member.getOAuthId())
+                .provider(member.getProvider())
+                .name(member.getName())
+                .email(member.getEmail())
+                .picture(member.getPicture())
+                .agree_notify(member.getAgreeNotify())
+                .sex(member.getSex())
+                .age(member.getAge())
                 .build();
-
     }
 }
