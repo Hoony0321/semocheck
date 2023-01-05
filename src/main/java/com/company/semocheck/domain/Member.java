@@ -5,6 +5,7 @@ import com.company.semocheck.domain.dto.Role;
 import com.company.semocheck.domain.dto.request.member.JoinRequestDto;
 import com.company.semocheck.domain.dto.request.member.UpdateRequestDto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,30 +19,37 @@ import org.hibernate.annotations.DynamicInsert;
 public class Member extends BaseTimeEntity{
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
 
+    @NotNull
     @Column(name = "oauth_id", nullable = false)
     private String oAuthId;
 
+    @NotNull
     @Column(nullable = false)
     private String provider;
 
+    @NotNull
     @Column(nullable = false)
     private String email;
 
+    @NotNull
     @Size(max = 15)
     @Column(nullable = false)
     private String name;
 
+    @NotNull
     @Column(nullable = false)
     private String picture;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
+    @NotNull
     @Column(nullable = false)
     private Boolean agreeNotify;
 
@@ -66,17 +74,17 @@ public class Member extends BaseTimeEntity{
         return this.role.getKey();
     }
 
-    static public Member createNewMember(OAuth2Attributes attributes, String provider){
-        Member member = new Member();
-        member.oAuthId = attributes.getId();
-        member.provider = provider;
-        member.email = attributes.getEmail();
-        member.picture = attributes.getPicture();
-        member.name = attributes.getName();
-        member.role = Role.USER;
-        member.agreeNotify = false;
+    static public Member createEntity(OAuth2Attributes attributes, String provider){
+        Member entity = new Member();
+        entity.oAuthId = attributes.getId();
+        entity.provider = provider;
+        entity.email = attributes.getEmail();
+        entity.picture = attributes.getPicture();
+        entity.name = attributes.getName();
+        entity.role = Role.USER;
+        entity.agreeNotify = false;
 
-        return member;
+        return entity;
     }
 
     //====== update method ======//

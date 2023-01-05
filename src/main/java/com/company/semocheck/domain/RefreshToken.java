@@ -1,6 +1,7 @@
 package com.company.semocheck.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ public class RefreshToken {
     @Column(name = "rt_key")
     private Long key;
 
+    @NotNull
     @Column(name = "rt_value")
     private String value;
 

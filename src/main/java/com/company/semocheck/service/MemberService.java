@@ -43,7 +43,7 @@ public class MemberService {
 
     @Transactional
     public Long join(OAuth2Attributes attributes, String provider, JoinRequestDto joinRequestDto, String fcmToken){
-        Member member = Member.createNewMember(attributes, provider);
+        Member member = Member.createEntity(attributes, provider);
         memberRepository.save(member);
 
         //TODO : fcmToken 세팅
