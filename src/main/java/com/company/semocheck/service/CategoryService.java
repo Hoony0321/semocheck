@@ -40,6 +40,17 @@ public class CategoryService {
         return findOne.get();
     }
 
+    public SubCategory findSubCategoryByName(String mainName, String subName){
+        Optional<MainCategory> findMainOne = mainCategoryRepository.findByName(mainName);
+        if(findMainOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 이름의 1차 카테고리는 존재하지 않습니다.");
+
+        MainCategory mainCategory = findMainOne.get();
+        Optional<SubCategory> findSubOne = mainCategory.getSubCategoryList().stream().filter(sc -> sc.getName().equals(subName)).findAny();
+        if(findSubOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 이름의 2차 카테고리는 존재하지 않습니다.");
+
+        return findSubOne.get();
+    }
+
     @Transactional
     public void createMainCategory(CreateMainCategoryRequestDto requestDto) {
         Optional<MainCategory> findOne = mainCategoryRepository.findByName(requestDto.getName());
@@ -89,10 +100,19 @@ public class CategoryService {
         findSubOne = mainCategory.getSubCategoryList().stream().filter(sc -> sc.getName().equals(subName)).findFirst();
         if(findSubOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 이름의 2차 카테고리는 존재하지 않습니다.");
 
-        //Update - 삭제 후 다시 생성
+        //Delete existed entity
         subCategoryRepository.delete(findSubOne.get());
-        CreateSubCategoryRequestDto createSubCategoryRequest = new CreateSubCategoryRequestDto(requestDto.getSubName());
-        createSubCategory(createSubCategoryRequest, requestDto.getMainName());
+
+        //Create new entity
+        if(requestDto.getMainName() == null){ //sub category name을 바꾸는 경우
+            CreateSubCategoryRequestDto createSubCategoryRequest = new CreateSubCategoryRequestDto(requestDto.getSubName());
+            createSubCategory(createSubCategoryRequest, mainName);
+        }
+        if(requestDto.getSubName() == null){ //main category name을 바꾸는 경우
+            CreateSubCategoryRequestDto createSubCategoryRequest = new CreateSubCategoryRequestDto(subName);
+            createSubCategory(createSubCategoryRequest, requestDto.getMainName());
+        }
+
     }
 
     @Transactional

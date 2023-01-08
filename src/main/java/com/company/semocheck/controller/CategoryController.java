@@ -60,12 +60,12 @@ public class CategoryController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Delete main categories API", description = "=1차 카테고리를 삭제합니다.\n" +
+    @Operation(summary = "Delete main categories API", description = "1차 카테고리를 삭제합니다.\n" +
             "연결된 하위 카테고리가 존재할 경우 삭제가 안됩니다. -> BAD_REQUEST(400) 반환")
     @DeleteMapping("/{name}")
     public ResponseDto deleteMainCategories(@PathVariable("name") String name){
         categoryService.removeMainCategory(name);
-        return ResponseDto.of(true, "2차 카테고리 삭제 성공");
+        return ResponseDto.of(true, "1차 카테고리 삭제 성공");
     }
 
     @ApiDocumentResponse
