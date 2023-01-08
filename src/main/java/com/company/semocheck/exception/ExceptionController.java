@@ -16,7 +16,9 @@ public class ExceptionController {
 
     @ExceptionHandler(GeneralException.class)
     public ResponseEntity handleBaseException(HttpServletRequest request, GeneralException exception){
-        return ErrorResponseDto.of(exception.getErrorCode(), exception);
+        if(exception.getMessage() != null) return ErrorResponseDto.of(exception.getErrorCode(), exception);
+        else{ return  ErrorResponseDto.of(exception.getErrorCode());}
+
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)

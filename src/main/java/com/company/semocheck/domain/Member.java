@@ -12,6 +12,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -57,6 +60,9 @@ public class Member extends BaseTimeEntity{
 
     private Integer age;
 
+    @OneToMany(mappedBy = "owner")
+    private List<CheckList> checkLists = new ArrayList<>();
+
     @Builder
     public Member(String oAuthId, String provider, String email, String name, String picture, Role role, Boolean agreeNotify, Boolean sex, Integer age) {
         this.oAuthId = oAuthId;
@@ -87,7 +93,12 @@ public class Member extends BaseTimeEntity{
         return entity;
     }
 
-    //====== update method ======//
+    //====== 연관관계 메서드 ======//
+    public void addCheckList(CheckList checkList){
+        this.checkLists.add(checkList);
+    }
+
+    //====== 정보 수정 메서드 ======//
     public void setInfoNewMember(JoinRequestDto joinRequestDto){
         this.name = joinRequestDto.getName();
         this.age = joinRequestDto.getAge();
