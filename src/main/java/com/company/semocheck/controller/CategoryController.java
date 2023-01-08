@@ -60,7 +60,7 @@ public class CategoryController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Delete main categories API", description = "1차 카테고리를 삭제합니다.\n" +
+    @Operation(summary = "Delete main categories API", description = "1차 카테고리를 삭제합니다.\n\n" +
             "연결된 하위 카테고리가 존재할 경우 삭제가 안됩니다. -> BAD_REQUEST(400) 반환")
     @DeleteMapping("/{name}")
     public ResponseDto deleteMainCategories(@PathVariable("name") String name){
@@ -92,7 +92,7 @@ public class CategoryController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Update sub categories API", description = "2차 카테고리 정보를 수정합니다.(name : 수정할 카테고리의 main 카테고리 이름)\n" +
+    @Operation(summary = "Update sub categories API", description = "2차 카테고리 정보를 수정합니다.(name : 수정할 카테고리의 main 카테고리 이름)\n\n" +
             "main category name / sub category name 둘 중 하나만 변경 가능합니다.\n" +
             "둘 다 변경할 경우 -> remove 하시고 새로 create 하시면 됩니다.")
     @PutMapping("/{mainName}/sub/{subName}")
