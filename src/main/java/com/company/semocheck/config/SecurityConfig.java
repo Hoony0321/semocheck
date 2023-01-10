@@ -48,24 +48,26 @@ public class SecurityConfig{
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()
 
-                // 허용 url 모음
+                // 인증 url 모음
                 .and()
                     .authorizeHttpRequests()
-                    .requestMatchers("/").permitAll()
-                    .requestMatchers(HttpMethod.POST,"/api/members").permitAll()
-                    .requestMatchers("/api/auth/refresh").permitAll()
-                    .requestMatchers("/api/auth/login").permitAll()
-                    .requestMatchers("/api/test/**").permitAll()
-                    .requestMatchers(HttpMethod.GET,"/api/auth/token").permitAll()
-                    .requestMatchers(HttpMethod.GET,"/api/auth/token/fail").permitAll()
-                    .requestMatchers("/logout").permitAll()
+                    .requestMatchers("/api/members/**").authenticated()
 
                 // ROLE url 모음
                 .and()
                     .authorizeHttpRequests()
-                    .requestMatchers("/api/guest").hasRole("GUEST")
                     .requestMatchers("/api/admin").hasRole("ADMIN")
-                    .anyRequest().authenticated()
+
+                // 허용 url 모음
+                .and()
+                    .authorizeHttpRequests()
+                    .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
+                    .requestMatchers(HttpMethod.POST,"/api/members").permitAll()
+                    .anyRequest().permitAll()
+
+
+
+
 
                 .and()
                     .logout()
