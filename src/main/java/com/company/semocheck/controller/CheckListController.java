@@ -27,7 +27,6 @@ import java.util.List;
 @Tag(name = "체크리스트", description = "체크리스트 관련 API 모음입니다.")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/members/{member_id}/checkList")
 public class CheckListController {
 
     private final MemberService memberService;
@@ -35,9 +34,23 @@ public class CheckListController {
     private final JwtUtils jwtUtils;
 
     @ApiDocumentResponse
+    @Operation(summary = "Get all visibile checkList API", description = "공개 가능한 모든 체크리스트를 제공합니다.\n\n")
+    @GetMapping("/api/checkList")
+    private DataResponseDto<List<CheckListDto>> createNewCheckList(HttpServletRequest request){
+        List<CheckList> checkLists = checkListService.findAllVisible();
+        List<CheckListDto> checkListDtos = new ArrayList<>();
+        for (CheckList checkList : checkLists) {
+            checkListDtos.add(CheckListDto.createDto(checkList));
+        }
+
+        return DataResponseDto.of(checkListDtos, "조회 성공");
+    }
+
+
+    @ApiDocumentResponse
     @Operation(summary = "Create new checklist API", description = "새로운 체크리스트를 생성합니다.\n\n" +
             "필수 목록 : [title]")
-    @PostMapping("")
+    @PostMapping("/api/members/{member_id}/checkList")
     private DataResponseDto<Long> createNewCheckList(HttpServletRequest request, @PathVariable("member_id") Long memberId,
                                                      @RequestBody CreateCheckListRequestDto requestDto){
         //JWT Member 검증
@@ -54,7 +67,7 @@ public class CheckListController {
 
     @ApiDocumentResponse
     @Operation(summary = "get all member's checklist API", description = "해당 멤버의 체크리스트 모두 조회합니다.")
-    @GetMapping("")
+    @GetMapping("/api/members/{member_id}/checkList")
     private DataResponseDto<List<CheckListDto>> findAllMemberCheckList(HttpServletRequest request, @PathVariable("member_id") Long memberId){
         //JWT Member 검증
         String accessToken = jwtUtils.getAccessToken(request);
@@ -76,7 +89,7 @@ public class CheckListController {
     @ApiDocumentResponse
     @Operation(summary = "get checklist by id API", description = "체크리스트 id를 통해 조회합니다.\n\n" +
             "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
-    @GetMapping("/{checkList_id}")
+    @GetMapping("/api/members/{member_id}/checkList/{checkList_id}")
     private DataResponseDto<CheckListDto> findCheckListById(HttpServletRequest request, @PathVariable("member_id") Long memberId,
                                                             @PathVariable("checkList_id") Long checkListId){
         //JWT Member 검증
@@ -97,7 +110,7 @@ public class CheckListController {
             "\"회원의 체크리스트가 아닌 경우 수정이 불가능합니다. - 403 Forbidden error\"" +
             "step 추가 api가 아닙니다. step 추가 api는 따로 있습니다.\n" +
             "수정하고 싶은 칼럼만 넘겨주시면 됩니다. 수정이 필요하지 않은 정보는 입력하지 않아도 됩니다.")
-    @PutMapping("/{checkList_id}")
+    @PutMapping("/api/members/{member_id}/checkList/{checkList_id}")
     private DataResponseDto<CheckListDto> updateCheckListInfo(HttpServletRequest request, @PathVariable("member_id") Long memberId,
                                                               @PathVariable("checkList_id") Long checkListId, @RequestBody UpdateCheckListRequestDto requestDto){
         //JWT Member 검증
@@ -119,7 +132,7 @@ public class CheckListController {
     @ApiDocumentResponse
     @Operation(summary = "Insert step item into checkList API", description = "해당 체크리스트에 stepItem을 추가합니다.\n\n" +
             "\"회원의 체크리스트가 아닌 경우 추가할 수 없습니다. - 403 Forbidden error\"")
-    @PostMapping("/{checkList_id}/stepItem")
+    @PostMapping("/api/members/{member_id}/checkList/{checkList_id}/stepItem")
     private DataResponseDto<CheckListDto> AddStepItem(HttpServletRequest request, @PathVariable("member_id") Long memberId,
                                                       @PathVariable("checkList_id") Long checkListId, @RequestBody CreateStepRequestDto requestDto){
         //JWT Member 검증
@@ -141,7 +154,7 @@ public class CheckListController {
     @ApiDocumentResponse
     @Operation(summary = "Delete a checklist API", description = "회원의 체크리스트를 삭제합니다.\n\n" +
             "회원의 체크리스트가 아닌 경우 삭제가 불가능합니다. - 403 Forbidden error")
-    @DeleteMapping("/{checkList_id}")
+    @DeleteMapping("/api/members/{member_id}/checkList/{checkList_id}")
     private ResponseDto deleteCheckList(HttpServletRequest request, @PathVariable("member_id") Long memberId,
                                         @PathVariable("checkList_id") Long checkListId){
         //JWT Member 검증

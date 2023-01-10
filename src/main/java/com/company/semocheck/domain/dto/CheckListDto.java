@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,23 +32,8 @@ public class CheckListDto {
     private Integer ageGroup;
     private Boolean visibility;
 
-    @Builder
-    public CheckListDto(Long checkListId, String ownerName, Long originCheckListId, SubCategoryDto category, List<StepDto> stepItems, String title, String subTitle, String brief, Integer stepCount, Integer viewCount, Integer scrapCount, Integer progress, Integer ageGroup, Boolean visibility) {
-        this.checkListId = checkListId;
-        this.ownerName = ownerName;
-        this.originCheckListId = originCheckListId;
-        this.category = category;
-        this.stepItems = stepItems;
-        this.title = title;
-        this.subTitle = subTitle;
-        this.brief = brief;
-        this.stepCount = stepCount;
-        this.viewCount = viewCount;
-        this.scrapCount = scrapCount;
-        this.progress = progress;
-        this.ageGroup = ageGroup;
-        this.visibility = visibility;
-    }
+    private String createdDate;
+    private String modifiedDate;
 
     static public CheckListDto createDto(CheckList checkList){
         CheckListDto dto = new CheckListDto();
@@ -62,6 +49,9 @@ public class CheckListDto {
         dto.scrapCount = checkList.getScrapCount();
         dto.progress = checkList.getProgress();
         dto.ageGroup = checkList.getAgeGroup();
+
+        dto.createdDate = checkList.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));;
+        dto.modifiedDate = checkList.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));;;
 
         if(checkList.getOrigin() != null) dto.originCheckListId = checkList.getOrigin().getId();
         if(checkList.getCategory() != null) dto.category = SubCategoryDto.createDto(checkList.getCategory());

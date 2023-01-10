@@ -1,5 +1,7 @@
 package com.company.semocheck.controller;
 
+import com.company.semocheck.common.response.DataResponseDto;
+import com.company.semocheck.domain.dto.request.TestRequestDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
@@ -8,11 +10,19 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 @Tag(name = "테스트", description = "로컬 환경 테스트 관련 API 모음입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/test")
 public class TestController {
+
+    @PostMapping("/request")
+    public DataResponseDto<List<String>> testRequestBody(@RequestBody TestRequestDto requestDto){
+        List<String> datas = requestDto.getDatas();
+        return DataResponseDto.of(datas);
+    }
 
     @GetMapping("/code/kakao")
     public ResponseEntity<String> codeKakao(@RequestParam("code") String code, @RequestParam("state") String state){

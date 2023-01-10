@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -67,5 +69,14 @@ public class CheckListService {
             StepItem stepItem = StepItem.createEntity(dto, checkList);
             checkList.addStep(stepItem);
         }
+    }
+
+    public List<CheckList> findAllVisible() {
+        List<CheckList> checkLists = new ArrayList<>();
+        for (CheckList checkList : checkListRepository.findAll()) {
+            if(checkList.getVisibility()) checkLists.add(checkList);
+        }
+
+        return checkLists;
     }
 }
