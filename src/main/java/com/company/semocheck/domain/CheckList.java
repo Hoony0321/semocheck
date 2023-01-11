@@ -63,15 +63,15 @@ public class CheckList extends BaseTimeEntity{
     @ColumnDefault("0")
     private Integer scrapCount;
 
-    @ColumnDefault("0")
-    private Integer progress;
-
     private Integer ageGroup;
 
     @ColumnDefault("0")
     private Boolean visibility;
 
-    static public CheckList createEntity(CreateCheckListRequestDto requestDto, Member member, SubCategory category){
+    @OneToOne(mappedBy = "checkList", cascade = CascadeType.ALL)
+    private CheckListProgress progressInfo;
+
+    static public CheckList createEntity(CreateCheckListRequestDto requestDto, Member member, SubCategory category ){
         CheckList entity = new CheckList();
 
         entity.title = requestDto.getTitle();
@@ -90,7 +90,8 @@ public class CheckList extends BaseTimeEntity{
             }
         }
 
-
+        CheckListProgress checkListProgress = CheckListProgress.createEntity(entity);
+        entity.progressInfo = checkListProgress;
         return entity;
     }
 

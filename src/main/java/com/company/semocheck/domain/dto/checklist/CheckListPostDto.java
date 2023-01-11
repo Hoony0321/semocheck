@@ -1,26 +1,24 @@
-package com.company.semocheck.domain.dto;
+package com.company.semocheck.domain.dto.checklist;
 
 import com.company.semocheck.domain.CheckList;
 import com.company.semocheck.domain.StepItem;
-import lombok.Builder;
+import com.company.semocheck.domain.dto.StepDto;
+import com.company.semocheck.domain.dto.SubCategoryDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class CheckListDto {
+public class CheckListPostDto {
 
     private Long checkListId;
     private String ownerName;
-
     private Long originCheckListId;
     private SubCategoryDto category;
-    private List<StepDto> stepItems = new ArrayList<>();
     private String title;
     private String subTitle;
     private String brief;
@@ -28,15 +26,13 @@ public class CheckListDto {
     private Integer stepCount;
     private Integer viewCount;
     private Integer scrapCount;
-    private Integer progress;
     private Integer ageGroup;
     private Boolean visibility;
-
     private String createdDate;
     private String modifiedDate;
 
-    static public CheckListDto createDto(CheckList checkList){
-        CheckListDto dto = new CheckListDto();
+    static public CheckListPostDto createDto(CheckList checkList){
+        CheckListPostDto dto = new CheckListPostDto();
         dto.checkListId = checkList.getId();
         dto.ownerName = checkList.getOwner().getName();
         dto.title = checkList.getTitle();
@@ -47,7 +43,6 @@ public class CheckListDto {
         dto.stepCount = checkList.getStepCount();
         dto.viewCount = checkList.getViewCount();
         dto.scrapCount = checkList.getScrapCount();
-        dto.progress = checkList.getProgress();
         dto.ageGroup = checkList.getAgeGroup();
 
         dto.createdDate = checkList.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));;
@@ -55,10 +50,6 @@ public class CheckListDto {
 
         if(checkList.getOrigin() != null) dto.originCheckListId = checkList.getOrigin().getId();
         if(checkList.getCategory() != null) dto.category = SubCategoryDto.createDto(checkList.getCategory());
-
-        for (StepItem stepItem : checkList.getStepItems()) {
-            dto.stepItems.add(StepDto.createDto(stepItem));
-        }
 
         return dto;
     }

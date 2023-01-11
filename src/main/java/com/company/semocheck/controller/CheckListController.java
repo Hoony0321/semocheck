@@ -7,7 +7,8 @@ import com.company.semocheck.common.response.DataResponseDto;
 import com.company.semocheck.common.response.ResponseDto;
 import com.company.semocheck.domain.CheckList;
 import com.company.semocheck.domain.Member;
-import com.company.semocheck.domain.dto.CheckListDto;
+import com.company.semocheck.domain.dto.checklist.CheckListDetailDto;
+import com.company.semocheck.domain.dto.checklist.CheckListPostDto;
 import com.company.semocheck.domain.dto.request.checkList.CreateCheckListRequestDto;
 import com.company.semocheck.domain.dto.request.checkList.CreateStepRequestDto;
 import com.company.semocheck.domain.dto.request.checkList.UpdateCheckListRequestDto;
@@ -36,16 +37,15 @@ public class CheckListController {
     @ApiDocumentResponse
     @Operation(summary = "Get all visibile checkList API", description = "공개 가능한 모든 체크리스트를 제공합니다.\n\n")
     @GetMapping("/api/checkList")
-    private DataResponseDto<List<CheckListDto>> createNewCheckList(HttpServletRequest request){
+    private DataResponseDto<List<CheckListPostDto>> findAllVisibleCheckList(HttpServletRequest request){
         List<CheckList> checkLists = checkListService.findAllVisible();
-        List<CheckListDto> checkListDtos = new ArrayList<>();
+        List<CheckListPostDto> checkListPostDtos = new ArrayList<>();
         for (CheckList checkList : checkLists) {
-            checkListDtos.add(CheckListDto.createDto(checkList));
+            checkListPostDtos.add(CheckListPostDto.createDto(checkList));
         }
 
-        return DataResponseDto.of(checkListDtos, "조회 성공");
+        return DataResponseDto.of(checkListPostDtos, "조회 성공");
     }
-
 
     @ApiDocumentResponse
     @Operation(summary = "Create new checklist API", description = "새로운 체크리스트를 생성합니다.\n\n" +
@@ -68,7 +68,7 @@ public class CheckListController {
     @ApiDocumentResponse
     @Operation(summary = "get all member's checklist API", description = "해당 멤버의 체크리스트 모두 조회합니다.")
     @GetMapping("/api/members/{member_id}/checkList")
-    private DataResponseDto<List<CheckListDto>> findAllMemberCheckList(HttpServletRequest request, @PathVariable("member_id") Long memberId){
+    private DataResponseDto<List<CheckListPostDto>> findAllMemberCheckList(HttpServletRequest request, @PathVariable("member_id") Long memberId){
         //JWT Member 검증
         String accessToken = jwtUtils.getAccessToken(request);
         Claims claims = jwtUtils.parseClaims(accessToken);
@@ -76,12 +76,14 @@ public class CheckListController {
         if(!member.getId().equals(memberId)) throw new GeneralException(Code.FORBIDDEN);
 
         //Get all member's checkList entity
-        List<CheckListDto> checkListDtos = new ArrayList<>();
+        List<CheckList> memberCheckLists = member.getCheckLists();
+
+        List<CheckListPostDto> checkListPostDtos = new ArrayList<>();
         for (CheckList checkList : member.getCheckLists()) {
-            checkListDtos.add(CheckListDto.createDto(checkList));
+            checkListPostDtos.add(CheckListPostDto.createDto(checkList));
         }
 
-        return DataResponseDto.of(checkListDtos, "조회 성공");
+        return DataResponseDto.of(checkListPostDtos, "조회 성공");
     }
 
 
@@ -90,8 +92,8 @@ public class CheckListController {
     @Operation(summary = "get checklist by id API", description = "체크리스트 id를 통해 조회합니다.\n\n" +
             "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
     @GetMapping("/api/members/{member_id}/checkList/{checkList_id}")
-    private DataResponseDto<CheckListDto> findCheckListById(HttpServletRequest request, @PathVariable("member_id") Long memberId,
-                                                            @PathVariable("checkList_id") Long checkListId){
+    private DataResponseDto<CheckListDetailDto> findCheckListById(HttpServletRequest request, @PathVariable("member_id") Long memberId,
+                                                                  @PathVariable("checkList_id") Long checkListId){
         //JWT Member 검증
         String accessToken = jwtUtils.getAccessToken(request);
         Claims claims = jwtUtils.parseClaims(accessToken);
@@ -102,7 +104,7 @@ public class CheckListController {
         CheckList checkList = checkListService.findById(checkListId);
         if(!checkList.getOwner().equals(member)) throw new GeneralException(Code.FORBIDDEN);
 
-        return DataResponseDto.of(CheckListDto.createDto(checkList), "조회 성공");
+        return DataResponseDto.of(CheckListDetailDto.createDto(checkList), "조회 성공");
     }
 
     @ApiDocumentResponse
@@ -111,8 +113,8 @@ public class CheckListController {
             "step 추가 api가 아닙니다. step 추가 api는 따로 있습니다.\n" +
             "수정하고 싶은 칼럼만 넘겨주시면 됩니다. 수정이 필요하지 않은 정보는 입력하지 않아도 됩니다.")
     @PutMapping("/api/members/{member_id}/checkList/{checkList_id}")
-    private DataResponseDto<CheckListDto> updateCheckListInfo(HttpServletRequest request, @PathVariable("member_id") Long memberId,
-                                                              @PathVariable("checkList_id") Long checkListId, @RequestBody UpdateCheckListRequestDto requestDto){
+    private DataResponseDto<CheckListPostDto> updateCheckListInfo(HttpServletRequest request, @PathVariable("member_id") Long memberId,
+                                                                  @PathVariable("checkList_id") Long checkListId, @RequestBody UpdateCheckListRequestDto requestDto){
         //JWT Member 검증
         String accessToken = jwtUtils.getAccessToken(request);
         Claims claims = jwtUtils.parseClaims(accessToken);
@@ -126,15 +128,15 @@ public class CheckListController {
         //Update checkList's info Entity
         checkListService.updateCheckList(requestDto, checkList);
 
-        return DataResponseDto.of(CheckListDto.createDto(checkList), "체크리스트 수정 성공");
+        return DataResponseDto.of(CheckListPostDto.createDto(checkList), "체크리스트 수정 성공");
     }
 
     @ApiDocumentResponse
     @Operation(summary = "Insert step item into checkList API", description = "해당 체크리스트에 stepItem을 추가합니다.\n\n" +
             "\"회원의 체크리스트가 아닌 경우 추가할 수 없습니다. - 403 Forbidden error\"")
-    @PostMapping("/api/members/{member_id}/checkList/{checkList_id}/stepItem")
-    private DataResponseDto<CheckListDto> AddStepItem(HttpServletRequest request, @PathVariable("member_id") Long memberId,
-                                                      @PathVariable("checkList_id") Long checkListId, @RequestBody CreateStepRequestDto requestDto){
+    @PostMapping("/api/members/{member_id}/checkList/{checkList_id}/steps")
+    private ResponseDto AddStepItem(HttpServletRequest request, @PathVariable("member_id") Long memberId,
+                                    @PathVariable("checkList_id") Long checkListId, @RequestBody CreateStepRequestDto requestDto){
         //JWT Member 검증
         String accessToken = jwtUtils.getAccessToken(request);
         Claims claims = jwtUtils.parseClaims(accessToken);
@@ -146,9 +148,10 @@ public class CheckListController {
         if(!checkList.getOwner().equals(member)) throw new GeneralException(Code.FORBIDDEN);
 
         //Insert stepItem into checkList entity
+        //TODO : order 중복에 따른 에러 처리 + 순차적으로 증가하게 설정
         checkListService.addStepItem(requestDto, checkList);
 
-        return DataResponseDto.of(CheckListDto.createDto(checkList), "체크리스트 수정 성공");
+        return ResponseDto.of(true, "step 추가 성공");
     }
 
     @ApiDocumentResponse
