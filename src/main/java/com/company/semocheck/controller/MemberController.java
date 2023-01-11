@@ -51,9 +51,11 @@ public class MemberController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Get member API", description = "member id를 통해 단일 회원 정보를 조회합니다.")
+    @Operation(summary = "Get member API", description = "member id를 통해 단일 회원 정보를 조회합니다.\n\n" +
+            "해당 회원의 JWT 토큰으로만 접근 가능한 URL입니다.")
     @GetMapping("/{id}")
     public DataResponseDto<MemberDto> getMember(@PathVariable("id") Long id, HttpServletRequest request){
+
         String accessToken = jwtUtils.getAccessToken(request);
         Claims claims = jwtUtils.parseClaims(accessToken);
         Member findOne = memberService.findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
@@ -64,15 +66,17 @@ public class MemberController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Delte member API", description = "member id를 통해 해당 회원을 DB에서 삭제합니다.")
+    @Operation(summary = "Delte member API", description = "member id를 통해 해당 회원을 DB에서 삭제합니다.\n\n" +
+            "해당 회원의 JWT 토큰으로만 접근 가능한 URL입니다.")
     @DeleteMapping("/{id}")
     public ResponseDto deleteMember(@PathVariable("id") Long id, HttpServletRequest request){
+        //JWT Member 검증
         String accessToken = jwtUtils.getAccessToken(request);
         Claims claims = jwtUtils.parseClaims(accessToken);
-        Member findOne = memberService.findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
+        Member member = memberService.findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
+        if(!member.getId().equals(id)) throw new GeneralException(Code.FORBIDDEN);
 
-        if(!findOne.getId().equals(id)) throw new GeneralException(Code.FORBIDDEN);
-        memberService.delete(findOne);
+        memberService.delete(member);
 
         return ResponseDto.of(true, "회원 삭제 성공");
     }
@@ -80,16 +84,18 @@ public class MemberController {
     @ApiDocumentResponse
     @Operation(summary = "Update member API", description = "member id를 통해 해당 회원 정보를 수정합니다.\n\n" +
             "모든 정보 수정이 가능한 API입니다.\n" +
-            "만약 수정을 원치 않는 정보는 null로 넣어주시면 됩니다.")
+            "만약 수정을 원치 않는 정보는 null로 넣어주시면 됩니다.\n" +
+            "해당 회원의 JWT 토큰으로만 접근 가능한 URL입니다.")
     @PutMapping("/{id}")
     public DataResponseDto<MemberDto> updateMember(@PathVariable("id") Long id, HttpServletRequest request, @RequestBody UpdateRequestDto requestDto) {
+
+        //JWT Member 검증
         String accessToken = jwtUtils.getAccessToken(request);
         Claims claims = jwtUtils.parseClaims(accessToken);
-        Member findOne = memberService.findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
+        Member member = memberService.findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
+        if(!member.getId().equals(id)) throw new GeneralException(Code.FORBIDDEN);
 
-        if (!findOne.getId().equals(id)) throw new GeneralException(Code.FORBIDDEN);
-        Member updatedMember = memberService.updateInfo(findOne, requestDto);
-
+        Member updatedMember = memberService.updateInfo(member, requestDto);
         return DataResponseDto.of(MemberDto.createDto(updatedMember), "회원 정보 수정 성공");
     }
 
