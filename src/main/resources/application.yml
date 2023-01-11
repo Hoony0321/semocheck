@@ -38,3 +38,16 @@ springdoc:
 
 server:
   forward-headers-strategy: framework
+
+cloud:
+  aws:
+    s3:
+      bucket: semocheck-s3
+    credentials:
+      access-key: ${aws.iam.user.access-key}
+      secret-key: ${aws.iam.user.secret-key}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
