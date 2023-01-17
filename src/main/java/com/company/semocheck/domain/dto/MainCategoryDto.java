@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class MainCategoryDto {
 
     private String name;
-    private FileDetail fileDetail;
+    private FileDto fileDto;
 
     @Builder
     public MainCategoryDto(String name) {
@@ -22,7 +22,7 @@ public class MainCategoryDto {
     public static MainCategoryDto createDto(MainCategory mainCategory){
         MainCategoryDto dto = new MainCategoryDto();
         dto.name = mainCategory.getName();
-        dto.fileDetail = mainCategory.getFileDetail();
+        dto.fileDto = FileDto.createDto(mainCategory.getFileDetail());
         return dto;
     }
 }

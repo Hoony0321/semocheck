@@ -12,7 +12,7 @@ public class SubCategoryDto {
     private String name;
     private String main;
 
-    private FileDetail fileDetail;
+    private FileDto fileDto;
 
     @Builder
     public SubCategoryDto(String name, String main) {
@@ -24,7 +24,7 @@ public class SubCategoryDto {
         SubCategoryDto dto = new SubCategoryDto();
         dto.name = subCategory.getName();
         dto.main = subCategory.getMainCategory().getName();
-        dto.fileDetail = subCategory.getFileDetail();
+        dto.fileDto = FileDto.createDto(subCategory.getFileDetail());
         return dto;
     }
 }
