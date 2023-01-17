@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @ConditionalOnProperty(prefix = "cloud.aws.s3", name = "bucket")
@@ -52,4 +53,10 @@ public class FileService {
         return fileDetail;
     }
 
+    public FileDetail findById(String id) {
+        Optional<FileDetail> findOne = fileDetailRepository.findById(id);
+        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 번호의 파일은 존재하지 않습니다.");
+
+        return findOne.get();
+    }
 }
