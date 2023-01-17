@@ -111,13 +111,6 @@ public class CategoryController {
         return ResponseDto.of(true, "2차 카테고리 삭제 성공");
     }
 
-
-
-
-
-
-
-
     @ApiDocumentResponse
     @Operation(summary = "Get all sub categories API", description = "2차 카테고리(소카테고리)를 전부 조회합니다. -> 필요할까요...?")
     @GetMapping("/sub")

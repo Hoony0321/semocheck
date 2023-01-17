@@ -1,6 +1,7 @@
 package com.company.semocheck.service;
 
 import com.company.semocheck.common.response.Code;
+import com.company.semocheck.domain.FileDetail;
 import com.company.semocheck.domain.SubCategory;
 import com.company.semocheck.domain.MainCategory;
 import com.company.semocheck.domain.dto.request.category.CreateMainCategoryRequestDto;
@@ -143,5 +144,30 @@ public class CategoryService {
 
         if(mainCategory.getSubCategoryList().size() > 0){ throw new GeneralException(Code.BAD_REQUEST, "연결된 하위 카테고리가 존재합니다."); }
         mainCategoryRepository.delete(mainCategory);
+    }
+
+    @Transactional
+    public void setMainCategoryFile(String name, FileDetail fileDetail){
+        Optional<MainCategory> findOne = mainCategoryRepository.findByName(name);
+        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 이름의 카테고리는 존재하지 않습니다.");
+        MainCategory mainCategory = findOne.get();
+
+        mainCategory.setFile(fileDetail);
+    }
+
+    @Transactional
+    public void setSubCategoryFile(String mainName, String subName, FileDetail fileDetail){
+        Optional<MainCategory> findMainOne;
+        Optional<SubCategory> findSubOne;
+
+        findMainOne = mainCategoryRepository.findByName(mainName);
+        if(findMainOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 이름의 1차 카테고리는 존재하지 않습니다.");
+
+        MainCategory mainCategory = findMainOne.get();
+        findSubOne = mainCategory.getSubCategoryList().stream().filter(sc -> sc.getName().equals(subName)).findFirst();
+        if(findSubOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 이름의 2차 카테고리는 존재하지 않습니다.");
+        SubCategory subCategory = findSubOne.get();
+
+        subCategory.setFile(fileDetail);
     }
 }

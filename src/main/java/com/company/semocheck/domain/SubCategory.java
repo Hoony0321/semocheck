@@ -27,6 +27,10 @@ public class SubCategory {
     @JsonIgnore
     private MainCategory mainCategory;
 
+    @OneToOne
+    @JoinColumn(name = "file_id")
+    private FileDetail fileDetail;
+
     static public SubCategory createEntity(CreateSubCategoryRequestDto requestDto, MainCategory mainCategory){
         SubCategory entity = new SubCategory();
         entity.name = requestDto.getName();
@@ -39,4 +43,5 @@ public class SubCategory {
         this.mainCategory = mainCategory;
         mainCategory.addSubCategory(this);
     }
+    public void setFile(FileDetail fileDetail) {this.fileDetail = fileDetail;}
 }
