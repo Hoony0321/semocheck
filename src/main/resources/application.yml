@@ -51,7 +51,7 @@ cloud:
     s3:
       bucket: semocheck-s3
     credentials:
-정      access-key: ${aws.s3.iam.user.access-key}
+      access-key: ${aws.s3.iam.user.access-key}
       secret-key: ${aws.s3.iam.user.secret-key}
     region:
       static: ap-northeast-2
