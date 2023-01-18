@@ -48,9 +48,6 @@ public class CheckList extends BaseTimeEntity{
     @Size(max = 30)
     private String title;
 
-    @Size(max = 128)
-    private String subTitle;
-
     @Size(max = 256)
     private String brief;
 
@@ -68,37 +65,42 @@ public class CheckList extends BaseTimeEntity{
     @ColumnDefault("0")
     private Boolean visibility;
 
-    @OneToOne(mappedBy = "checkList", cascade = CascadeType.ALL)
-    private CheckListProgress progressInfo;
+    @OneToOne
+    @JoinColumn(name = "file_id")
+    private FileDetail fileDetail;
 
-    static public CheckList createEntity(CreateCheckListRequestDto requestDto, Member member, SubCategory category ){
+    //====== 진행 정보 =====//
+    @ColumnDefault("0")
+    private Boolean complete;
+
+    @ColumnDefault("0")
+    private Float progress;
+
+
+
+    static public CheckList createEntity(CreateCheckListRequestDto requestDto, Member member, SubCategory category){
         CheckList entity = new CheckList();
 
         entity.title = requestDto.getTitle();
-
-        entity.subTitle = requestDto.getSubTitle();
         entity.brief = requestDto.getBrief();
-        entity.ageGroup = requestDto.getAgeGroup();
         entity.visibility = requestDto.getVisibility();
 
-        entity.setOwner(member);
-        if(category != null) entity.setCategory(category);
-        if(requestDto.getSteps() != null){
+        //연관관계 설정
+        entity.setOwner(member); //owner
+        if(category != null) entity.setCategory(category); //category
+        if(requestDto.getSteps() != null){ //step
             for (StepRequestDto stepRequestDto : requestDto.getSteps()) {
                 StepItem stepItem = StepItem.createEntity(stepRequestDto, entity);
                 entity.addStep(stepItem);
             }
         }
 
-        CheckListProgress checkListProgress = CheckListProgress.createEntity(entity);
-        entity.progressInfo = checkListProgress;
         return entity;
     }
 
     //====== 수정 메서드 ======//
     public void updateInfo(UpdateCheckListRequestDto requestDto, SubCategory subCategory) {
         if(requestDto.getTitle() != null) this.title = requestDto.getTitle();
-        if(requestDto.getSubTitle() != null) this.subTitle = requestDto.getSubTitle();
         if(requestDto.getBrief() != null) this.brief = requestDto.getBrief();
         if(requestDto.getAgeGroup() != null) this.ageGroup = requestDto.getAgeGroup();
         if(requestDto.getVisibility() != null) this.visibility = requestDto.getVisibility();
@@ -111,11 +113,9 @@ public class CheckList extends BaseTimeEntity{
         member.addCheckList(this);
     }
 
-    public void setCategory(SubCategory category) {
-        this.category = category;}
-
+    public void setCategory(SubCategory category) {this.category = category;}
     public void addStep(StepItem stepItem){
         this.stepItems.add(stepItem);
     }
-
+    public void setFile(FileDetail fileDetail){this.fileDetail = fileDetail;}
 }

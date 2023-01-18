@@ -10,7 +10,6 @@ import java.util.List;
 public class UpdateCheckListRequestDto {
 
     private String title;
-    private String subTitle;
     private String brief;
     private String mainCategoryName;
     private String subCategoryName;

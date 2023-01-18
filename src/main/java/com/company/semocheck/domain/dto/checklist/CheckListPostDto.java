@@ -2,6 +2,7 @@ package com.company.semocheck.domain.dto.checklist;
 
 import com.company.semocheck.domain.CheckList;
 import com.company.semocheck.domain.StepItem;
+import com.company.semocheck.domain.dto.FileDto;
 import com.company.semocheck.domain.dto.StepDto;
 import com.company.semocheck.domain.dto.SubCategoryDto;
 import lombok.Data;
@@ -20,7 +21,6 @@ public class CheckListPostDto {
     private Long originCheckListId;
     private SubCategoryDto category;
     private String title;
-    private String subTitle;
     private String brief;
 
     private Integer stepCount;
@@ -31,6 +31,8 @@ public class CheckListPostDto {
     private String createdDate;
     private String modifiedDate;
 
+    private FileDto fileDto;
+
     static public CheckListPostDto createDto(CheckList checkList){
         CheckListPostDto dto = new CheckListPostDto();
         dto.checkListId = checkList.getId();
@@ -39,7 +41,6 @@ public class CheckListPostDto {
         dto.brief = checkList.getBrief();
         dto.visibility = checkList.getVisibility();
 
-        dto.subTitle = checkList.getSubTitle();
         dto.stepCount = checkList.getStepCount();
         dto.viewCount = checkList.getViewCount();
         dto.scrapCount = checkList.getScrapCount();
@@ -50,6 +51,7 @@ public class CheckListPostDto {
 
         if(checkList.getOrigin() != null) dto.originCheckListId = checkList.getOrigin().getId();
         if(checkList.getCategory() != null) dto.category = SubCategoryDto.createDto(checkList.getCategory());
+        if(checkList.getFileDetail() != null) dto.fileDto = FileDto.createDto(checkList.getFileDetail());
 
         return dto;
     }

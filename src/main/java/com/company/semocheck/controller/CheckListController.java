@@ -6,6 +6,7 @@ import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.DataResponseDto;
 import com.company.semocheck.common.response.ResponseDto;
 import com.company.semocheck.domain.CheckList;
+import com.company.semocheck.domain.FileDetail;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.dto.checklist.CheckListDetailDto;
 import com.company.semocheck.domain.dto.checklist.CheckListPostDto;
@@ -20,7 +21,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,9 +53,9 @@ public class CheckListController {
     @ApiDocumentResponse
     @Operation(summary = "Create new checklist API", description = "새로운 체크리스트를 생성합니다.\n\n" +
             "필수 목록 : [title]")
-    @PostMapping("/api/members/{member_id}/checkList")
+    @PostMapping(value = "/api/members/{member_id}/checkList", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     private DataResponseDto<Long> createNewCheckList(HttpServletRequest request, @PathVariable("member_id") Long memberId,
-                                                     @RequestBody CreateCheckListRequestDto requestDto){
+                                                     @RequestPart("request") CreateCheckListRequestDto requestDto, @RequestPart("image") MultipartFile imgFile){
         //JWT Member 검증
         String accessToken = jwtUtils.getAccessToken(request);
         Claims claims = jwtUtils.parseClaims(accessToken);
@@ -60,7 +63,7 @@ public class CheckListController {
         if(!member.getId().equals(memberId)) throw new GeneralException(Code.FORBIDDEN);
 
         //Create New CheckList Entity
-        Long checkListId = checkListService.createCheckList(requestDto, member);
+        Long checkListId = checkListService.createCheckList(requestDto, member, imgFile);
 
         return DataResponseDto.of(checkListId, "체크리스트 생성 성공");
     }
@@ -132,7 +135,7 @@ public class CheckListController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Insert step item into checkList API", description = "해당 체크리스트에 stepItem을 추가합니다.\n\n" +
+    @Operation(summary = "Insert step item into checkList API", description = "해당 체크리스트에 step을 추가합니다.\n\n" +
             "\"회원의 체크리스트가 아닌 경우 추가할 수 없습니다. - 403 Forbidden error\"")
     @PostMapping("/api/members/{member_id}/checkList/{checkList_id}/steps")
     private ResponseDto AddStepItem(HttpServletRequest request, @PathVariable("member_id") Long memberId,
