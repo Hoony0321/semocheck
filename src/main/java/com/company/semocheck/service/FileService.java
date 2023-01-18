@@ -32,7 +32,6 @@ public class FileService {
 
 
     //TODO : 현재는 AWS 저장되고 Entity 저장되는 구조임 -> 엔티티 생성 과정에서 오류가 생기면 S3에 잉여 파일이 올라가게 됨. -> 수정 필요
-    @Transactional
     public FileDetail upload(String folder, MultipartFile multipartFile) {
         FileDetail fileDetail = FileDetail.createEntity(folder, multipartFile);
         String fullPath = fileDetail.getPath();
@@ -44,12 +43,19 @@ public class FileService {
         try(InputStream inputStream = multipartFile.getInputStream()){
             amazonS3Client.putObject(new PutObjectRequest(bucket, fullPath, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
-            fileDetailRepository.save(fileDetail);
         }catch (IOException e){
             throw new GeneralException(Code.BAD_REQUEST, e.getMessage());
         }
 
         return fileDetail;
+    }
+
+    @Transactional
+    public String save(FileDetail fileDetail){
+        Optional<FileDetail> findOne = fileDetailRepository.findById(fileDetail.getId());
+        if(findOne.isPresent()) throw new GeneralException(Code.NOT_FOUND, "이미 저장된 파일입니다.");
+        fileDetailRepository.save(fileDetail);
+        return fileDetail.getId();
     }
 
     public FileDetail findById(String id) {

@@ -1,6 +1,6 @@
 package com.company.semocheck.domain.dto;
 
-import com.company.semocheck.domain.StepItem;
+import com.company.semocheck.domain.Step;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,12 +13,12 @@ public class StepDto {
     private Integer order;
     private String description;
 
-    static public StepDto createDto(StepItem stepItem){
+    static public StepDto createDto(Step step){
         StepDto dto = new StepDto();
-        dto.id = stepItem.getId();
-        dto.name = stepItem.getName();
-        dto.order = stepItem.getStepOrder();
-        dto.description = stepItem.getDescription();
+        dto.id = step.getId();
+        dto.name = step.getName();
+        dto.order = step.getStepOrder();
+        dto.description = step.getDescription();
         return dto;
     }
 }

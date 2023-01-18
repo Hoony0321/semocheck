@@ -28,7 +28,7 @@ public class MainCategory {
     @OneToMany(mappedBy = "mainCategory")
     private List<SubCategory> subCategoryList = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "file_id")
     private FileDetail fileDetail;
 

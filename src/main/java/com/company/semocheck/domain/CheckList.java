@@ -41,15 +41,22 @@ public class CheckList extends BaseTimeEntity{
     @JoinColumn(name = "category_id")
     private SubCategory category;
 
-    @OneToMany(mappedBy = "checkList", cascade = CascadeType.ALL)
-    private List<StepItem> stepItems = new ArrayList<>();
-
     @NotNull
     @Size(max = 30)
     private String title;
 
     @Size(max = 256)
     private String brief;
+
+    @ColumnDefault("0")
+    private Boolean visibility;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "file_id")
+    private FileDetail fileDetail;
+
+    @OneToMany(mappedBy = "checkList", cascade = CascadeType.ALL)
+    private List<Step> steps = new ArrayList<>();
 
     @ColumnDefault("0")
     private Integer stepCount;
@@ -61,13 +68,6 @@ public class CheckList extends BaseTimeEntity{
     private Integer scrapCount;
 
     private Integer ageGroup;
-
-    @ColumnDefault("0")
-    private Boolean visibility;
-
-    @OneToOne
-    @JoinColumn(name = "file_id")
-    private FileDetail fileDetail;
 
     //====== 진행 정보 =====//
     @ColumnDefault("0")
@@ -90,8 +90,8 @@ public class CheckList extends BaseTimeEntity{
         if(category != null) entity.setCategory(category); //category
         if(requestDto.getSteps() != null){ //step
             for (StepRequestDto stepRequestDto : requestDto.getSteps()) {
-                StepItem stepItem = StepItem.createEntity(stepRequestDto, entity);
-                entity.addStep(stepItem);
+                Step step = Step.createEntity(stepRequestDto, entity);
+                entity.addStep(step);
             }
         }
 
@@ -102,7 +102,6 @@ public class CheckList extends BaseTimeEntity{
     public void updateInfo(UpdateCheckListRequestDto requestDto, SubCategory subCategory) {
         if(requestDto.getTitle() != null) this.title = requestDto.getTitle();
         if(requestDto.getBrief() != null) this.brief = requestDto.getBrief();
-        if(requestDto.getAgeGroup() != null) this.ageGroup = requestDto.getAgeGroup();
         if(requestDto.getVisibility() != null) this.visibility = requestDto.getVisibility();
         if(subCategory != null) this.setCategory(subCategory);
     }
@@ -114,8 +113,9 @@ public class CheckList extends BaseTimeEntity{
     }
 
     public void setCategory(SubCategory category) {this.category = category;}
-    public void addStep(StepItem stepItem){
-        this.stepItems.add(stepItem);
+    public void addStep(Step step){
+        this.steps.add(step);
     }
     public void setFile(FileDetail fileDetail){this.fileDetail = fileDetail;}
+    public void removeStep(Step step) { this.steps.remove(step); }
 }

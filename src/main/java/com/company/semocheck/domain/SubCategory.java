@@ -27,7 +27,7 @@ public class SubCategory {
     @JsonIgnore
     private MainCategory mainCategory;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "file_id")
     private FileDetail fileDetail;
 

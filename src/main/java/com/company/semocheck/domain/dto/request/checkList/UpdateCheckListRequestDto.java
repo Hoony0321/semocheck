@@ -13,6 +13,6 @@ public class UpdateCheckListRequestDto {
     private String brief;
     private String mainCategoryName;
     private String subCategoryName;
-    private Integer ageGroup;
     private Boolean visibility;
+    private List<StepRequestDto> steps;
 }

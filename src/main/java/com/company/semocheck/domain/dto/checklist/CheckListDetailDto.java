@@ -1,7 +1,7 @@
 package com.company.semocheck.domain.dto.checklist;
 
 import com.company.semocheck.domain.CheckList;
-import com.company.semocheck.domain.StepItem;
+import com.company.semocheck.domain.Step;
 import com.company.semocheck.domain.dto.FileDto;
 import com.company.semocheck.domain.dto.StepDto;
 import com.company.semocheck.domain.dto.SubCategoryDto;
@@ -33,6 +33,7 @@ public class CheckListDetailDto {
     private String createdDate;
     private String modifiedDate;
 
+    private Float progress;
     private FileDto fileDto;
 
     public static CheckListDetailDto createDto(CheckList checkList) {
@@ -42,6 +43,7 @@ public class CheckListDetailDto {
         dto.title = checkList.getTitle();
         dto.brief = checkList.getBrief();
         dto.visibility = checkList.getVisibility();
+        dto.progress = checkList.getProgress();
 
         dto.stepCount = checkList.getStepCount();
         dto.viewCount = checkList.getViewCount();
@@ -55,8 +57,8 @@ public class CheckListDetailDto {
         if(checkList.getCategory() != null) dto.category = SubCategoryDto.createDto(checkList.getCategory());
         if(checkList.getFileDetail() != null) dto.fileDto = FileDto.createDto(checkList.getFileDetail());
 
-        for (StepItem stepItem : checkList.getStepItems()) {
-            dto.stepItems.add(StepDto.createDto(stepItem));
+        for (Step step : checkList.getSteps()) {
+            dto.stepItems.add(StepDto.createDto(step));
         }
         return dto;
     }

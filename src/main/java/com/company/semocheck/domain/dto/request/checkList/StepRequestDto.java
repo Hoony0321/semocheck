@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StepRequestDto {
 
+    private Long stepId;
     private String name;
     private Integer order;
     private String description;

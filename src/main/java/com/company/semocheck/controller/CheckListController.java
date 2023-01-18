@@ -90,7 +90,6 @@ public class CheckListController {
     }
 
 
-
     @ApiDocumentResponse
     @Operation(summary = "get checklist by id API", description = "체크리스트 id를 통해 조회합니다.\n\n" +
             "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
@@ -113,11 +112,16 @@ public class CheckListController {
     @ApiDocumentResponse
     @Operation(summary = "Update checklist's info API", description = "체크리스트 정보를 수정합니다.\n\n" +
             "\"회원의 체크리스트가 아닌 경우 수정이 불가능합니다. - 403 Forbidden error\"" +
-            "step 추가 api가 아닙니다. step 추가 api는 따로 있습니다.\n" +
-            "수정하고 싶은 칼럼만 넘겨주시면 됩니다. 수정이 필요하지 않은 정보는 입력하지 않아도 됩니다.")
-    @PutMapping("/api/members/{member_id}/checkList/{checkList_id}")
+            "수정하고 싶은 체크리스트 정보만 넘겨주시면 됩니다. 수정이 필요하지 않은 정보는 입력하지 않아도 됩니다.\n" +
+            "\n\n\n ===step list 관련 내용=== \n" +
+            "step list 부분은 수정하든 안 하든 일단 포함해서 넘겨줘야 합니다.\n" +
+            "수정을 하지 않더라도 기존 step id에 기존 정보를 포함시켜서 넘겨줘야 합니다.\n" +
+            "step list 부분은 기존 정보를 넘기지 않을 시 삭제된 것으로 간주됩니다." +
+            "step id가 -1인 경우는 새로 추가된 step으로 간주됩니다.")
+    @PostMapping("/api/members/{member_id}/checkList/{checkList_id}")
     private DataResponseDto<CheckListPostDto> updateCheckListInfo(HttpServletRequest request, @PathVariable("member_id") Long memberId,
-                                                                  @PathVariable("checkList_id") Long checkListId, @RequestBody UpdateCheckListRequestDto requestDto){
+                                                                  @PathVariable("checkList_id") Long checkListId, @RequestPart("request") UpdateCheckListRequestDto requestDto,
+                                                                  @RequestPart("image") MultipartFile imgFile){
         //JWT Member 검증
         String accessToken = jwtUtils.getAccessToken(request);
         Claims claims = jwtUtils.parseClaims(accessToken);
@@ -129,7 +133,7 @@ public class CheckListController {
         if(!checkList.getOwner().equals(member)) throw new GeneralException(Code.FORBIDDEN);
 
         //Update checkList's info Entity
-        checkListService.updateCheckList(requestDto, checkList);
+        checkListService.updateCheckList(checkList, requestDto, imgFile);
 
         return DataResponseDto.of(CheckListPostDto.createDto(checkList), "체크리스트 수정 성공");
     }
