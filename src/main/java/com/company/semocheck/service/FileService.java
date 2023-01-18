@@ -15,8 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,8 +31,9 @@ public class FileService {
     private String bucket;
 
 
+    //TODO : 현재는 AWS 저장되고 Entity 저장되는 구조임 -> 엔티티 생성 과정에서 오류가 생기면 S3에 잉여 파일이 올라가게 됨. -> 수정 필요
     @Transactional
-    public FileDetail save(String folder, MultipartFile multipartFile) {
+    public FileDetail upload(String folder, MultipartFile multipartFile) {
         FileDetail fileDetail = FileDetail.createEntity(folder, multipartFile);
         String fullPath = fileDetail.getPath();
 
