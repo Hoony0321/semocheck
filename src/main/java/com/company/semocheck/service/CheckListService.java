@@ -76,39 +76,41 @@ public class CheckListService {
             subCategory = categoryService.findSubCategoryByName(requestDto.getMainCategoryName(), requestDto.getSubCategoryName());
         }
 
-        //step validation
-        List<Integer> orderList = new ArrayList<>();
-        requestDto.getSteps().stream().forEach(s -> orderList.add(s.getOrder()));
-        Collections.sort(orderList);
-        for(int i = 1; i <= orderList.size(); i++){
-            if(!orderList.get(i-1).equals(i)) throw new GeneralException(Code.BAD_REQUEST, "스텝의 순서 오류");
-        }
-
-        //step update & add & delete
-        for (Step step : checkList.getSteps()) {
-            Optional<StepRequestDto> findOne = requestDto.getSteps().stream().filter(s -> s.getStepId().equals(step.getId())).findFirst();
-            if(findOne.isEmpty()){ //정보가 없는 스텝 삭제
-                checkList.removeStep(step);
-                stepRepository.delete(step);
+        if(requestDto.getSteps() != null){
+            //step validation
+            List<Integer> orderList = new ArrayList<>();
+            requestDto.getSteps().stream().forEach(s -> orderList.add(s.getOrder()));
+            Collections.sort(orderList);
+            for(int i = 1; i <= orderList.size(); i++){
+                if(!orderList.get(i-1).equals(i)) throw new GeneralException(Code.BAD_REQUEST, "스텝의 순서 오류");
             }
-            else{ step.update(findOne.get()); } //기존 스텝 정보 수정
-        }
 
-        for (StepRequestDto step : requestDto.getSteps()) { //새로운 스텝 추가
-            if(step.getStepId().equals(-1L)){
-                Step stepEntity = Step.createEntity(step, checkList);
-                checkList.addStep(stepEntity);
+            //step update & add & delete
+            for (Step step : checkList.getSteps()) {
+                Optional<StepRequestDto> findOne = requestDto.getSteps().stream().filter(s -> s.getStepId().equals(step.getId())).findFirst();
+                if(findOne.isEmpty()){ //정보가 없는 스텝 삭제
+                    checkList.removeStep(step);
+                    stepRepository.delete(step);
+                }
+                else{ step.update(findOne.get()); } //기존 스텝 정보 수정
+            }
+
+            for (StepRequestDto step : requestDto.getSteps()) { //새로운 스텝 추가
+                if(step.getStepId().equals(-1L)){
+                    Step stepEntity = Step.createEntity(step, checkList);
+                    checkList.addStep(stepEntity);
+                }
             }
         }
 
         //image file update
-        if(imgFile != null){
+        if(imgFile != null && !imgFile.isEmpty()){
             FileDetail file = fileService.upload("checklist/image", imgFile);
             checkList.setFile(file);
         }
 
         //checkList 기본 정보 수정
-        checkList.updateInfo(requestDto,subCategory);
+        checkList.updateInfo(requestDto, subCategory);
     }
 
     @Transactional

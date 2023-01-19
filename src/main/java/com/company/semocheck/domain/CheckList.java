@@ -42,7 +42,7 @@ public class CheckList extends BaseTimeEntity{
     private SubCategory category;
 
     @NotNull
-    @Size(max = 30)
+    @Size(max = 30, message = "{title.size too long}")
     private String title;
 
     @Size(max = 256)
