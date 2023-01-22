@@ -24,6 +24,9 @@ public enum Code {
 
     NOT_FOUND(404, HttpStatus.NOT_FOUND, "존재하지 않는 리소스입니다."),
 
+    CONSTRAINT_NOT_VALID(410, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    TRANSACTION_NOT_COMMITED(411, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+
     INTERNAL_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다.");
 
     private final Integer code;

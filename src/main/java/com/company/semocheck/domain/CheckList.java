@@ -5,12 +5,14 @@ import com.company.semocheck.domain.dto.request.checkList.StepRequestDto;
 import com.company.semocheck.domain.dto.request.checkList.UpdateCheckListRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +44,10 @@ public class CheckList extends BaseTimeEntity{
     private SubCategory category;
 
     @NotNull
-    @Size(max = 30, message = "{title.size too long}")
+    @Size(max = 30)
     private String title;
 
-    @Size(max = 256)
+    @Size(max = 255)
     private String brief;
 
     @ColumnDefault("0")

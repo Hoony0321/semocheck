@@ -39,19 +39,19 @@ public class ErrorResponseDto{
 
     public static ResponseEntity<ErrorResponseDto> of(Code errorCode){
         return ResponseEntity
-                .status(errorCode.getHttpStatus())
+                .status(errorCode.getCode())
                 .body(new ErrorResponseDto(errorCode));
     }
 
     public static ResponseEntity<ErrorResponseDto> of(Code errorCode, Exception e){
         return ResponseEntity
-                .status(errorCode.getHttpStatus())
+                .status(errorCode.getCode())
                 .body(new ErrorResponseDto(errorCode, e.getMessage()));
     }
 
     public static ResponseEntity<ErrorResponseDto> of(Code errorCode, String message,  Exception e){
         return ResponseEntity
-                .status(errorCode.getHttpStatus())
+                .status(errorCode.getCode())
                 .body(new ErrorResponseDto(errorCode, message));
     }
 
