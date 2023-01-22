@@ -40,17 +40,20 @@ public class ExceptionController {
         return ErrorResponseDto.of(Code.UNAUTHORIZED, exception);
     }
 
+    //TODO : Exceptinon Error Message 처리
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity handleConstraintViolationException(Exception exception){
         log.error(exception.getMessage() + " - " + exception.getCause());
         return  ErrorResponseDto.of(Code.CONSTRAINT_NOT_VALID, exception);
     }
 
+    //TODO : Exceptinon Error Message 처리
     @ExceptionHandler(TransactionSystemException.class)
     public ResponseEntity handleTransactionSystemException(Exception exception){
         log.error(exception.getMessage() + " - " + exception.getCause());
         if(exception.getCause() != null && exception.getCause().getCause() != null && exception.getCause().getCause().getClass() == ConstraintViolationException.class){
             ConstraintViolationException constraintViolationException = (ConstraintViolationException) exception.getCause().getCause();
+            //TODO Constraint HashMap에서 하나씩 꺼내서 처리하기.
             return ErrorResponseDto.of(Code.CONSTRAINT_NOT_VALID, constraintViolationException);
         }
 

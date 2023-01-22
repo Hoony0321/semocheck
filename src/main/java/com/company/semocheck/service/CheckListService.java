@@ -76,6 +76,7 @@ public class CheckListService {
             subCategory = categoryService.findSubCategoryByName(requestDto.getMainCategoryName(), requestDto.getSubCategoryName());
         }
 
+        //TODO : requestDto에 만약 없는 stepId가 있을 경우 error throw
         if(requestDto.getSteps() != null){
             //step validation
             List<Integer> orderList = new ArrayList<>();
@@ -86,27 +87,40 @@ public class CheckListService {
             }
 
             //step update & add & delete
-            for (Step step : checkList.getSteps()) {
-                Optional<StepRequestDto> findOne = requestDto.getSteps().stream().filter(s -> s.getStepId().equals(step.getId())).findFirst();
-                if(findOne.isEmpty()){ //정보가 없는 스텝 삭제
-                    checkList.removeStep(step);
-                    stepRepository.delete(step);
-                }
-                else{ step.update(findOne.get()); } //기존 스텝 정보 수정
-            }
+            List<Boolean> modifedList = new ArrayList<Boolean>();
+            checkList.getSteps().stream().forEach(_s -> modifedList.add(false));
 
-            for (StepRequestDto step : requestDto.getSteps()) { //새로운 스텝 추가
-                if(step.getStepId().equals(-1L)){
+            for (StepRequestDto step : requestDto.getSteps()) {
+                if(step.getStepId() == -1){ //add new stepp
                     Step stepEntity = Step.createEntity(step, checkList);
                     checkList.addStep(stepEntity);
+                }
+                else{
+                    Optional<Step> findOne = checkList.getSteps().stream().filter(_step -> step.getStepId().equals(_step.getId())).findFirst();
+                    if(findOne.isPresent()){
+                        findOne.get().update(step);
+                        int updateIdx = checkList.getSteps().indexOf(findOne.get());
+                        modifedList.set(updateIdx, true);
+                    } // existed step info update
+                    else throw new GeneralException(Code.NOT_FOUND, "not found step id - " + step.getStepId()); // not found step id
+                }
+            }
+
+            for(int i = 0; i < modifedList.size(); i++){ //정보가 없는 스텝 삭제
+                if(modifedList.get(i) == null || !modifedList.get(i)){ //null이거나 false인 경우
+                    Step step = checkList.getSteps().get(i);
+                    checkList.removeStep(step);
+                    stepRepository.delete(step);
                 }
             }
         }
 
         //image file update
-        if(imgFile != null && !imgFile.isEmpty()){
+        if(!imgFile.isEmpty()){
             FileDetail file = fileService.upload("checklist/image", imgFile);
             checkList.setFile(file);
+        }else{
+            checkList.setFile(null);
         }
 
         //checkList 기본 정보 수정

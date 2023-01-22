@@ -44,7 +44,7 @@ public class CheckList extends BaseTimeEntity{
     private SubCategory category;
 
     @NotNull
-    @Size(max = 30)
+    @Size(max = 60)
     private String title;
 
     @Size(max = 255)
