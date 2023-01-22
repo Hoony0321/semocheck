@@ -28,10 +28,6 @@ public class MainCategory {
     @OneToMany(mappedBy = "mainCategory")
     private List<SubCategory> subCategoryList = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "file_id")
-    private FileDetail fileDetail;
-
     static public MainCategory createEntity(CreateMainCategoryRequestDto requestDto){
         MainCategory entity = new MainCategory();
         entity.name = requestDto.getName();
@@ -47,7 +43,6 @@ public class MainCategory {
         this.subCategoryList.add(subCategory);
     }
     public void removeSubCategory(SubCategory subCategory){ this.subCategoryList.remove(subCategory); }
-    public void setFile(FileDetail file){ this.fileDetail = file; }
 
 
 }

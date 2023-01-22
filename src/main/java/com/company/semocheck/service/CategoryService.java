@@ -151,8 +151,6 @@ public class CategoryService {
         Optional<MainCategory> findOne = mainCategoryRepository.findByName(name);
         if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 이름의 카테고리는 존재하지 않습니다.");
         MainCategory mainCategory = findOne.get();
-
-        mainCategory.setFile(fileDetail);
     }
 
     @Transactional
@@ -167,7 +165,5 @@ public class CategoryService {
         findSubOne = mainCategory.getSubCategoryList().stream().filter(sc -> sc.getName().equals(subName)).findFirst();
         if(findSubOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 이름의 2차 카테고리는 존재하지 않습니다.");
         SubCategory subCategory = findSubOne.get();
-
-        subCategory.setFile(fileDetail);
     }
 }
