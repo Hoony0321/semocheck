@@ -1,6 +1,7 @@
 package com.company.semocheck.domain;
 
 import com.company.semocheck.domain.dto.request.checkList.StepRequestDto;
+import com.company.semocheck.domain.dto.request.checkList.StepUpdateDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -39,6 +40,17 @@ public class Step {
         entity.name = requestDto.getName();
         entity.stepOrder = requestDto.getOrder();
         entity.description = requestDto.getDescription();
+        entity.isCheck = false;
+        entity.setCheckList(checkList);
+        return entity;
+    }
+
+    static public Step createEntity(Step step, CheckList checkList){
+        Step entity = new Step();
+        entity.name = step.getName();
+        entity.stepOrder = step.getStepOrder();
+        entity.description = step.getDescription();
+        entity.isCheck = false;
         entity.setCheckList(checkList);
         return entity;
     }
@@ -48,6 +60,10 @@ public class Step {
         this.name = dto.getName();
         this.stepOrder = dto.getOrder();
         this.description = dto.getDescription();
+    }
+
+    public void update(StepUpdateDto dto){
+        this.isCheck = dto.getIsCheck();
     }
 
     //====== 연관관계 메서드 ======//

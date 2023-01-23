@@ -33,7 +33,7 @@ public class CheckListDetailDto {
     private String createdDate;
     private String modifiedDate;
 
-    private Float progress;
+    private String progress;
     private FileDto fileDto;
 
     public static CheckListDetailDto createDto(CheckList checkList) {

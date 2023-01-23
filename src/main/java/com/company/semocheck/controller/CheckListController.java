@@ -139,11 +139,13 @@ public class CheckListController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Insert step item into checkList API", description = "해당 체크리스트에 step을 추가합니다.\n\n" +
-            "\"회원의 체크리스트가 아닌 경우 추가할 수 없습니다. - 403 Forbidden error\"")
-    @PostMapping("/api/members/{member_id}/checkList/{checkList_id}/steps")
-    private ResponseDto AddStepItem(HttpServletRequest request, @PathVariable("member_id") Long memberId,
-                                    @PathVariable("checkList_id") Long checkListId, @RequestBody CreateStepRequestDto requestDto){
+    @Operation(summary = "Update checkList progress API", description = "해당 체크리스트의 진행 정보를 수정합니다.\n\n" +
+            "회원의 체크리스트가 아닌 경우 수정할 수 없습니다. - 403 Forbidden error\n\n" +
+            "만약 해당 체크리스트의 없는 step id인 경우 에러를 발생합니다. - 404 Not found error\n\n" +
+            "update할 step만 넣어주면 됩니다.")
+    @PutMapping("/api/members/{member_id}/checkList/{checkList_id}/steps")
+    private ResponseDto updateProgress(HttpServletRequest request, @PathVariable("member_id") Long memberId,
+                                    @PathVariable("checkList_id") Long checkListId, @RequestBody UpdateStepRequestDto requestDto){
         //JWT Member 검증
         String accessToken = jwtUtils.getAccessToken(request);
         Claims claims = jwtUtils.parseClaims(accessToken);
@@ -156,9 +158,9 @@ public class CheckListController {
 
         //Insert stepItem into checkList entity
         //TODO : order 중복에 따른 에러 처리 + 순차적으로 증가하게 설정
-        checkListService.addStepItem(requestDto, checkList);
+        checkListService.updateStepProgress(checkList, requestDto);
 
-        return ResponseDto.of(true, "step 추가 성공");
+        return ResponseDto.of(true, "수정 성공");
     }
 
     @ApiDocumentResponse

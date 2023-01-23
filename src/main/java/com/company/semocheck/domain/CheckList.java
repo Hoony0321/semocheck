@@ -75,9 +75,9 @@ public class CheckList extends BaseTimeEntity{
     @ColumnDefault("0")
     private Boolean complete;
 
+    @Size(max = 10)
     @ColumnDefault("0")
-    private Float progress;
-
+    private String progress;
 
 
     static public CheckList createEntity(CreateCheckListRequestDto requestDto, Member member, SubCategory category){

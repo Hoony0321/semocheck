@@ -127,12 +127,19 @@ public class CheckListService {
         checkList.updateInfo(requestDto, subCategory);
     }
 
+
+
     @Transactional
-    public void addStepItem(CreateStepRequestDto requestDto, CheckList checkList) {
-        for (StepRequestDto dto : requestDto.getSteps()) {
-            Step step = Step.createEntity(dto, checkList);
-            checkList.addStep(step);
+    public void updateStepProgress(CheckList checkList, UpdateStepRequestDto requestDto) {
+        //step progress update
+        for (StepUpdateDto step : requestDto.getSteps()) {
+            Optional<Step> findOne = checkList.getSteps().stream().filter(_step -> step.getStepId().equals(_step.getId())).findFirst();
+            if(findOne.isPresent()){ findOne.get().update(step); } // existed step info update
+            else throw new GeneralException(Code.NOT_FOUND, "not found step id - " + step.getStepId()); // not found step id
         }
+
+        //checkList progress 수정
+        checkList.updateProgress();
     }
 
     public List<CheckList> findAllVisible() {
