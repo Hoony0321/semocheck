@@ -63,6 +63,9 @@ public class Member extends BaseTimeEntity{
     @OneToMany(mappedBy = "owner")
     private List<CheckList> checkLists = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Scrap> scraps = new ArrayList<>();
+
     @Builder
     public Member(String oAuthId, String provider, String email, String name, String picture, Role role, Boolean agreeNotify, Boolean sex, Integer age) {
         this.oAuthId = oAuthId;
@@ -97,6 +100,7 @@ public class Member extends BaseTimeEntity{
     public void addCheckList(CheckList checkList){
         this.checkLists.add(checkList);
     }
+    public void addScrap(Scrap scrap) { this.scraps.add(scrap); }
 
     //====== 정보 수정 메서드 ======//
     public void setInfoNewMember(JoinRequestDto joinRequestDto){
