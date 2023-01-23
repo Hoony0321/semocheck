@@ -79,7 +79,7 @@ public class CheckList extends BaseTimeEntity{
     @ColumnDefault("0")
     private String progress;
 
-
+    //====== 생성 메서드 ======//
     static public CheckList createEntity(CreateCheckListRequestDto requestDto, Member member, SubCategory category){
         CheckList entity = new CheckList();
 
@@ -100,12 +100,43 @@ public class CheckList extends BaseTimeEntity{
         return entity;
     }
 
+    static public CheckList createEntity(CheckList checkList, Member member){
+        CheckList entity = new CheckList();
+
+        entity.title = checkList.getTitle();
+        entity.brief = checkList.getBrief();
+        entity.visibility = false;
+
+        //연관관계 설정
+        entity.setOrigin(checkList); //origin
+        entity.setOwner(member); //owner
+        if(checkList.getCategory() != null) entity.setCategory(checkList.getCategory()); //category
+        if(checkList.getSteps() != null){ //step
+            for (Step step : checkList.getSteps()) {
+                Step _step = Step.createEntity(step, entity);
+                entity.addStep(_step);
+            }
+        }
+
+        return entity;
+    }
+
     //====== 수정 메서드 ======//
     public void updateInfo(UpdateCheckListRequestDto requestDto, SubCategory subCategory) {
         if(requestDto.getTitle() != null) this.title = requestDto.getTitle();
         if(requestDto.getBrief() != null) this.brief = requestDto.getBrief();
         if(requestDto.getVisibility() != null) this.visibility = requestDto.getVisibility();
         if(subCategory != null) this.setCategory(subCategory);
+    }
+
+    public void updateProgress(){
+        int total = this.steps.size();
+        int checkNum = 0;
+        for (Step step : this.steps) {
+            if(step.getIsCheck()) checkNum += 1;
+        }
+        float result = checkNum / (float)total * 100.0f; //백분율 표시
+        this.progress = String.format("%.2f", result);
     }
 
     //====== 연관관계 메서드======//
@@ -120,4 +151,5 @@ public class CheckList extends BaseTimeEntity{
     }
     public void setFile(FileDetail fileDetail){this.fileDetail = fileDetail;}
     public void removeStep(Step step) { this.steps.remove(step); }
+    public void setOrigin(CheckList checkList) {this.origin = checkList;}
 }

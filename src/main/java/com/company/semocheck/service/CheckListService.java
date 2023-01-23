@@ -2,10 +2,7 @@ package com.company.semocheck.service;
 
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.domain.*;
-import com.company.semocheck.domain.dto.request.checkList.CreateCheckListRequestDto;
-import com.company.semocheck.domain.dto.request.checkList.CreateStepRequestDto;
-import com.company.semocheck.domain.dto.request.checkList.StepRequestDto;
-import com.company.semocheck.domain.dto.request.checkList.UpdateCheckListRequestDto;
+import com.company.semocheck.domain.dto.request.checkList.*;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.CheckListRepository;
 import com.company.semocheck.repository.StepRepository;
@@ -28,10 +25,18 @@ public class CheckListService {
     private final CategoryService categoryService;
     private final FileService fileService;
     private final StepRepository stepRepository;
+
+    public List<CheckList> findAllVisible() {
+        List<CheckList> checkLists = new ArrayList<>();
+        for (CheckList checkList : checkListRepository.findAll()) {
+            if(checkList.getVisibility()) checkLists.add(checkList);
+        }
+        return checkLists;
+    }
     @Transactional
     public CheckList findById(Long id){
         Optional<CheckList> findOne = checkListRepository.findById(id);
-        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 정보의 체크리스트는 존재하지 않습니다.");
+        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 id의 체크리스트는 존재하지 않습니다.");
 
         return findOne.get();
     }
@@ -52,7 +57,7 @@ public class CheckListService {
         CheckList checkList = CheckList.createEntity(requestDto, member, category);
 
         //Image File 설정
-        if(imgFile != null){
+        if(imgFile != null && !imgFile.isEmpty()){
             FileDetail file = fileService.upload("checklist/image", imgFile);
             checkList.setFile(file);
         }
@@ -70,6 +75,11 @@ public class CheckListService {
 
     @Transactional
     public void updateCheckList(CheckList checkList, UpdateCheckListRequestDto requestDto, MultipartFile imgFile) {
+        //check origin checklist validation
+        if(checkList.getOrigin() != null && requestDto.getVisibility()){ //origin checkList가 존재하면 visibility true 불가능.
+            throw new GeneralException(Code.FORBIDDEN, "해당 체크리스트는 공개할 수 없습니다.");
+        }
+
         //category validation
         SubCategory subCategory = null;
         if(requestDto.getMainCategoryName() != null && requestDto.getSubCategoryName() != null) {
@@ -142,12 +152,14 @@ public class CheckListService {
         checkList.updateProgress();
     }
 
-    public List<CheckList> findAllVisible() {
-        List<CheckList> checkLists = new ArrayList<>();
-        for (CheckList checkList : checkListRepository.findAll()) {
-            if(checkList.getVisibility()) checkLists.add(checkList);
-        }
+    @Transactional
+    public Long useCheckList(CheckList existedCheckList, Member member) {
+        //체크리스트 생성
+        CheckList checkList = CheckList.createEntity(existedCheckList, member); //기존 체크리스트 정보를 토대로 새로운 체크리스트 생성
 
-        return checkLists;
+        //CheckList 저장
+        checkListRepository.save(checkList);
+
+        return checkList.getId();
     }
 }

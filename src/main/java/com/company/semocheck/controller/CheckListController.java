@@ -13,6 +13,7 @@ import com.company.semocheck.domain.dto.checklist.CheckListPostDto;
 import com.company.semocheck.domain.dto.request.checkList.CreateCheckListRequestDto;
 import com.company.semocheck.domain.dto.request.checkList.CreateStepRequestDto;
 import com.company.semocheck.domain.dto.request.checkList.UpdateCheckListRequestDto;
+import com.company.semocheck.domain.dto.request.checkList.UpdateStepRequestDto;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.service.CheckListService;
 import com.company.semocheck.service.MemberService;
@@ -37,6 +38,8 @@ public class CheckListController {
     private final CheckListService checkListService;
     private final JwtUtils jwtUtils;
 
+
+    //======= read method ======//
     @ApiDocumentResponse
     @Operation(summary = "Get all visibile checkList API", description = "공개 가능한 모든 체크리스트를 제공합니다.\n\n")
     @GetMapping("/api/checkList")
@@ -51,25 +54,7 @@ public class CheckListController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Create new checklist API", description = "새로운 체크리스트를 생성합니다.\n\n" +
-            "필수 목록 : [title]")
-    @PostMapping(value = "/api/members/{member_id}/checkList", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    private DataResponseDto<Long> createNewCheckList(HttpServletRequest request, @PathVariable("member_id") Long memberId,
-                                                     @RequestPart("request") CreateCheckListRequestDto requestDto, @RequestPart("image") MultipartFile imgFile){
-        //JWT Member 검증
-        String accessToken = jwtUtils.getAccessToken(request);
-        Claims claims = jwtUtils.parseClaims(accessToken);
-        Member member = memberService.findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
-        if(!member.getId().equals(memberId)) throw new GeneralException(Code.FORBIDDEN);
-
-        //Create New CheckList Entity
-        Long checkListId = checkListService.createCheckList(requestDto, member, imgFile);
-
-        return DataResponseDto.of(checkListId, "체크리스트 생성 성공");
-    }
-
-    @ApiDocumentResponse
-    @Operation(summary = "get all member's checklist API", description = "해당 멤버의 체크리스트 모두 조회합니다.")
+    @Operation(summary = "Get all member's checklist API", description = "해당 멤버의 체크리스트 모두 조회합니다.")
     @GetMapping("/api/members/{member_id}/checkList")
     private DataResponseDto<List<CheckListPostDto>> findAllMemberCheckList(HttpServletRequest request, @PathVariable("member_id") Long memberId){
         //JWT Member 검증
@@ -89,9 +74,8 @@ public class CheckListController {
         return DataResponseDto.of(checkListPostDtos, "조회 성공");
     }
 
-
     @ApiDocumentResponse
-    @Operation(summary = "get checklist by id API", description = "체크리스트 id를 통해 조회합니다.\n\n" +
+    @Operation(summary = "Get checklist by id API", description = "체크리스트 id를 통해 조회합니다.\n\n" +
             "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
     @GetMapping("/api/members/{member_id}/checkList/{checkList_id}")
     private DataResponseDto<CheckListDetailDto> findCheckListById(HttpServletRequest request, @PathVariable("member_id") Long memberId,
@@ -109,6 +93,48 @@ public class CheckListController {
         return DataResponseDto.of(CheckListDetailDto.createDto(checkList), "조회 성공");
     }
 
+    //======= create method ======//
+    @ApiDocumentResponse
+    @Operation(summary = "Create new checklist API", description = "새로운 체크리스트를 생성합니다.\n\n" +
+            "필수 목록 : [title]")
+    @PostMapping(value = "/api/members/{member_id}/checkList", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    private DataResponseDto<Long> createNewCheckList(HttpServletRequest request, @PathVariable("member_id") Long memberId,
+                                                     @RequestPart("request") CreateCheckListRequestDto requestDto, @RequestPart("image") MultipartFile imgFile){
+        //JWT Member 검증
+        String accessToken = jwtUtils.getAccessToken(request);
+        Claims claims = jwtUtils.parseClaims(accessToken);
+        Member member = memberService.findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
+        if(!member.getId().equals(memberId)) throw new GeneralException(Code.FORBIDDEN);
+
+        //Create New CheckList Entity
+        Long checkListId = checkListService.createCheckList(requestDto, member, imgFile);
+
+        return DataResponseDto.of(checkListId, "체크리스트 생성 성공");
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "Use existed checklist API by checkList id", description = "기존에 존재하는 체크리스트를 사용합니다.\n\n" +
+            "다른 사람의 체크리스트만 사용가능합니다.\n\n" +
+            "자신의 체크리스트는 이미 사용중인 상태로 만약 checkList가 자기 소유일경우 에러를 발생합니다. - 400 Bad request")
+    @PostMapping(value = "/api/members/{member_id}/checkList/{checkList_id}/use")
+    private DataResponseDto<Long> useExistedCheckList(HttpServletRequest request, @PathVariable("member_id") Long memberId, @PathVariable("checkList_id") Long checkListId){
+        //JWT Member 검증
+        String accessToken = jwtUtils.getAccessToken(request);
+        Claims claims = jwtUtils.parseClaims(accessToken);
+        Member member = memberService.findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
+        if(!member.getId().equals(memberId)) throw new GeneralException(Code.FORBIDDEN);
+
+        //Get checkList by id
+        CheckList checkList = checkListService.findById(checkListId);
+        if(checkList.getOwner().equals(member)) throw new GeneralException(Code.BAD_REQUEST, "자신의 체크리스트는 이미 사용중인 상태입니다.");
+
+        //Create checkList
+        Long newCheckListId = checkListService.useCheckList(checkList, member);
+
+        return DataResponseDto.of(newCheckListId, "체크리스트 생성 성공");
+    }
+
+    //======= update method ======//
     @ApiDocumentResponse
     @Operation(summary = "Update checklist's info API", description = "체크리스트 정보를 수정합니다.\n\n" +
             "회원의 체크리스트가 아닌 경우 수정이 불가능합니다. - 403 Forbidden error\n\n" +
@@ -163,6 +189,7 @@ public class CheckListController {
         return ResponseDto.of(true, "수정 성공");
     }
 
+    //======= delete method ======//
     @ApiDocumentResponse
     @Operation(summary = "Delete a checklist API", description = "회원의 체크리스트를 삭제합니다.\n\n" +
             "회원의 체크리스트가 아닌 경우 삭제가 불가능합니다. - 403 Forbidden error")
