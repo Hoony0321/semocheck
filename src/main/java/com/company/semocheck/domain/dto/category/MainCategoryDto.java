@@ -1,7 +1,5 @@
-package com.company.semocheck.domain.dto;
+package com.company.semocheck.domain.dto.category;
 
-import com.company.semocheck.domain.FileDetail;
-import com.company.semocheck.domain.SubCategory;
 import com.company.semocheck.domain.MainCategory;
 import lombok.Builder;
 import lombok.Data;
