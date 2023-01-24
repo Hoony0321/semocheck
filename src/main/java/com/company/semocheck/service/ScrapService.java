@@ -42,10 +42,11 @@ public class ScrapService {
     }
 
     @Transactional
-    public void deleteScrap(CheckList checkList) {
+    public void deleteScrap(Member member, CheckList checkList) {
         Optional<Scrap> findOne = scrapRepository.findByCheckList(checkList);
         if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 id의 체크리스트는 스크랩 목록에 존재하지 않습니다.");
 
+        member.removeScrap(findOne.get());
         scrapRepository.delete(findOne.get());
     }
 }

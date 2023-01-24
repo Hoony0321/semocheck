@@ -16,12 +16,12 @@ import lombok.NoArgsConstructor;
 public class ScrapDto {
 
     private Long scrapId;
-    private CheckListPostDto checkListPostDto;
+    private Long checkListId;
 
     static public ScrapDto createDto(Scrap entity){
         ScrapDto dto = new ScrapDto();
         dto.scrapId = entity.getId();
-        dto.checkListPostDto = CheckListPostDto.createDto(entity.getCheckList());
+        dto.checkListId = entity.getCheckList().getId();
         return dto;
     }
 }

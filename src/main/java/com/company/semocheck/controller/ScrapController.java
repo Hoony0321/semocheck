@@ -82,7 +82,7 @@ public class ScrapController {
         CheckList checkList = checkListService.findById(checkListId);
 
         //Insert stepItem into checkList entity
-        scrapService.deleteScrap(checkList);
+        scrapService.deleteScrap(member, checkList);
 
         return ResponseDto.of(true, "삭제 성공");
     }
