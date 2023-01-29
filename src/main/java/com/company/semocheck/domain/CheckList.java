@@ -135,7 +135,9 @@ public class CheckList extends BaseTimeEntity{
         for (Step step : this.steps) {
             if(step.getIsCheck()) checkNum += 1;
         }
-        float result = checkNum / (float)total * 100.0f; //백분율 표시
+        float result = checkNum / (float)total * 100f; //백분율 표시
+        if(result == 100f) this.complete = true; //진행도 100%일 경우 complete true로 변경
+
         this.progress = String.format("%.2f", result);
     }
 
