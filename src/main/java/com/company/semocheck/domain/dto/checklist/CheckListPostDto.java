@@ -2,7 +2,7 @@ package com.company.semocheck.domain.dto.checklist;
 
 import com.company.semocheck.domain.CheckList;
 import com.company.semocheck.domain.dto.FileDto;
-import com.company.semocheck.domain.dto.SubCategoryDto;
+import com.company.semocheck.domain.dto.category.SubCategoryDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

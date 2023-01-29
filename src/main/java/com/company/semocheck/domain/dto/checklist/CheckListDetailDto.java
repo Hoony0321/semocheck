@@ -4,7 +4,7 @@ import com.company.semocheck.domain.CheckList;
 import com.company.semocheck.domain.Step;
 import com.company.semocheck.domain.dto.FileDto;
 import com.company.semocheck.domain.dto.StepDto;
-import com.company.semocheck.domain.dto.SubCategoryDto;
+import com.company.semocheck.domain.dto.category.SubCategoryDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -33,6 +33,7 @@ public class CheckListDetailDto {
     private String createdDate;
     private String modifiedDate;
 
+    private Boolean complete;
     private String progress;
     private FileDto fileDto;
 
@@ -43,6 +44,7 @@ public class CheckListDetailDto {
         dto.title = checkList.getTitle();
         dto.brief = checkList.getBrief();
         dto.visibility = checkList.getVisibility();
+        dto.complete = checkList.getComplete();
         dto.progress = checkList.getProgress();
 
         dto.stepCount = checkList.getStepCount();

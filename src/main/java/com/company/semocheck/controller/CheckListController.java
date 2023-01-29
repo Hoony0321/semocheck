@@ -6,15 +6,14 @@ import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.DataResponseDto;
 import com.company.semocheck.common.response.ResponseDto;
 import com.company.semocheck.domain.CheckList;
-import com.company.semocheck.domain.FileDetail;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.dto.checklist.CheckListDetailDto;
 import com.company.semocheck.domain.dto.checklist.CheckListPostDto;
 import com.company.semocheck.domain.dto.request.checkList.CreateCheckListRequestDto;
-import com.company.semocheck.domain.dto.request.checkList.CreateStepRequestDto;
 import com.company.semocheck.domain.dto.request.checkList.UpdateCheckListRequestDto;
 import com.company.semocheck.domain.dto.request.checkList.UpdateStepRequestDto;
 import com.company.semocheck.exception.GeneralException;
+import com.company.semocheck.service.CategoryService;
 import com.company.semocheck.service.CheckListService;
 import com.company.semocheck.service.MemberService;
 import io.jsonwebtoken.Claims;
@@ -36,15 +35,19 @@ public class CheckListController {
 
     private final MemberService memberService;
     private final CheckListService checkListService;
+
+    private final CategoryService categoryService;
     private final JwtUtils jwtUtils;
 
 
     //======= read method ======//
     @ApiDocumentResponse
-    @Operation(summary = "Get all visibile checkList API", description = "공개 가능한 모든 체크리스트를 제공합니다.\n\n")
+    @Operation(summary = "Get all visibile checkList API", description = "공개된 모든 체크리스트를 조회합니다.\n\n")
     @GetMapping("/api/checkList")
-    private DataResponseDto<List<CheckListPostDto>> findAllVisibleCheckList(HttpServletRequest request){
-        List<CheckList> checkLists = checkListService.findAllVisible();
+    private DataResponseDto<List<CheckListPostDto>> getAllVisibleCheckLists(HttpServletRequest request){
+        List<CheckList> checkLists = checkListService.getAllVisibleCheckLists();
+
+        //entity convert to dto
         List<CheckListPostDto> checkListPostDtos = new ArrayList<>();
         for (CheckList checkList : checkLists) {
             checkListPostDtos.add(CheckListPostDto.createDto(checkList));
@@ -54,9 +57,19 @@ public class CheckListController {
     }
 
     @ApiDocumentResponse
+    @Operation(summary = "[Test] Query checkList API", description = "쿼리문을 통해 체크리스트를 조회합니다.(테스트중)\n\n")
+    @GetMapping("/api/checkList/query")
+    private ResponseDto getAllVisibleCheckListsByCategory(HttpServletRequest request, @RequestParam String filter,
+                                                          @RequestParam(required = false) String mainName, @RequestParam(required = false) String subName){
+        System.out.println(filter + mainName + subName);
+        return ResponseDto.of(true, "조회 성공");
+    }
+
+
+    @ApiDocumentResponse
     @Operation(summary = "Get all member's checklist API", description = "해당 멤버의 체크리스트 모두 조회합니다.")
     @GetMapping("/api/members/{member_id}/checkList")
-    private DataResponseDto<List<CheckListPostDto>> findAllMemberCheckList(HttpServletRequest request, @PathVariable("member_id") Long memberId){
+    private DataResponseDto<List<CheckListPostDto>> getAllMemberCheckLists(HttpServletRequest request, @PathVariable("member_id") Long memberId){
         //JWT Member 검증
         String accessToken = jwtUtils.getAccessToken(request);
         Claims claims = jwtUtils.parseClaims(accessToken);
@@ -66,8 +79,9 @@ public class CheckListController {
         //Get all member's checkList entity
         List<CheckList> memberCheckLists = member.getCheckLists();
 
+        //entity convert to dto
         List<CheckListPostDto> checkListPostDtos = new ArrayList<>();
-        for (CheckList checkList : member.getCheckLists()) {
+        for (CheckList checkList : memberCheckLists) {
             checkListPostDtos.add(CheckListPostDto.createDto(checkList));
         }
 
@@ -75,10 +89,76 @@ public class CheckListController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Get checklist by id API", description = "체크리스트 id를 통해 조회합니다.\n\n" +
+    @Operation(summary = "[Test] Get all member's checklist in progress API", description = "해당 멤버의 진행중 체크리스트 모두 조회합니다.")
+    @GetMapping("/api/members/{member_id}/checkList/progress")
+    private DataResponseDto<List<CheckListDetailDto>> getAllMemberCheckListInProgress(HttpServletRequest request, @PathVariable("member_id") Long memberId){
+        //JWT Member 검증
+        String accessToken = jwtUtils.getAccessToken(request);
+        Claims claims = jwtUtils.parseClaims(accessToken);
+        Member member = memberService.findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
+        if(!member.getId().equals(memberId)) throw new GeneralException(Code.FORBIDDEN);
+
+        //Get all member's checkList entity
+        List<CheckList> memberCheckLists = checkListService.getAllMemberCheckListsInProgress(member);
+
+        //entity convert to dto
+        List<CheckListDetailDto> checkListDetailDtos = new ArrayList<>();
+        for (CheckList checkList : memberCheckLists) {
+            checkListDetailDtos.add(CheckListDetailDto.createDto(checkList));
+        }
+
+        return DataResponseDto.of(checkListDetailDtos, "조회 성공");
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "[Test] Get all member's checklist in complete API", description = "해당 멤버의 완료한 체크리스트를 모두 조회합니다.")
+    @GetMapping("/api/members/{member_id}/checkList/complete")
+    private DataResponseDto<List<CheckListPostDto>> getAllMemberCheckListInComplete(HttpServletRequest request, @PathVariable("member_id") Long memberId){
+        //JWT Member 검증
+        String accessToken = jwtUtils.getAccessToken(request);
+        Claims claims = jwtUtils.parseClaims(accessToken);
+        Member member = memberService.findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
+        if(!member.getId().equals(memberId)) throw new GeneralException(Code.FORBIDDEN);
+
+        //Get all member's checkList entity
+        List<CheckList> memberCheckLists = checkListService.getAllMemberCheckListsInComplete(member);
+
+        //entity convert to dto
+        List<CheckListPostDto> checkListPostDtos = new ArrayList<>();
+        for (CheckList checkList : memberCheckLists) {
+            checkListPostDtos.add(CheckListPostDto.createDto(checkList));
+        }
+
+        return DataResponseDto.of(checkListPostDtos, "조회 성공");
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "[Test] Get all member's checklist that is made by the member API", description = "해당 멤버가 만든 체크리스트를 모두 조회합니다.")
+    @GetMapping("/api/members/{member_id}/checkList/owner")
+    private DataResponseDto<List<CheckListPostDto>> getAllMemberCheckListByMember(HttpServletRequest request, @PathVariable("member_id") Long memberId){
+        //JWT Member 검증
+        String accessToken = jwtUtils.getAccessToken(request);
+        Claims claims = jwtUtils.parseClaims(accessToken);
+        Member member = memberService.findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
+        if(!member.getId().equals(memberId)) throw new GeneralException(Code.FORBIDDEN);
+
+        //Get all member's checkList entity
+        List<CheckList> memberCheckLists = checkListService.getAllMemberCheckListsMadeByMember(member);
+
+        //entity convert to dto
+        List<CheckListPostDto> checkListPostDtos = new ArrayList<>();
+        for (CheckList checkList : memberCheckLists) {
+            checkListPostDtos.add(CheckListPostDto.createDto(checkList));
+        }
+
+        return DataResponseDto.of(checkListPostDtos, "조회 성공");
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "Get checklist's detail info by id API", description = "체크리스트 id를 통해 조회합니다.\n\n" +
             "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
     @GetMapping("/api/members/{member_id}/checkList/{checkList_id}")
-    private DataResponseDto<CheckListDetailDto> findCheckListById(HttpServletRequest request, @PathVariable("member_id") Long memberId,
+    private DataResponseDto<CheckListDetailDto> getCheckListById(HttpServletRequest request, @PathVariable("member_id") Long memberId,
                                                                   @PathVariable("checkList_id") Long checkListId){
         //JWT Member 검증
         String accessToken = jwtUtils.getAccessToken(request);
@@ -91,6 +171,17 @@ public class CheckListController {
         if(!checkList.getOwner().equals(member)) throw new GeneralException(Code.FORBIDDEN);
 
         return DataResponseDto.of(CheckListDetailDto.createDto(checkList), "조회 성공");
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "Get checklist by id API (No Login)", description = "체크리스트 id를 통해 조회합니다. - 회원의 체크리스트가 아니더라도 조회 가능합니다.\n\n" +
+            "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
+    @GetMapping("/api/checkList/{checkList_id}")
+    private DataResponseDto<CheckListPostDto> getCheckListByIdNoLogin(HttpServletRequest request, @PathVariable("checkList_id") Long checkListId){
+        //Get checkList by id
+        CheckList checkList = checkListService.findById(checkListId);
+
+        return DataResponseDto.of(CheckListPostDto.createDto(checkList), "조회 성공");
     }
 
     //======= create method ======//
@@ -207,7 +298,7 @@ public class CheckListController {
         if(!checkList.getOwner().equals(member)) throw new GeneralException(Code.FORBIDDEN);
 
         //Delete checkList
-        checkListService.removeCheckList(checkList);
+        checkListService.deleteCheckList(checkList, member);
 
         return ResponseDto.of(true, "삭제 성공");
     }

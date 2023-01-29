@@ -26,14 +26,41 @@ public class CheckListService {
     private final FileService fileService;
     private final StepRepository stepRepository;
 
-    public List<CheckList> findAllVisible() {
+    public List<CheckList> getAllVisibleCheckLists() {
         List<CheckList> checkLists = new ArrayList<>();
         for (CheckList checkList : checkListRepository.findAll()) {
             if(checkList.getVisibility()) checkLists.add(checkList);
         }
         return checkLists;
     }
-    @Transactional
+
+    public List<CheckList> getAllMemberCheckListsInProgress(Member member) {
+        List<CheckList> checkListsInProgress = new ArrayList<>();
+        for (CheckList checkList : member.getCheckLists()) {
+            if(!checkList.getComplete()) checkListsInProgress.add(checkList);
+        }
+
+        return checkListsInProgress;
+    }
+
+    public List<CheckList> getAllMemberCheckListsInComplete(Member member) {
+        List<CheckList> checkListsInComplete = new ArrayList<>();
+        for (CheckList checkList : member.getCheckLists()) {
+            if(checkList.getComplete()) checkListsInComplete.add(checkList);
+        }
+
+        return checkListsInComplete;
+    }
+
+    public List<CheckList> getAllMemberCheckListsMadeByMember(Member member) {
+        List<CheckList> checkListsInComplete = new ArrayList<>();
+        for (CheckList checkList : member.getCheckLists()) {
+            if(checkList.getOrigin() == null) checkListsInComplete.add(checkList);
+        }
+
+        return checkListsInComplete;
+    }
+
     public CheckList findById(Long id){
         Optional<CheckList> findOne = checkListRepository.findById(id);
         if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 id의 체크리스트는 존재하지 않습니다.");
@@ -69,7 +96,8 @@ public class CheckListService {
     }
 
     @Transactional
-    public void removeCheckList(CheckList checkList) {
+    public void deleteCheckList(CheckList checkList, Member member) {
+        member.removeCheckList(checkList);
         checkListRepository.delete(checkList);
     }
 
@@ -162,4 +190,5 @@ public class CheckListService {
 
         return checkList.getId();
     }
+
 }
