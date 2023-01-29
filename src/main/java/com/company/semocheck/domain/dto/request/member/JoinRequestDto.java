@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class JoinRequestDto {
-    private String name;
     private Boolean sex;
     private Integer age;
     private Boolean agreeNotify;
