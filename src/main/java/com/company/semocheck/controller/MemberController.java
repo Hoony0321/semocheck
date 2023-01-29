@@ -32,7 +32,8 @@ public class MemberController {
     private final JwtUtils jwtUtils;
 
     @ApiDocumentResponse
-    @Operation(summary = "Sign up API", description = "oAuthToken 및 회원정보를 입력받아 해당 계정을 회원으로 등록합니다.")
+    @Operation(summary = "Sign up API", description = "oAuthToken 및 회원정보를 입력받아 해당 계정을 회원으로 등록합니다.\n\n" +
+            "return data : 회원가입 성공한 member id")
     @PostMapping("")
     public DataResponseDto<Long> joinMember(@RequestParam("oAuthToken") String oAuthToken, @RequestParam("provider") String provider,
                                             @RequestParam("fcmToken") String fcmToken, @RequestBody JoinRequestDto joinRequestDto){
