@@ -66,6 +66,9 @@ public class Member extends BaseTimeEntity{
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Scrap> scraps = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<MemberCategory> categories = new ArrayList<>();
+
     @Builder
     public Member(String oAuthId, String provider, String email, String name, String picture, Role role, Boolean agreeNotify, Boolean sex, Integer age) {
         this.oAuthId = oAuthId;
@@ -100,33 +103,17 @@ public class Member extends BaseTimeEntity{
     public void addCheckList(CheckList checkList){
         this.checkLists.add(checkList);
     }
+    public void removeCheckList(CheckList checkList) {this.checkLists.remove(checkList);}
     public void addScrap(Scrap scrap) { this.scraps.add(scrap); }
+    public void removeScrap(Scrap scrap) {this.scraps.remove(scrap);}
+    public void addCategory(MemberCategory category){ this.categories.add(category); }
+    public void removeCategory(MemberCategory category){this.categories.remove(category);}
 
     //====== 정보 수정 메서드 ======//
     public void setInfoNewMember(JoinRequestDto joinRequestDto){
-        this.name = joinRequestDto.getName();
         this.age = joinRequestDto.getAge();
         this.sex = joinRequestDto.getSex();
         this.agreeNotify = joinRequestDto.getAgreeNotify();
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
-    }
-
-    public void setAgreeNotify(Boolean agreeNotify) {
-        this.agreeNotify = agreeNotify;
-    }
-
-    public void setSex(Boolean sex) {
-        this.sex = sex;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
     }
 
     public void updateInfo(UpdateRequestDto requestDto) {
