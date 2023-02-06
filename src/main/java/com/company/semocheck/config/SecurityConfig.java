@@ -48,6 +48,12 @@ public class SecurityConfig{
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()
 
+                // 허용 url 모음
+                .and()
+                    .authorizeHttpRequests()
+                    .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
+                    .requestMatchers(HttpMethod.POST,"/api/members").permitAll()
+
                 // 인증 url 모음
                 .and()
                     .authorizeHttpRequests()
@@ -57,17 +63,7 @@ public class SecurityConfig{
                 .and()
                     .authorizeHttpRequests()
                     .requestMatchers("/api/admin").hasRole("ADMIN")
-
-                // 허용 url 모음
-                .and()
-                    .authorizeHttpRequests()
-                    .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
-                    .requestMatchers(HttpMethod.POST,"/api/members").permitAll()
                     .anyRequest().permitAll()
-
-
-
-
 
                 .and()
                     .logout()

@@ -28,12 +28,14 @@ import java.util.Optional;
 @RequestMapping("/api/members")
 public class MemberController {
 
-    private final MemberService memberService;
     private final JwtUtils jwtUtils;
+    private final MemberService memberService;
+
+
 
     @ApiDocumentResponse
     @Operation(summary = "Sign up API", description = "oAuthToken 및 회원정보를 입력받아 해당 계정을 회원으로 등록합니다.\n\n" +
-            "return data : 회원가입 성공한 member id")
+            "return data : 회원가입 성공한 member id\n\n")
     @PostMapping("")
     public DataResponseDto<Long> joinMember(@RequestParam("oAuthToken") String oAuthToken, @RequestParam("provider") String provider,
                                             @RequestParam("fcmToken") String fcmToken, @RequestBody JoinRequestDto joinRequestDto){
@@ -46,9 +48,8 @@ public class MemberController {
 
         //새로운 회원 생성 & 초기 정보 세팅
         Long id = memberService.join(attributes, provider, joinRequestDto, fcmToken);
-        Member member = memberService.findById(id);
 
-        return DataResponseDto.of(member.getId(), "회원가입 성공");
+        return DataResponseDto.of(id, "회원가입 성공");
     }
 
     @ApiDocumentResponse

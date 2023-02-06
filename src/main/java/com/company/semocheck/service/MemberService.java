@@ -6,6 +6,7 @@ import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.MemberCategory;
 import com.company.semocheck.domain.SubCategory;
 import com.company.semocheck.domain.dto.category.MemberCategoryDto;
+import com.company.semocheck.domain.dto.category.SubCategoryDto;
 import com.company.semocheck.domain.dto.request.member.JoinRequestDto;
 import com.company.semocheck.domain.dto.request.member.UpdateRequestDto;
 import com.company.semocheck.exception.GeneralException;
@@ -26,6 +27,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberCategoryRepository memberCategoryRepository;
+    private final CategoryService categoryService;
 
     public List<Member> findAll(){ return memberRepository.findAll(); }
     public Member findById(Long id){
@@ -50,10 +52,18 @@ public class MemberService {
     @Transactional
     public Long join(OAuth2Attributes attributes, String provider, JoinRequestDto joinRequestDto, String fcmToken){
         Member member = Member.createEntity(attributes, provider);
-        memberRepository.save(member);
 
         //TODO : fcmToken 세팅
+        //회원 기본정보 setting
         member.setInfoNewMember(joinRequestDto);
+
+        //category setting
+        for (SubCategoryDto dto : joinRequestDto.getCategorys()) {
+            SubCategory subCategory = categoryService.findSubCategoryByName(dto.getMain(), dto.getName());
+            this.addMemberCategory(member, subCategory);
+        }
+
+        memberRepository.save(member);
 
         return member.getId();
     }
