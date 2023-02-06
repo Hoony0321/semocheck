@@ -25,7 +25,7 @@ public class MemberCategory {
     @NotNull
     @JsonIgnore
     @JoinColumn(name = "category_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private SubCategory subCategory;
 
     static public MemberCategory createEntity(Member member, SubCategory subCategory){

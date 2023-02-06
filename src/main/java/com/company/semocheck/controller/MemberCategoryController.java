@@ -77,4 +77,6 @@ public class MemberCategoryController {
         memberService.deleteMemberCategory(member, category);
         return ResponseDto.of(true, "카테고리 삭제 성공");
     }
+
+
 }

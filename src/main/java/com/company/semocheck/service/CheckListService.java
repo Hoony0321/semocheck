@@ -68,6 +68,18 @@ public class CheckListService {
         return findOne.get();
     }
 
+    public List<CheckList> findByCategoryIn(Member member) {
+        //set sub category list
+        List<SubCategory> subCategories = new ArrayList<>();
+        for (MemberCategory memberCategory : member.getCategories()) {
+            SubCategory subCategory = memberCategory.getSubCategory();
+            subCategories.add(subCategory);
+        }
+
+        List<CheckList> checkLists = checkListRepository.findByCategoryIn(subCategories);
+        return checkLists;
+    }
+
     @Transactional
     public Long createCheckList(CreateCheckListRequestDto requestDto, Member member, MultipartFile imgFile){
         SubCategory category = null;
@@ -190,5 +202,4 @@ public class CheckListService {
 
         return checkList.getId();
     }
-
 }
