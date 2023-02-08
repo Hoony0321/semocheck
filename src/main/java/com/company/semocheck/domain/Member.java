@@ -117,10 +117,10 @@ public class Member extends BaseTimeEntity{
     }
 
     public void updateInfo(UpdateRequestDto requestDto) {
-        if(requestDto.getAge() != null) this.age = requestDto.getAge();
-        if(requestDto.getSex() != null) this.sex = requestDto.getSex();
-        if(requestDto.getName() != null) this.name = requestDto.getName();
-        if(requestDto.getAgreeNotify() != null) this.agreeNotify = requestDto.getAgreeNotify();
-        if(requestDto.getPicture() != null) this.picture = requestDto.getPicture();
+        this.age = requestDto.getAge();
+        this.sex = requestDto.getSex();
+        this.name = requestDto.getName();
+        this.agreeNotify = requestDto.getAgreeNotify();
+        this.picture = requestDto.getPicture();
     }
 }
