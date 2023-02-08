@@ -1,17 +1,16 @@
-package com.company.semocheck.domain.dto.request.checkList;
+package com.company.semocheck.domain.dto.request.checklist;
 
 
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 
 @Data
 @NoArgsConstructor
-public class CreateCheckListRequestDto {
+public class CreateChecklistRequestDto {
 
     private String title;
     private String brief;
@@ -21,7 +20,7 @@ public class CreateCheckListRequestDto {
     private List<StepRequestDto> steps;
 
     @Builder
-    public CreateCheckListRequestDto(String title, String brief, String mainCategoryName, String subCategoryName,
+    public CreateChecklistRequestDto(String title, String brief, String mainCategoryName, String subCategoryName,
                                      Boolean visibility, List<StepRequestDto> steps) {
         this.title = title;
         this.brief = brief;

@@ -1,13 +1,6 @@
 package com.company.semocheck.domain.dto;
 
-import com.company.semocheck.domain.CheckList;
-import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.Scrap;
-import com.company.semocheck.domain.dto.checklist.CheckListPostDto;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,12 +9,12 @@ import lombok.NoArgsConstructor;
 public class ScrapDto {
 
     private Long scrapId;
-    private Long checkListId;
+    private Long checklistId;
 
     static public ScrapDto createDto(Scrap entity){
         ScrapDto dto = new ScrapDto();
         dto.scrapId = entity.getId();
-        dto.checkListId = entity.getCheckList().getId();
+        dto.checklistId = entity.getChecklist().getId();
         return dto;
     }
 }

@@ -1,4 +1,4 @@
-package com.company.semocheck.domain.dto.request.checkList;
+package com.company.semocheck.domain.dto.request.checklist;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class UpdateCheckListRequestDto {
+public class UpdateChecklistRequestDto {
 
     private String title;
     private String brief;
@@ -18,7 +18,7 @@ public class UpdateCheckListRequestDto {
     private List<StepRequestDto> steps;
 
     @Builder
-    public UpdateCheckListRequestDto(String title, String brief, String mainCategoryName, String subCategoryName, Boolean visibility, List<StepRequestDto> steps) {
+    public UpdateChecklistRequestDto(String title, String brief, String mainCategoryName, String subCategoryName, Boolean visibility, List<StepRequestDto> steps) {
         this.title = title;
         this.brief = brief;
         this.mainCategoryName = mainCategoryName;

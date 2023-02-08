@@ -26,12 +26,12 @@ public class Scrap {
     @JoinColumn(name = "checklist_id")
     @JsonIgnore
     @NotNull
-    private CheckList checkList;
+    private Checklist checklist;
 
-    static public Scrap createEntity(Member member, CheckList checkList){
+    static public Scrap createEntity(Member member, Checklist checklist){
         Scrap entity = new Scrap();
         entity.setMember(member);
-        entity.setCheckList(checkList);
+        entity.setChecklist(checklist);
         return entity;
     }
 
@@ -40,7 +40,7 @@ public class Scrap {
         this.member = member;
     }
 
-    private void setCheckList(CheckList checkList){
-        this.checkList = checkList;
+    private void setChecklist(Checklist checklist){
+        this.checklist = checklist;
     }
 }

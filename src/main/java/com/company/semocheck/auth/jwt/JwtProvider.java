@@ -36,7 +36,6 @@ public class JwtProvider {
     private static final String AUTHORITIES_KEY = "authority";
     private static final Long ACCESS_TOKEN_VALID_TIME = 24 * 60 * 60 * 1000L; // 24hours -> 추후에 10min으로 변경할 것
     private static final Long REFRESH_TOKEN_VALID_TIME = 24 * 60 * 60 * 1000L; // 24hours
-
     private final RefreshTokenRepository refreshTokenRepository;
 
     private Key key;

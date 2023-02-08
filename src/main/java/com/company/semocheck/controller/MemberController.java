@@ -54,46 +54,36 @@ public class MemberController {
     @ApiDocumentResponse
     @Operation(summary = "Get member's detail info API", description = "member id를 통해 단일 회원 정보를 조회합니다.\n\n" +
             "해당 회원의 JWT 토큰으로만 접근 가능한 URL입니다.")
-    @GetMapping("/{id}")
-    public DataResponseDto<MemberDto> getMember(@PathVariable("id") Long id, HttpServletRequest request){
-
-        String accessToken = jwtUtils.getAccessToken(request);
-        Claims claims = jwtUtils.parseClaims(accessToken);
-        Member findOne = memberService.findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
-
-        if(!findOne.getId().equals(id)) throw new GeneralException(Code.FORBIDDEN);
-
-        return DataResponseDto.of(MemberDto.createDto(findOne), "회원 정보 조회 성공");
+    @GetMapping("")
+    public DataResponseDto<MemberDto> getMemberDetailInfo(HttpServletRequest request){
+        //Get member by jwt token
+        Member member = memberService.getMemberByJwt(request);
+        return DataResponseDto.of(MemberDto.createDto(member), "회원 정보 조회 성공");
     }
 
+    //TODO : delete할 때 회원의 비밀번호를 추가로 받는 등 -> 추가 확인 필요! -> 해당 계정을 inactivate 시키는 방향으로 진행!
     @ApiDocumentResponse
     @Operation(summary = "Delte member's info in database API", description = "member id를 통해 해당 회원을 DB에서 삭제합니다.\n\n" +
             "해당 회원의 JWT 토큰으로만 접근 가능한 URL입니다.")
-    @DeleteMapping("/{id}")
-    public ResponseDto deleteMember(@PathVariable("id") Long id, HttpServletRequest request){
-        //JWT Member 검증
-        String accessToken = jwtUtils.getAccessToken(request);
-        Claims claims = jwtUtils.parseClaims(accessToken);
-        Member member = memberService.findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
-        if(!member.getId().equals(id)) throw new GeneralException(Code.FORBIDDEN);
-
+    @DeleteMapping("")
+    public ResponseDto deleteMember(HttpServletRequest request){
+        //Get member by jwt token
+        Member member = memberService.getMemberByJwt(request);
         memberService.delete(member);
 
         return ResponseDto.of(true, "회원 삭제 성공");
     }
 
+    //TODO : 민감한 정보를 수정할 때 회원의 비밀번호를 추가로 받는 등 -> 추가 확인 필요!
     @ApiDocumentResponse
     @Operation(summary = "Update member's info API", description = "member id를 통해 해당 회원 정보를 수정합니다.\n\n" +
             "모든 정보 수정이 가능한 API입니다.\n" +
             "만약 수정을 원치 않는 정보는 null로 넣어주시면 됩니다.\n" +
             "해당 회원의 JWT 토큰으로만 접근 가능한 URL입니다.")
-    @PutMapping("/{id}")
-    public DataResponseDto<MemberDto> updateMember(@PathVariable("id") Long id, HttpServletRequest request, @RequestBody UpdateRequestDto requestDto) {
-        //JWT Member 검증
-        String accessToken = jwtUtils.getAccessToken(request);
-        Claims claims = jwtUtils.parseClaims(accessToken);
-        Member member = memberService.findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
-        if(!member.getId().equals(id)) throw new GeneralException(Code.FORBIDDEN);
+    @PutMapping("")
+    public DataResponseDto<MemberDto> updateMember(HttpServletRequest request, @RequestBody UpdateRequestDto requestDto) {
+        //Get member by jwt token
+        Member member = memberService.getMemberByJwt(request);
 
         Member updatedMember = memberService.updateInfo(member, requestDto);
         return DataResponseDto.of(MemberDto.createDto(updatedMember), "회원 정보 수정 성공");

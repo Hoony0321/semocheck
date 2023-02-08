@@ -1,5 +1,6 @@
 package com.company.semocheck.service;
 
+import com.company.semocheck.auth.jwt.JwtUtils;
 import com.company.semocheck.auth.oauth2.OAuth2Attributes;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.domain.Member;
@@ -12,6 +13,8 @@ import com.company.semocheck.domain.dto.request.member.UpdateRequestDto;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.MemberCategoryRepository;
 import com.company.semocheck.repository.MemberRepository;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,8 +31,16 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberCategoryRepository memberCategoryRepository;
     private final CategoryService categoryService;
+    private final JwtUtils jwtUtils;
 
     public List<Member> findAll(){ return memberRepository.findAll(); }
+
+    public Member getMemberByJwt(HttpServletRequest request){
+        String accessToken = jwtUtils.getAccessToken(request);
+        Claims claims = jwtUtils.parseClaims(accessToken);
+        Member member = findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
+        return member;
+    }
     public Member findById(Long id){
         Optional<Member> findOne = memberRepository.findById(id);
         if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 정보의 회원은 존재하지 않습니다.");

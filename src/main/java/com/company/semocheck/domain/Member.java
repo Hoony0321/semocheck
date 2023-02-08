@@ -61,7 +61,7 @@ public class Member extends BaseTimeEntity{
     private Integer age;
 
     @OneToMany(mappedBy = "owner")
-    private List<CheckList> checkLists = new ArrayList<>();
+    private List<Checklist> checklists = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Scrap> scraps = new ArrayList<>();
@@ -100,10 +100,10 @@ public class Member extends BaseTimeEntity{
     }
 
     //====== 연관관계 메서드 ======//
-    public void addCheckList(CheckList checkList){
-        this.checkLists.add(checkList);
+    public void addChecklist(Checklist checklist){
+        this.checklists.add(checklist);
     }
-    public void removeCheckList(CheckList checkList) {this.checkLists.remove(checkList);}
+    public void removeChecklist(Checklist checklist) {this.checklists.remove(checklist);}
     public void addScrap(Scrap scrap) { this.scraps.add(scrap); }
     public void removeScrap(Scrap scrap) {this.scraps.remove(scrap);}
     public void addCategory(MemberCategory category){ this.categories.add(category); }

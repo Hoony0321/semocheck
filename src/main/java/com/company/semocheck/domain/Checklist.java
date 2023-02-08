@@ -1,18 +1,16 @@
 package com.company.semocheck.domain;
 
-import com.company.semocheck.domain.dto.request.checkList.CreateCheckListRequestDto;
-import com.company.semocheck.domain.dto.request.checkList.StepRequestDto;
-import com.company.semocheck.domain.dto.request.checkList.UpdateCheckListRequestDto;
+import com.company.semocheck.domain.dto.request.checklist.CreateChecklistRequestDto;
+import com.company.semocheck.domain.dto.request.checklist.StepRequestDto;
+import com.company.semocheck.domain.dto.request.checklist.UpdateChecklistRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.validator.constraints.Length;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @DynamicInsert
 @Table(name = "checklist")
-public class CheckList extends BaseTimeEntity{
+public class Checklist extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +35,7 @@ public class CheckList extends BaseTimeEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "origin_checklist_id")
-    private CheckList origin;
+    private Checklist origin;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -57,7 +55,7 @@ public class CheckList extends BaseTimeEntity{
     @JoinColumn(name = "file_id")
     private FileDetail fileDetail;
 
-    @OneToMany(mappedBy = "checkList", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL)
     private List<Step> steps = new ArrayList<>();
 
     @ColumnDefault("0")
@@ -80,8 +78,8 @@ public class CheckList extends BaseTimeEntity{
     private String progress;
 
     //====== 생성 메서드 ======//
-    static public CheckList createEntity(CreateCheckListRequestDto requestDto, Member member, SubCategory category){
-        CheckList entity = new CheckList();
+    static public Checklist createEntity(CreateChecklistRequestDto requestDto, Member member, SubCategory category){
+        Checklist entity = new Checklist();
 
         entity.title = requestDto.getTitle();
         entity.brief = requestDto.getBrief();
@@ -100,19 +98,19 @@ public class CheckList extends BaseTimeEntity{
         return entity;
     }
 
-    static public CheckList createEntity(CheckList checkList, Member member){
-        CheckList entity = new CheckList();
+    static public Checklist createEntity(Checklist checklist, Member member){
+        Checklist entity = new Checklist();
 
-        entity.title = checkList.getTitle();
-        entity.brief = checkList.getBrief();
+        entity.title = checklist.getTitle();
+        entity.brief = checklist.getBrief();
         entity.visibility = false;
 
         //연관관계 설정
-        entity.setOrigin(checkList); //origin
+        entity.setOrigin(checklist); //origin
         entity.setOwner(member); //owner
-        if(checkList.getCategory() != null) entity.setCategory(checkList.getCategory()); //category
-        if(checkList.getSteps() != null){ //step
-            for (Step step : checkList.getSteps()) {
+        if(checklist.getCategory() != null) entity.setCategory(checklist.getCategory()); //category
+        if(checklist.getSteps() != null){ //step
+            for (Step step : checklist.getSteps()) {
                 Step _step = Step.createEntity(step, entity);
                 entity.addStep(_step);
             }
@@ -122,7 +120,7 @@ public class CheckList extends BaseTimeEntity{
     }
 
     //====== 수정 메서드 ======//
-    public void updateInfo(UpdateCheckListRequestDto requestDto, SubCategory subCategory) {
+    public void updateInfo(UpdateChecklistRequestDto requestDto, SubCategory subCategory) {
         if(requestDto.getTitle() != null) this.title = requestDto.getTitle();
         if(requestDto.getBrief() != null) this.brief = requestDto.getBrief();
         if(requestDto.getVisibility() != null) this.visibility = requestDto.getVisibility();
@@ -144,7 +142,7 @@ public class CheckList extends BaseTimeEntity{
     //====== 연관관계 메서드======//
     public void setOwner(Member member){
         this.owner = member;
-        member.addCheckList(this);
+        member.addChecklist(this);
     }
 
     public void setCategory(SubCategory category) {this.category = category;}
@@ -153,5 +151,5 @@ public class CheckList extends BaseTimeEntity{
     }
     public void setFile(FileDetail fileDetail){this.fileDetail = fileDetail;}
     public void removeStep(Step step) { this.steps.remove(step); }
-    public void setOrigin(CheckList checkList) {this.origin = checkList;}
+    public void setOrigin(Checklist checklist) {this.origin = checklist;}
 }

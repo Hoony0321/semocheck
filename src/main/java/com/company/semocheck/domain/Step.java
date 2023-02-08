@@ -1,14 +1,13 @@
 package com.company.semocheck.domain;
 
-import com.company.semocheck.domain.dto.request.checkList.StepRequestDto;
-import com.company.semocheck.domain.dto.request.checkList.StepUpdateDto;
+import com.company.semocheck.domain.dto.request.checklist.StepRequestDto;
+import com.company.semocheck.domain.dto.request.checklist.StepUpdateDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 @Entity
@@ -33,25 +32,25 @@ public class Step {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "checklist_id")
     @JsonIgnore
-    private CheckList checkList;
+    private Checklist checklist;
 
-    static public Step createEntity(StepRequestDto requestDto, CheckList checkList){
+    static public Step createEntity(StepRequestDto requestDto, Checklist checklist){
         Step entity = new Step();
         entity.name = requestDto.getName();
         entity.stepOrder = requestDto.getOrder();
         entity.description = requestDto.getDescription();
         entity.isCheck = false;
-        entity.setCheckList(checkList);
+        entity.setChecklist(checklist);
         return entity;
     }
 
-    static public Step createEntity(Step step, CheckList checkList){
+    static public Step createEntity(Step step, Checklist checklist){
         Step entity = new Step();
         entity.name = step.getName();
         entity.stepOrder = step.getStepOrder();
         entity.description = step.getDescription();
         entity.isCheck = false;
-        entity.setCheckList(checkList);
+        entity.setChecklist(checklist);
         return entity;
     }
 
@@ -67,7 +66,7 @@ public class Step {
     }
 
     //====== 연관관계 메서드 ======//
-    public void setCheckList(CheckList checkList) {
-        this.checkList = checkList;
+    public void setChecklist(Checklist checklist) {
+        this.checklist = checklist;
     }
 }
