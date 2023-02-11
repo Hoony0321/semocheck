@@ -26,10 +26,10 @@ public class ChecklistService {
     private final FileService fileService;
     private final StepRepository stepRepository;
 
-    public List<Checklist> getAllVisibleChecklists() {
+    public List<Checklist> getAllPublicChecklists() {
         List<Checklist> checklists = new ArrayList<>();
         for (Checklist checklist : checklistRepository.findAll()) {
-            if(checklist.getVisibility()) checklists.add(checklist);
+            if(checklist.getPublish()) checklists.add(checklist);
         }
         return checklists;
     }

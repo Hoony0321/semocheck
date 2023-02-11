@@ -43,7 +43,7 @@ public class ChecklistDetailDto {
         dto.ownerName = checklist.getOwner().getName();
         dto.title = checklist.getTitle();
         dto.brief = checklist.getBrief();
-        dto.visibility = checklist.getVisibility();
+        dto.visibility = checklist.getPublish();
         dto.complete = checklist.getComplete();
         dto.progress = checklist.getProgress();
 

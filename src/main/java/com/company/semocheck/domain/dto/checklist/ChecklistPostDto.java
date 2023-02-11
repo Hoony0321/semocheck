@@ -35,7 +35,7 @@ public class ChecklistPostDto {
         dto.ownerName = checklist.getOwner().getName();
         dto.title = checklist.getTitle();
         dto.brief = checklist.getBrief();
-        dto.visibility = checklist.getVisibility();
+        dto.visibility = checklist.getPublish();
 
         dto.stepCount = checklist.getStepCount();
         dto.viewCount = checklist.getViewCount();

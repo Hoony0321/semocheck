@@ -49,7 +49,7 @@ public class Checklist extends BaseTimeEntity{
     private String brief;
 
     @ColumnDefault("0")
-    private Boolean visibility;
+    private Boolean publish;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "file_id")
@@ -83,7 +83,7 @@ public class Checklist extends BaseTimeEntity{
 
         entity.title = requestDto.getTitle();
         entity.brief = requestDto.getBrief();
-        entity.visibility = requestDto.getVisibility();
+        entity.publish = requestDto.getVisibility();
 
         //연관관계 설정
         entity.setOwner(member); //owner
@@ -103,7 +103,7 @@ public class Checklist extends BaseTimeEntity{
 
         entity.title = checklist.getTitle();
         entity.brief = checklist.getBrief();
-        entity.visibility = false;
+        entity.publish = false;
 
         //연관관계 설정
         entity.setOrigin(checklist); //origin
@@ -123,7 +123,7 @@ public class Checklist extends BaseTimeEntity{
     public void updateInfo(UpdateChecklistRequestDto requestDto, SubCategory subCategory) {
         if(requestDto.getTitle() != null) this.title = requestDto.getTitle();
         if(requestDto.getBrief() != null) this.brief = requestDto.getBrief();
-        if(requestDto.getVisibility() != null) this.visibility = requestDto.getVisibility();
+        if(requestDto.getVisibility() != null) this.publish = requestDto.getVisibility();
         if(subCategory != null) this.setCategory(subCategory);
     }
 
