@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,11 +27,13 @@ public class ChecklistService {
     private final FileService fileService;
     private final StepRepository stepRepository;
 
-    public List<Checklist> getAllPublicChecklists() {
-        List<Checklist> checklists = new ArrayList<>();
-        for (Checklist checklist : checklistRepository.findAll()) {
-            if(checklist.getPublish()) checklists.add(checklist);
-        }
+    public List<Checklist> getAllPublishedChecklists() {
+        List<Checklist> checklists = checklistRepository.findByPublishTrue();
+        return checklists;
+    }
+
+    public List<Checklist> getAllMemberChecklists(Member member) {
+        List<Checklist> checklists = checklistRepository.findByOwner(member);
         return checklists;
     }
 
@@ -66,18 +69,6 @@ public class ChecklistService {
         if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 id의 체크리스트는 존재하지 않습니다.");
 
         return findOne.get();
-    }
-
-    public List<Checklist> findByCategoryIn(Member member) {
-        //set sub category list
-        List<SubCategory> subCategories = new ArrayList<>();
-        for (MemberCategory memberCategory : member.getCategories()) {
-            SubCategory subCategory = memberCategory.getSubCategory();
-            subCategories.add(subCategory);
-        }
-
-        List<Checklist> checklists = checklistRepository.findByCategoryIn(subCategories);
-        return checklists;
     }
 
     @Transactional
@@ -201,5 +192,24 @@ public class ChecklistService {
         checklistRepository.save(checklist);
 
         return checklist.getId();
+    }
+
+    public List<Checklist> recommendChecklist(Member member) {
+
+        List<Checklist> checklists = checklistRepository.findByPublishTrue();
+
+        //filtering checklist by member's category
+        List<SubCategory> subCategories = new ArrayList<>();
+        for (MemberCategory memberCategory : member.getCategories()) {
+            SubCategory subCategory = memberCategory.getSubCategory();
+            subCategories.add(subCategory);
+        }
+
+        checklists = checklists.stream()
+                .filter(chk -> subCategories.contains(chk.getCategory()))
+                .collect(Collectors.toList());
+
+        return checklists;
+
     }
 }
