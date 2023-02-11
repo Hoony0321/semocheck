@@ -11,10 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,48 +24,113 @@ public class ChecklistService {
     private final FileService fileService;
     private final StepRepository stepRepository;
 
-    public List<Checklist> getAllPublishedChecklists() {
-        List<Checklist> checklists = checklistRepository.findByPublishTrue();
-        return checklists;
-    }
-
-    public List<Checklist> getAllMemberChecklists(Member member) {
-        List<Checklist> checklists = checklistRepository.findByOwner(member);
-        return checklists;
-    }
-
-    public List<Checklist> getAllMemberChecklistsInProgress(Member member) {
-        List<Checklist> checklistsInProgresses = new ArrayList<>();
-        for (Checklist checklist : member.getChecklists()) {
-            if(!checklist.getComplete()) checklistsInProgresses.add(checklist);
-        }
-
-        return checklistsInProgresses;
-    }
-
-    public List<Checklist> getAllMemberChecklistsInComplete(Member member) {
-        List<Checklist> checklistsInComplete = new ArrayList<>();
-        for (Checklist checklist : member.getChecklists()) {
-            if(checklist.getComplete()) checklistsInComplete.add(checklist);
-        }
-
-        return checklistsInComplete;
-    }
-
-    public List<Checklist> getAllMemberChecklistsMadeByMember(Member member) {
-        List<Checklist> checklistsInComplete = new ArrayList<>();
-        for (Checklist checklist : member.getChecklists()) {
-            if(checklist.getOrigin() == null) checklistsInComplete.add(checklist);
-        }
-
-        return checklistsInComplete;
-    }
-
     public Checklist findById(Long id){
         Optional<Checklist> findOne = checklistRepository.findById(id);
         if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 id의 체크리스트는 존재하지 않습니다.");
 
         return findOne.get();
+    }
+
+    public List<Checklist> getAllPublishedChecklists() {
+        return checklistRepository.findByPublishTrue();
+    }
+
+    public List<Checklist> getAllMemberChecklists(Member member) {
+        return checklistRepository.findByOwner(member);
+    }
+
+    public List<Checklist> getPublishedChecklistByQuery(String categoryMain, String categorySub, String title, String owner) {
+
+        List<Checklist> checklists = getAllPublishedChecklists();
+
+        //Category MainName
+        if(categoryMain != null){
+            checklists = checklists.stream()
+                    .filter(chk -> chk.getCategory().getMainCategory().getName().equals(categoryMain))
+                    .collect(Collectors.toList());
+        }
+
+        //Category SubName
+        if(categorySub != null){
+            checklists = checklists.stream()
+                    .filter(chk -> chk.getCategory().getName().equals(categorySub))
+                    .collect(Collectors.toList());
+        }
+
+        //Checklist title
+        if(title != null){
+            checklists = checklists.stream()
+                    .filter(chk -> chk.getTitle().contains(title))
+                    .collect(Collectors.toList());
+        }
+
+        //Checklist ownerName
+        if(owner != null){
+            checklists = checklists.stream()
+                    .filter(chk -> chk.getOwner().getName().equals(owner))
+                    .collect(Collectors.toList());
+        }
+
+        return checklists;
+    }
+
+    public List<Checklist> getMemberChecklistsByQuery(Member member, String categoryMain, String categorySub, String title, Boolean published, Boolean completed) {
+        List<Checklist> checklists = getAllMemberChecklists(member);
+        //Category MainName
+        if(categoryMain != null){
+            checklists = checklists.stream()
+                    .filter(chk -> chk.getCategory().getMainCategory().getName().equals(categoryMain))
+                    .collect(Collectors.toList());
+        }
+
+        //Category SubName
+        if(categorySub != null){
+            checklists = checklists.stream()
+                    .filter(chk -> chk.getCategory().getName().equals(categorySub))
+                    .collect(Collectors.toList());
+        }
+
+        //Checklist title
+        if(title != null){
+            checklists = checklists.stream()
+                    .filter(chk -> chk.getTitle().contains(title))
+                    .collect(Collectors.toList());
+        }
+
+        //Checklist publish
+        if(published != null){
+            checklists = checklists.stream()
+                    .filter(chk -> chk.getPublish() == published)
+                    .collect(Collectors.toList());
+        }
+
+        //Checklist completed
+        if(completed != null){
+            checklists = checklists.stream()
+                    .filter(chk -> chk.getComplete() == completed)
+                    .collect(Collectors.toList());
+        }
+
+        return checklists;
+    }
+
+    public List<Checklist> recommendChecklist(Member member) {
+
+        List<Checklist> checklists = checklistRepository.findByPublishTrue();
+
+        //filtering checklist by member's category
+        List<SubCategory> subCategories = new ArrayList<>();
+        for (MemberCategory memberCategory : member.getCategories()) {
+            SubCategory subCategory = memberCategory.getSubCategory();
+            subCategories.add(subCategory);
+        }
+
+        checklists = checklists.stream()
+                .filter(chk -> subCategories.contains(chk.getCategory()))
+                .collect(Collectors.toList());
+
+        return checklists;
+
     }
 
     @Transactional
@@ -105,7 +167,7 @@ public class ChecklistService {
     }
 
     @Transactional
-    public void updateChecklist(Checklist checklist, UpdateChecklistRequestDto requestDto, MultipartFile imgFile) {
+    public void updateChecklist(Checklist checklist, UpdateChecklistRequestDto requestDto) {
         //check origin checklist validation
         if(checklist.getOrigin() != null && requestDto.getVisibility()){ //origin checklist가 존재하면 visibility true 불가능.
             throw new GeneralException(Code.FORBIDDEN, "해당 체크리스트는 공개할 수 없습니다.");
@@ -156,16 +218,17 @@ public class ChecklistService {
             }
         }
 
-        //image file update
-        if(!imgFile.isEmpty()){
-            FileDetail file = fileService.upload("checklist/image", imgFile);
-            checklist.setFile(file);
-        }else{
-            checklist.setFile(null);
-        }
-
         //checklist 기본 정보 수정
         checklist.updateInfo(requestDto, subCategory);
+    }
+
+    @Transactional
+    public void uploadImage(Checklist checklist, MultipartFile imgFile) {
+        if(imgFile.isEmpty()) throw new GeneralException(Code.BAD_REQUEST, "이미지 파일이 없습니다.");
+
+        //image file update
+        FileDetail file = fileService.upload("checklist/image", imgFile);
+        checklist.setFile(file);
     }
 
 
@@ -194,22 +257,31 @@ public class ChecklistService {
         return checklist.getId();
     }
 
-    public List<Checklist> recommendChecklist(Member member) {
-
-        List<Checklist> checklists = checklistRepository.findByPublishTrue();
-
-        //filtering checklist by member's category
-        List<SubCategory> subCategories = new ArrayList<>();
-        for (MemberCategory memberCategory : member.getCategories()) {
-            SubCategory subCategory = memberCategory.getSubCategory();
-            subCategories.add(subCategory);
+    public List<Checklist> sortChecklists(List<Checklist> checklists, String sort, String direction) {
+        if (sort.equals("date")) {
+            if (direction.equals("asc")) {
+                checklists.sort(Comparator.comparing(Checklist::getModifiedDate));
+            } else {
+                checklists.sort(Comparator.comparing(Checklist::getModifiedDate).reversed());
+            }
+        }
+        else if (sort.equals("view")) {
+            if (direction.equals("asc")) {
+                checklists.sort(Comparator.comparing(Checklist::getViewCount));
+            } else {
+                checklists.sort(Comparator.comparing(Checklist::getViewCount).reversed());
+            }
+        }
+        else if (sort.equals("scrap")) {
+            if (direction.equals("asc")) {
+                checklists.sort(Comparator.comparing(Checklist::getScrapCount));
+            } else {
+                checklists.sort(Comparator.comparing(Checklist::getScrapCount).reversed());
+            }
         }
 
-        checklists = checklists.stream()
-                .filter(chk -> subCategories.contains(chk.getCategory()))
-                .collect(Collectors.toList());
-
         return checklists;
-
     }
+
+
 }

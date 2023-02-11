@@ -58,58 +58,11 @@ public class ChecklistController {
                                                                          @RequestParam(required = false, defaultValue = "date") String sort,
                                                                          @RequestParam(required = false, defaultValue = "desc") String direction){
 
-        List<Checklist> checklists = checklistService.getAllPublishedChecklists();
-
-        //Category MainName
-        if(categoryMain != null){
-            checklists = checklists.stream()
-                    .filter(chk -> chk.getCategory().getMainCategory().getName().equals(categoryMain))
-                    .collect(Collectors.toList());
-        }
-
-        //Category SubName
-        if(categorySub != null){
-            checklists = checklists.stream()
-                    .filter(chk -> chk.getCategory().getName().equals(categorySub))
-                    .collect(Collectors.toList());
-        }
-
-        //Checklist title
-        if(title != null){
-            checklists = checklists.stream()
-                    .filter(chk -> chk.getTitle().contains(title))
-                    .collect(Collectors.toList());
-        }
-
-        //Checklist ownerName
-        if(owner != null){
-            checklists = checklists.stream()
-                    .filter(chk -> chk.getOwner().getName().equals(owner))
-                    .collect(Collectors.toList());
-        }
+        //get checklists by query
+        List<Checklist> checklists = checklistService.getPublishedChecklistByQuery(categoryMain, categorySub, title, owner);
 
         //sorting checklists
-        if (sort.equals("date")) {
-            if (direction.equals("asc")) {
-                checklists.sort(Comparator.comparing(Checklist::getModifiedDate));
-            } else {
-                checklists.sort(Comparator.comparing(Checklist::getModifiedDate).reversed());
-            }
-        }
-        else if (sort.equals("view")) {
-            if (direction.equals("asc")) {
-                checklists.sort(Comparator.comparing(Checklist::getViewCount));
-            } else {
-                checklists.sort(Comparator.comparing(Checklist::getViewCount).reversed());
-            }
-        }
-        else if (sort.equals("scrap")) {
-            if (direction.equals("asc")) {
-                checklists.sort(Comparator.comparing(Checklist::getScrapCount));
-            } else {
-                checklists.sort(Comparator.comparing(Checklist::getScrapCount).reversed());
-            }
-        }
+        checklists = checklistService.sortChecklists(checklists, sort, direction);
 
         List<ChecklistPostDto> checklistPostDtos = new ArrayList<>();
         for(Checklist checklist : checklists){
@@ -142,66 +95,11 @@ public class ChecklistController {
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
-        List<Checklist> checklists = checklistService.getAllMemberChecklists(member);
-
-
-        //Category MainName
-        if(categoryMain != null){
-            checklists = checklists.stream()
-                    .filter(chk -> chk.getCategory().getMainCategory().getName().equals(categoryMain))
-                    .collect(Collectors.toList());
-        }
-
-        //Category SubName
-        if(categorySub != null){
-            checklists = checklists.stream()
-                    .filter(chk -> chk.getCategory().getName().equals(categorySub))
-                    .collect(Collectors.toList());
-        }
-
-        //Checklist title
-        if(title != null){
-            checklists = checklists.stream()
-                    .filter(chk -> chk.getTitle().contains(title))
-                    .collect(Collectors.toList());
-        }
-
-        //Checklist publish
-        if(published != null){
-                checklists = checklists.stream()
-                        .filter(chk -> chk.getPublish() == published)
-                        .collect(Collectors.toList());
-        }
-
-        //Checklist completed
-        if(completed != null){
-            checklists = checklists.stream()
-                    .filter(chk -> chk.getComplete() == completed)
-                    .collect(Collectors.toList());
-        }
+        //get checklists by query
+        List<Checklist> checklists = checklistService.getMemberChecklistsByQuery(member, categoryMain, categorySub, title, published, completed);
 
         //sorting checklists
-        if (sort.equals("date")) {
-            if (direction.equals("asc")) {
-                checklists.sort(Comparator.comparing(Checklist::getModifiedDate));
-            } else {
-                checklists.sort(Comparator.comparing(Checklist::getModifiedDate).reversed());
-            }
-        }
-        else if (sort.equals("view")) {
-            if (direction.equals("asc")) {
-                checklists.sort(Comparator.comparing(Checklist::getViewCount));
-            } else {
-                checklists.sort(Comparator.comparing(Checklist::getViewCount).reversed());
-            }
-        }
-        else if (sort.equals("scrap")) {
-            if (direction.equals("asc")) {
-                checklists.sort(Comparator.comparing(Checklist::getScrapCount));
-            } else {
-                checklists.sort(Comparator.comparing(Checklist::getScrapCount).reversed());
-            }
-        }
+        checklists = checklistService.sortChecklists(checklists, sort, direction);
 
         List<ChecklistPostDto> checklistPostDtos = new ArrayList<>();
         for(Checklist checklist : checklists){
@@ -304,9 +202,8 @@ public class ChecklistController {
             "수정을 하지 않더라도 기존 step id에 기존 정보를 포함시켜서 넘겨줘야 합니다.\n\n" +
             "step list 부분은 기존 정보를 넘기지 않을 시 삭제된 것으로 간주됩니다.\n\n" +
             "step id가 -1인 경우는 새로 추가된 step으로 간주됩니다.")
-    @PostMapping("/api/members/checklists/{checklist_id}")
-    private DataResponseDto<ChecklistPostDto> updateChecklistInfo(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId, @RequestPart("request") UpdateChecklistRequestDto requestDto,
-                                                                  @RequestPart("image") MultipartFile imgFile){
+    @PutMapping("/api/members/checklists/{checklist_id}")
+    private DataResponseDto<ChecklistPostDto> updateChecklistInfo(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId, @RequestPart("request") UpdateChecklistRequestDto requestDto){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
@@ -315,9 +212,27 @@ public class ChecklistController {
         if(!checklist.getOwner().equals(member)) throw new GeneralException(Code.FORBIDDEN);
 
         //Update checklist's info Entity
-        checklistService.updateChecklist(checklist, requestDto, imgFile);
+        checklistService.updateChecklist(checklist, requestDto);
 
         return DataResponseDto.of(ChecklistPostDto.createDto(checklist), "체크리스트 수정 성공");
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "upload checklist's image api", description = "체크리스트 이미지 파일을 업로드합니다.")
+    @PostMapping("/api/members/checklists/{checklist_id}/images")
+    private ResponseDto uploadChecklistImage(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId,
+                                             @RequestParam("file") MultipartFile imgFile){
+        //Get member by jwt token
+        Member member = memberService.getMemberByJwt(request);
+
+        //Get checklist by id
+        Checklist checklist = checklistService.findById(checklistId);
+        if(!checklist.getOwner().equals(member)) throw new GeneralException(Code.FORBIDDEN);
+
+        //Upload checklists's image
+        checklistService.uploadImage(checklist, imgFile);
+
+        return ResponseDto.of(true, "업로드 성공");
     }
 
     @ApiDocumentResponse
