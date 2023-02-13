@@ -1,10 +1,14 @@
 package com.company.semocheck.domain.dto.request.category;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class CreateMainCategoryRequestDto {
-    private String name;
+@AllArgsConstructor
+public class CreateCategoryRequestDto {
+
+    String mainName;
+    String subName;
 }

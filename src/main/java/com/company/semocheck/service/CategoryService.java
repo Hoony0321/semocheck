@@ -4,10 +4,7 @@ import com.company.semocheck.common.response.Code;
 import com.company.semocheck.domain.FileDetail;
 import com.company.semocheck.domain.SubCategory;
 import com.company.semocheck.domain.MainCategory;
-import com.company.semocheck.domain.dto.request.category.CreateMainCategoryRequestDto;
-import com.company.semocheck.domain.dto.request.category.CreateSubCategoryRequestDto;
-import com.company.semocheck.domain.dto.request.category.UpdateMainCategoryRequestDto;
-import com.company.semocheck.domain.dto.request.category.UpdateSubCategoryRequestDto;
+import com.company.semocheck.domain.dto.request.category.CreateCategoryRequestDto;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.SubCategoryRepository;
 import com.company.semocheck.repository.MainCategoryRepository;
@@ -52,68 +49,38 @@ public class CategoryService {
         return findSubOne.get();
     }
 
-    @Transactional
-    public void createMainCategory(CreateMainCategoryRequestDto requestDto) {
-        Optional<MainCategory> findOne = mainCategoryRepository.findByName(requestDto.getName());
-        if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, "해당 이름의 카테고리는 이미 존재합니다.");
-
-        MainCategory mainCategory = MainCategory.createEntity(requestDto);
-        mainCategoryRepository.save(mainCategory);
+    public List<SubCategory> findSubCategoryByOnlySubName(String subName) {
+        List<SubCategory> categories = subCategoryRepository.findByName(subName);
+        return categories;
     }
 
     @Transactional
-    public void createSubCategory(CreateSubCategoryRequestDto requestDto, String mainName) {
-        Optional<MainCategory> findMainOne = mainCategoryRepository.findByName(mainName);
-        if(findMainOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 이름의 1차 카테고리는 존재하지 않습니다.");
+    public void createCategory(CreateCategoryRequestDto requestDto) {
+        String mainName = requestDto.getMainName();
+        String subName = requestDto.getSubName();
 
-        //메인 카테고리에 똑같은 이름의 서브 카테고리 있는지 확인
-        MainCategory mainCategory = findMainOne.get();
-        mainCategory.getSubCategoryList().stream().forEach(subCategory -> {
-            if(subCategory.getName().equals(requestDto.getName())) throw new GeneralException(Code.BAD_REQUEST, "해당 이름의 2차 카테고리는 이미 존재합니다.");
-        });
+        if(mainName == null) throw new GeneralException(Code.BAD_REQUEST, "1차 카테고리 이름이 없습니다.");
 
-        SubCategory subCategory = SubCategory.createEntity(requestDto, findMainOne.get());
-        subCategoryRepository.save(subCategory);
-    }
+        Optional<MainCategory> findOne = mainCategoryRepository.findByName(mainName);
 
-    @Transactional
-    public void updateMainCategory(UpdateMainCategoryRequestDto requestDto, String name) {
-        Optional<MainCategory> findOne;
-        findOne = mainCategoryRepository.findByName(name);
-        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 이름의 카테고리는 존재하지 않습니다.");
-        MainCategory prevCategory = findOne.get();
-
-        findOne = mainCategoryRepository.findByName(requestDto.getName());
-        if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, "해당 이름의 카테고리는 이미 존재합니다.");
-
-        prevCategory.update(requestDto);
-    }
-
-    @Transactional
-    public void updateSubCategory(UpdateSubCategoryRequestDto requestDto, String mainName, String subName) {
-        Optional<MainCategory> findMainOne;
-        Optional<SubCategory> findSubOne;
-
-        findMainOne = mainCategoryRepository.findByName(mainName);
-        if(findMainOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 이름의 1차 카테고리는 존재하지 않습니다.");
-
-        MainCategory mainCategory = findMainOne.get();
-        findSubOne = mainCategory.getSubCategoryList().stream().filter(sc -> sc.getName().equals(subName)).findFirst();
-        if(findSubOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 이름의 2차 카테고리는 존재하지 않습니다.");
-
-        //Delete existed entity
-        subCategoryRepository.delete(findSubOne.get());
-
-        //Create new entity
-        if(requestDto.getMainName() == null){ //sub category name을 바꾸는 경우
-            CreateSubCategoryRequestDto createSubCategoryRequest = new CreateSubCategoryRequestDto(requestDto.getSubName());
-            createSubCategory(createSubCategoryRequest, mainName);
-        }
-        if(requestDto.getSubName() == null){ //main category name을 바꾸는 경우
-            CreateSubCategoryRequestDto createSubCategoryRequest = new CreateSubCategoryRequestDto(subName);
-            createSubCategory(createSubCategoryRequest, requestDto.getMainName());
+        if(subName == null){ //1차 카테고리 생성
+            if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, "해당 이름의 카테고리는 이미 존재합니다.");
+            MainCategory mainCategory = MainCategory.createEntity(requestDto);
+            mainCategoryRepository.save(mainCategory);
         }
 
+        if(subName != null){ //2차 카테고리 생성
+            if(findOne.isEmpty()) throw new GeneralException(Code.BAD_REQUEST, "해당 이름의 1차 카테고리는 존재하지 않습니다.");
+
+            //메인 카테고리에 똑같은 이름의 서브 카테고리 있는지 확인
+            MainCategory mainCategory = findOne.get();
+            mainCategory.getSubCategoryList().stream().forEach(subCategory -> {
+                if(subCategory.getName().equals(requestDto.getSubName())) throw new GeneralException(Code.BAD_REQUEST, "해당 이름의 2차 카테고리는 이미 존재합니다.");
+            });
+
+            SubCategory subCategory = SubCategory.createEntity(requestDto, findOne.get());
+            subCategoryRepository.save(subCategory);
+        }
     }
 
     @Transactional
@@ -166,4 +133,7 @@ public class CategoryService {
         if(findSubOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 이름의 2차 카테고리는 존재하지 않습니다.");
         SubCategory subCategory = findSubOne.get();
     }
+
+
+
 }

@@ -1,6 +1,6 @@
 package com.company.semocheck.domain;
 
-import com.company.semocheck.domain.dto.request.category.CreateSubCategoryRequestDto;
+import com.company.semocheck.domain.dto.request.category.CreateCategoryRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -27,9 +27,9 @@ public class SubCategory {
     @JsonIgnore
     private MainCategory mainCategory;
 
-    static public SubCategory createEntity(CreateSubCategoryRequestDto requestDto, MainCategory mainCategory){
+    static public SubCategory createEntity(CreateCategoryRequestDto requestDto, MainCategory mainCategory){
         SubCategory entity = new SubCategory();
-        entity.name = requestDto.getName();
+        entity.name = requestDto.getSubName();
         entity.setMainCategory(mainCategory);
         return entity;
     }
