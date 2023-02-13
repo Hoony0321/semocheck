@@ -14,16 +14,16 @@ public class UpdateChecklistRequestDto {
     private String brief;
     private String mainCategoryName;
     private String subCategoryName;
-    private Boolean visibility;
+    private Boolean publish;
     private List<StepRequestDto> steps;
 
     @Builder
-    public UpdateChecklistRequestDto(String title, String brief, String mainCategoryName, String subCategoryName, Boolean visibility, List<StepRequestDto> steps) {
+    public UpdateChecklistRequestDto(String title, String brief, String mainCategoryName, String subCategoryName, Boolean publish, List<StepRequestDto> steps) {
         this.title = title;
         this.brief = brief;
         this.mainCategoryName = mainCategoryName;
         this.subCategoryName = subCategoryName;
-        this.visibility = visibility;
+        this.publish = publish;
         this.steps = steps;
     }
 }

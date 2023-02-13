@@ -23,7 +23,6 @@ public class ChecklistPostDto {
     private Integer viewCount;
     private Integer scrapCount;
     private Integer ageGroup;
-    private Boolean visibility;
     private String createdDate;
     private String modifiedDate;
 
@@ -35,7 +34,6 @@ public class ChecklistPostDto {
         dto.ownerName = checklist.getOwner().getName();
         dto.title = checklist.getTitle();
         dto.brief = checklist.getBrief();
-        dto.visibility = checklist.getPublish();
 
         dto.stepCount = checklist.getStepCount();
         dto.viewCount = checklist.getViewCount();

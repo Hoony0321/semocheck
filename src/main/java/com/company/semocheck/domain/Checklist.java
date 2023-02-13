@@ -83,7 +83,7 @@ public class Checklist extends BaseTimeEntity{
 
         entity.title = requestDto.getTitle();
         entity.brief = requestDto.getBrief();
-        entity.publish = requestDto.getVisibility();
+        entity.publish = requestDto.getPublish();
 
         //연관관계 설정
         entity.setOwner(member); //owner
@@ -123,7 +123,7 @@ public class Checklist extends BaseTimeEntity{
     public void updateInfo(UpdateChecklistRequestDto requestDto, SubCategory subCategory) {
         if(requestDto.getTitle() != null) this.title = requestDto.getTitle();
         if(requestDto.getBrief() != null) this.brief = requestDto.getBrief();
-        if(requestDto.getVisibility() != null) this.publish = requestDto.getVisibility();
+        if(requestDto.getPublish() != null) this.publish = requestDto.getPublish();
         if(subCategory != null) this.setCategory(subCategory);
     }
 

@@ -28,7 +28,7 @@ public class ChecklistDetailDto {
     private Integer viewCount;
     private Integer scrapCount;
     private Integer ageGroup;
-    private Boolean visibility;
+    private Boolean publish;
 
     private String createdDate;
     private String modifiedDate;
@@ -43,7 +43,7 @@ public class ChecklistDetailDto {
         dto.ownerName = checklist.getOwner().getName();
         dto.title = checklist.getTitle();
         dto.brief = checklist.getBrief();
-        dto.visibility = checklist.getPublish();
+        dto.publish = checklist.getPublish();
         dto.complete = checklist.getComplete();
         dto.progress = checklist.getProgress();
 

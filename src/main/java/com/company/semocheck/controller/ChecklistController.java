@@ -221,7 +221,7 @@ public class ChecklistController {
     @Operation(summary = "upload checklist's image api", description = "체크리스트 이미지 파일을 업로드합니다.")
     @PostMapping("/api/members/checklists/{checklist_id}/images")
     private ResponseDto uploadChecklistImage(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId,
-                                             @RequestParam("file") MultipartFile imgFile){
+                                             @RequestParam("image") MultipartFile imgFile){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
@@ -240,7 +240,7 @@ public class ChecklistController {
             "회원의 체크리스트가 아닌 경우 수정할 수 없습니다. - 403 Forbidden error\n\n" +
             "만약 해당 체크리스트의 없는 step id인 경우 에러를 발생합니다. - 404 Not found error\n\n" +
             "update할 step만 넣어주면 됩니다.")
-    @PutMapping("/api/members/checklists/{checklist_id}/steps")
+    @PatchMapping("/api/members/checklists/{checklist_id}/steps")
     private ResponseDto updateProgress(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId, @RequestBody UpdateStepRequestDto requestDto){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);

@@ -169,7 +169,7 @@ public class ChecklistService {
     @Transactional
     public void updateChecklist(Checklist checklist, UpdateChecklistRequestDto requestDto) {
         //check origin checklist validation
-        if(checklist.getOrigin() != null && requestDto.getVisibility()){ //origin checklist가 존재하면 visibility true 불가능.
+        if(checklist.getOrigin() != null && requestDto.getPublish()){ //origin checklist가 존재하면 publish true 불가능.
             throw new GeneralException(Code.FORBIDDEN, "해당 체크리스트는 공개할 수 없습니다.");
         }
 
