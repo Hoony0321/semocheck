@@ -134,7 +134,7 @@ public class ChecklistService {
     }
 
     @Transactional
-    public Long createChecklist(CreateChecklistRequestDto requestDto, Member member, MultipartFile imgFile){
+    public Long createChecklist(CreateChecklistRequestDto requestDto, Member member){
         SubCategory category = null;
 
         //Category Entity 찾기
@@ -147,12 +147,6 @@ public class ChecklistService {
 
         //Checklist 생성
         Checklist checklist = Checklist.createEntity(requestDto, member, category);
-
-        //Image File 설정
-        if(imgFile != null && !imgFile.isEmpty()){
-            FileDetail file = fileService.upload("checklist/image", imgFile);
-            checklist.setFile(file);
-        }
 
         //Checklist 저장
         checklistRepository.save(checklist);

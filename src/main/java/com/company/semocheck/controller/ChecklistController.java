@@ -110,7 +110,7 @@ public class ChecklistController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Get checklist by id API (No Login)", description = "체크리스트 id를 통해 조회합니다. - 회원의 체크리스트가 아니더라도 조회 가능합니다.\n\n" +
+    @Operation(summary = "Get simple info of checklist by id API (No Login)", description = "체크리스트 id를 통해 조회합니다. - 회원의 체크리스트가 아니더라도 조회 가능합니다.\n\n" +
             "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
     @GetMapping("/api/checklists/{checklist_id}")
     private DataResponseDto<ChecklistPostDto> getChecklistByIdNoLogin(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId){
@@ -122,7 +122,7 @@ public class ChecklistController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Get checklist's detail info by id API", description = "체크리스트 id를 통해 조회합니다.\n\n" +
+    @Operation(summary = "Get detail info of checklist by id API", description = "체크리스트 id를 통해 조회합니다.\n\n" +
             "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
     @GetMapping("/api/members/checklists/{checklist_id}")
     private DataResponseDto<ChecklistDetailDto> getChecklistById(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId){
@@ -163,12 +163,12 @@ public class ChecklistController {
     @Operation(summary = "Create new checklist API", description = "새로운 체크리스트를 생성합니다.\n\n" +
             "필수 목록 : [title]")
     @PostMapping(value = "/api/members/checklists", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    private DataResponseDto<Long> createNewChecklist(HttpServletRequest request, @RequestPart("request") CreateChecklistRequestDto requestDto, @RequestPart("image") MultipartFile imgFile){
+    private DataResponseDto<Long> createNewChecklist(HttpServletRequest request, @RequestPart("request") CreateChecklistRequestDto requestDto){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
         //Create New Checklist Entity
-        Long checklistId = checklistService.createChecklist(requestDto, member, imgFile);
+        Long checklistId = checklistService.createChecklist(requestDto, member);
 
         return DataResponseDto.of(checklistId, "체크리스트 생성 성공");
     }
@@ -217,23 +217,7 @@ public class ChecklistController {
         return DataResponseDto.of(ChecklistPostDto.createDto(checklist), "체크리스트 수정 성공");
     }
 
-    @ApiDocumentResponse
-    @Operation(summary = "upload checklist's image api", description = "체크리스트 이미지 파일을 업로드합니다.")
-    @PostMapping("/api/members/checklists/{checklist_id}/images")
-    private ResponseDto uploadChecklistImage(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId,
-                                             @RequestParam("image") MultipartFile imgFile){
-        //Get member by jwt token
-        Member member = memberService.getMemberByJwt(request);
 
-        //Get checklist by id
-        Checklist checklist = checklistService.findById(checklistId);
-        if(!checklist.getOwner().equals(member)) throw new GeneralException(Code.FORBIDDEN);
-
-        //Upload checklists's image
-        checklistService.uploadImage(checklist, imgFile);
-
-        return ResponseDto.of(true, "업로드 성공");
-    }
 
     @ApiDocumentResponse
     @Operation(summary = "Update checklist progress API", description = "해당 체크리스트의 진행 정보를 수정합니다.\n\n" +

@@ -6,6 +6,7 @@ import com.company.semocheck.common.response.DataResponseDto;
 import com.company.semocheck.common.response.ResponseDto;
 import com.company.semocheck.domain.SubCategory;
 import com.company.semocheck.domain.MainCategory;
+import com.company.semocheck.domain.dto.category.MainCategoryDto;
 import com.company.semocheck.domain.dto.category.SubCategoryDto;
 import com.company.semocheck.domain.dto.request.category.CreateCategoryRequestDto;
 import com.company.semocheck.exception.GeneralException;
@@ -64,6 +65,21 @@ public class CategoryController {
     }
 
     @ApiDocumentResponse
+    @Operation(summary = "Get main categories's name API", description = "메인 카테고리 이름을 조회합니다.")
+    @GetMapping("/api/categories/main")
+    public ResponseDto getMainCategories(){
+        List<MainCategory> allMainCategories = categoryService.getAllMainCategories();
+
+        List<MainCategoryDto> categoryDtos = new ArrayList<>();
+        for(MainCategory mainCategory : allMainCategories){
+            categoryDtos.add(MainCategoryDto.createDto(mainCategory));
+        }
+
+        return DataResponseDto.of(categoryDtos, "조회 성공");
+    }
+
+
+    @ApiDocumentResponse
     @Operation(summary = "Create categories API", description = "카테고리를 생성합니다.")
     @PostMapping("/api/categories")
     public ResponseDto createCategories(@RequestBody CreateCategoryRequestDto requestDto){
@@ -79,8 +95,8 @@ public class CategoryController {
                                             @RequestParam(required = false, name = "sub") String subName){
 
         if(mainName == null) throw new GeneralException(Code.BAD_REQUEST);
-
         if(subName == null) categoryService.removeMainCategory(mainName);
+
         else categoryService.removeSubCategory(mainName, subName);
 
         return ResponseDto.of(true, "카테고리 삭제 성공");

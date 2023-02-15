@@ -31,15 +31,18 @@ public class FileService {
     private String bucket;
 
 
-    //TODO : 현재는 AWS 저장되고 Entity 저장되는 구조임 -> 엔티티 생성 과정에서 오류가 생기면 S3에 잉여 파일이 올라가게 됨. -> 수정 필요
+    @Transactional
     public FileDetail upload(String folder, MultipartFile multipartFile) {
+        //create file detail by given info
         FileDetail fileDetail = FileDetail.createEntity(folder, multipartFile);
         String fullPath = fileDetail.getPath();
 
+        //create object metedata
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(multipartFile.getContentType());
         objectMetadata.setContentLength(multipartFile.getSize());
 
+        //upload file to aws
         try(InputStream inputStream = multipartFile.getInputStream()){
             amazonS3Client.putObject(new PutObjectRequest(bucket, fullPath, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
@@ -47,15 +50,30 @@ public class FileService {
             throw new GeneralException(Code.BAD_REQUEST, e.getMessage());
         }
 
+        //file save
+        save(fileDetail);
         return fileDetail;
     }
 
     @Transactional
-    public String save(FileDetail fileDetail){
+    public void save(FileDetail fileDetail){
         Optional<FileDetail> findOne = fileDetailRepository.findById(fileDetail.getId());
         if(findOne.isPresent()) throw new GeneralException(Code.NOT_FOUND, "이미 저장된 파일입니다.");
-        fileDetailRepository.save(fileDetail);
-        return fileDetail.getId();
+
+        try{
+            fileDetailRepository.save(fileDetail);
+        } catch (Exception e){
+            //delete file on aws
+            amazonS3Client.deleteObject(bucket, fileDetail.getPath());
+            throw new GeneralException(Code.TRANSACTION_NOT_COMMITED, "트랜잭션 실패");
+        }
+    }
+
+    @Transactional
+    public void removeFile(FileDetail fileDetail){
+        //delete file on aws
+        amazonS3Client.deleteObject(bucket, fileDetail.getPath());
+        fileDetailRepository.delete(fileDetail);
     }
 
     public FileDetail findById(String id) {
@@ -64,4 +82,5 @@ public class FileService {
 
         return findOne.get();
     }
+
 }
