@@ -1,12 +1,10 @@
 package com.company.semocheck.controller;
 
-import com.company.semocheck.auth.jwt.JwtUtils;
 import com.company.semocheck.common.response.ApiDocumentResponse;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.DataResponseDto;
 import com.company.semocheck.common.response.ResponseDto;
 import com.company.semocheck.domain.Checklist;
-import com.company.semocheck.domain.MainCategory;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.dto.checklist.ChecklistDetailDto;
 import com.company.semocheck.domain.dto.checklist.ChecklistPostDto;
@@ -14,22 +12,17 @@ import com.company.semocheck.domain.dto.request.checklist.CreateChecklistRequest
 import com.company.semocheck.domain.dto.request.checklist.UpdateChecklistRequestDto;
 import com.company.semocheck.domain.dto.request.checklist.UpdateStepRequestDto;
 import com.company.semocheck.exception.GeneralException;
-import com.company.semocheck.service.CategoryService;
 import com.company.semocheck.service.ChecklistService;
 import com.company.semocheck.service.MemberService;
-import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "체크리스트", description = "체크리스트 관련 API 모음입니다.")
 @RestController
@@ -163,14 +156,17 @@ public class ChecklistController {
     @Operation(summary = "Create new checklist API", description = "새로운 체크리스트를 생성합니다.\n\n" +
             "필수 목록 : [title]")
     @PostMapping(value = "/api/members/checklists", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    private DataResponseDto<Long> createNewChecklist(HttpServletRequest request, @RequestPart("request") CreateChecklistRequestDto requestDto){
+    private DataResponseDto<ChecklistPostDto> createChecklist(HttpServletRequest request, @RequestBody CreateChecklistRequestDto requestDto){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
-        //Create New Checklist Entity
+        //Create a checklist Entity
         Long checklistId = checklistService.createChecklist(requestDto, member);
 
-        return DataResponseDto.of(checklistId, "체크리스트 생성 성공");
+        //Get the checklist entity
+        Checklist checklist = checklistService.findById(checklistId);
+
+        return DataResponseDto.of(ChecklistPostDto.createDto(checklist), "체크리스트 생성 성공");
     }
 
     @ApiDocumentResponse

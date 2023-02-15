@@ -148,6 +148,10 @@ public class ChecklistService {
         //Checklist 생성
         Checklist checklist = Checklist.createEntity(requestDto, member, category);
 
+        //image file
+        FileDetail fileDetail = fileService.findById(requestDto.getFileId());
+        checklist.setFile(fileDetail);
+
         //Checklist 저장
         checklistRepository.save(checklist);
 

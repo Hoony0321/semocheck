@@ -19,14 +19,17 @@ public class CreateChecklistRequestDto {
     private Boolean publish;
     private List<StepRequestDto> steps;
 
+    private String fileId;
+
     @Builder
     public CreateChecklistRequestDto(String title, String brief, String mainCategoryName, String subCategoryName,
-                                     Boolean publish, List<StepRequestDto> steps) {
+                                     Boolean publish, List<StepRequestDto> steps, String fileId) {
         this.title = title;
         this.brief = brief;
         this.mainCategoryName = mainCategoryName;
         this.subCategoryName = subCategoryName;
         this.publish = publish;
         this.steps = steps;
+        this.fileId = fileId;
     }
 }
