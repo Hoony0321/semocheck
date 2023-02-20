@@ -15,15 +15,6 @@ public class UpdateChecklistRequestDto {
     private String mainCategoryName;
     private String subCategoryName;
     private Boolean publish;
+    private String fileId;
     private List<StepRequestDto> steps;
-
-    @Builder
-    public UpdateChecklistRequestDto(String title, String brief, String mainCategoryName, String subCategoryName, Boolean publish, List<StepRequestDto> steps) {
-        this.title = title;
-        this.brief = brief;
-        this.mainCategoryName = mainCategoryName;
-        this.subCategoryName = subCategoryName;
-        this.publish = publish;
-        this.steps = steps;
-    }
 }

@@ -82,6 +82,7 @@ public class ChecklistController {
                                                                                @RequestParam(required = false) String title,
                                                                                @RequestParam(required = false) Boolean published,
                                                                                @RequestParam(required = false) Boolean completed,
+                                                                               @RequestParam(required = false) Boolean owner,
                                                                                @RequestParam(required = false, defaultValue = "date") String sort,
                                                                                @RequestParam(required = false, defaultValue = "desc") String direction){
 
@@ -89,7 +90,7 @@ public class ChecklistController {
         Member member = memberService.getMemberByJwt(request);
 
         //get checklists by query
-        List<Checklist> checklists = checklistService.getMemberChecklistsByQuery(member, categoryMain, categorySub, title, published, completed);
+        List<Checklist> checklists = checklistService.getMemberChecklistsByQuery(member, categoryMain, categorySub, title, published, completed, owner);
 
         //sorting checklists
         checklists = checklistService.sortChecklists(checklists, sort, direction);
@@ -172,7 +173,8 @@ public class ChecklistController {
     @ApiDocumentResponse
     @Operation(summary = "Use existed checklist API by checklist id", description = "기존에 존재하는 체크리스트를 사용합니다.\n\n" +
             "다른 사람의 체크리스트만 사용가능합니다.\n\n" +
-            "자신의 체크리스트는 이미 사용중인 상태로 만약 checklist가 자기 소유일경우 에러를 발생합니다. - 400 Bad request")
+            "자신의 체크리스트는 이미 사용중인 상태입니다.\n\n" +
+            "따라서 만약 checklist가 자기 소유일경우 에러를 발생합니다. - 400 Bad request")
     @PostMapping(value = "/api/members/checklists/{checklist_id}/use")
     private DataResponseDto<Long> useExistedChecklist(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId){
         //Get member by jwt token
@@ -198,8 +200,8 @@ public class ChecklistController {
             "수정을 하지 않더라도 기존 step id에 기존 정보를 포함시켜서 넘겨줘야 합니다.\n\n" +
             "step list 부분은 기존 정보를 넘기지 않을 시 삭제된 것으로 간주됩니다.\n\n" +
             "step id가 -1인 경우는 새로 추가된 step으로 간주됩니다.")
-    @PutMapping("/api/members/checklists/{checklist_id}")
-    private DataResponseDto<ChecklistPostDto> updateChecklistInfo(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId, @RequestPart("request") UpdateChecklistRequestDto requestDto){
+    @PatchMapping("/api/members/checklists/{checklist_id}")
+    private DataResponseDto<ChecklistPostDto> updateChecklistInfo(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId, @RequestBody UpdateChecklistRequestDto requestDto){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 

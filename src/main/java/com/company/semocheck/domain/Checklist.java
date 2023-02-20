@@ -121,10 +121,10 @@ public class Checklist extends BaseTimeEntity{
 
     //====== 수정 메서드 ======//
     public void updateInfo(UpdateChecklistRequestDto requestDto, SubCategory subCategory) {
-        if(requestDto.getTitle() != null) this.title = requestDto.getTitle();
-        if(requestDto.getBrief() != null) this.brief = requestDto.getBrief();
-        if(requestDto.getPublish() != null) this.publish = requestDto.getPublish();
-        if(subCategory != null) this.setCategory(subCategory);
+        this.title = requestDto.getTitle();
+        this.brief = requestDto.getBrief();
+        this.publish = requestDto.getPublish();
+        this.setCategory(subCategory);
     }
 
     public void updateProgress(){

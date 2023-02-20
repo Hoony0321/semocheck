@@ -74,7 +74,7 @@ public class ChecklistService {
         return checklists;
     }
 
-    public List<Checklist> getMemberChecklistsByQuery(Member member, String categoryMain, String categorySub, String title, Boolean published, Boolean completed) {
+    public List<Checklist> getMemberChecklistsByQuery(Member member, String categoryMain, String categorySub, String title, Boolean published, Boolean completed, Boolean owner) {
         List<Checklist> checklists = getAllMemberChecklists(member);
         //Category MainName
         if(categoryMain != null){
@@ -109,6 +109,20 @@ public class ChecklistService {
             checklists = checklists.stream()
                     .filter(chk -> chk.getComplete() == completed)
                     .collect(Collectors.toList());
+        }
+
+        //Checklist owner
+        if(owner != null){
+            if(owner){ //자신의 체크리스트만 리스트
+                checklists = checklists.stream()
+                        .filter(chk -> chk.getOrigin() == null)
+                        .collect(Collectors.toList());
+            }
+            else{
+                checklists = checklists.stream()
+                        .filter(chk -> chk.getOrigin() != null)
+                        .collect(Collectors.toList());
+            }
         }
 
         return checklists;
@@ -149,8 +163,10 @@ public class ChecklistService {
         Checklist checklist = Checklist.createEntity(requestDto, member, category);
 
         //image file
-        FileDetail fileDetail = fileService.findById(requestDto.getFileId());
-        checklist.setFile(fileDetail);
+        if(requestDto.getFileId() != null){
+            FileDetail fileDetail = fileService.findById(requestDto.getFileId());
+            checklist.setFile(fileDetail);
+        }
 
         //Checklist 저장
         checklistRepository.save(checklist);
@@ -218,18 +234,15 @@ public class ChecklistService {
 
         //checklist 기본 정보 수정
         checklist.updateInfo(requestDto, subCategory);
+
+        //image 설정
+        if(requestDto.getFileId() != null){
+            FileDetail newImageFile = fileService.findById(requestDto.getFileId());
+            checklist.setFile(newImageFile);
+        }
+        else{ checklist.setFile(null); }
+
     }
-
-    @Transactional
-    public void uploadImage(Checklist checklist, MultipartFile imgFile) {
-        if(imgFile.isEmpty()) throw new GeneralException(Code.BAD_REQUEST, "이미지 파일이 없습니다.");
-
-        //image file update
-        FileDetail file = fileService.upload("checklist/image", imgFile);
-        checklist.setFile(file);
-    }
-
-
 
     @Transactional
     public void updateStepProgress(Checklist checklist, UpdateStepRequestDto requestDto) {
