@@ -36,7 +36,6 @@ public class MemberCategory {
     }
 
     //====== 연관관계 메서드 ======//
-
     public void setMember(Member member) {this.member = member;}
 
     public void setSubCategory(SubCategory subCategory) {this.subCategory = subCategory;}

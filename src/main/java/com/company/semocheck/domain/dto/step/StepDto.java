@@ -1,4 +1,4 @@
-package com.company.semocheck.domain.dto;
+package com.company.semocheck.domain.dto.step;
 
 import com.company.semocheck.domain.Step;
 import lombok.Data;

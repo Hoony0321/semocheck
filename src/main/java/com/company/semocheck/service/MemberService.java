@@ -69,7 +69,7 @@ public class MemberService {
         member.setInfoNewMember(joinRequestDto);
 
         //category setting
-        for (SubCategoryDto dto : joinRequestDto.getCategorys()) {
+        for (SubCategoryDto dto : joinRequestDto.getCategories()) {
             SubCategory subCategory = categoryService.findSubCategoryByName(dto.getMain(), dto.getName());
             this.addMemberCategory(member, subCategory);
         }

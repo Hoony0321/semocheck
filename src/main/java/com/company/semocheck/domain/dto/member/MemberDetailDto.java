@@ -1,4 +1,4 @@
-package com.company.semocheck.domain.dto;
+package com.company.semocheck.domain.dto.member;
 
 import com.company.semocheck.domain.Member;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class MemberDto {
+public class MemberDetailDto {
 
     private Long id;
     private String provider;
@@ -19,7 +19,7 @@ public class MemberDto {
     private Integer age;
 
     @Builder
-    public MemberDto(Long id, String provider, String email, String name, String picture, Boolean agreeNotify, Boolean sex, Integer age) {
+    public MemberDetailDto(Long id, String provider, String email, String name, String picture, Boolean agreeNotify, Boolean sex, Integer age) {
         this.id = id;
         this.provider = provider;
         this.email = email;
@@ -30,8 +30,8 @@ public class MemberDto {
         this.age = age;
     }
 
-    static public MemberDto createDto(Member member){
-        return MemberDto.builder()
+    static public MemberDetailDto createDto(Member member){
+        return MemberDetailDto.builder()
                 .id(member.getId())
                 .provider(member.getProvider())
                 .name(member.getName())

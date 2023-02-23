@@ -7,8 +7,9 @@ import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.DataResponseDto;
 import com.company.semocheck.common.response.ResponseDto;
 import com.company.semocheck.domain.Member;
-import com.company.semocheck.domain.dto.MemberDto;
+import com.company.semocheck.domain.dto.member.MemberDetailDto;
 import com.company.semocheck.domain.dto.Token;
+import com.company.semocheck.domain.dto.member.MemberDto;
 import com.company.semocheck.domain.dto.request.member.JoinRequestDto;
 import com.company.semocheck.domain.dto.request.member.UpdateRequestDto;
 import com.company.semocheck.domain.dto.response.LoginResponseDto;
@@ -61,13 +62,38 @@ public class MemberController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Get member's detail info API", description = "회원 정보를 조회합니다.\n\n" +
-            "해당 회원의 JWT 토큰으로만 접근 가능한 URL입니다.")
+    @Operation(summary = "Get member's info API", description = "회원 정보를 조회합니다.\n\n" +
+            "해당 회원의 JWT 토큰으로만 접근 가능합니다.")
     @GetMapping("")
-    public DataResponseDto<MemberDto> getMemberDetailInfo(HttpServletRequest request){
+    public DataResponseDto<MemberDto> getMemberInfo(HttpServletRequest request){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
-        return DataResponseDto.of(MemberDto.createDto(member), "회원 정보 조회 성공");
+        return DataResponseDto.of(MemberDto.createDto(member));
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "Get member's detail info API", description = "회원 정보를 조회합니다.\n\n" +
+            "해당 회원의 JWT 토큰으로만 접근 가능합니다.")
+    @GetMapping("/detail")
+    public DataResponseDto<MemberDetailDto> getMemberDetailInfo(HttpServletRequest request){
+        //Get member by jwt token
+        Member member = memberService.getMemberByJwt(request);
+        return DataResponseDto.of(MemberDetailDto.createDto(member), "회원 정보 조회 성공");
+    }
+
+    //TODO : 민감한 정보를 수정할 때 회원의 비밀번호를 추가로 받는 등 -> 추가 확인 필요!
+    @ApiDocumentResponse
+    @Operation(summary = "Update member's info API", description = "회원 정보를 수정합니다.\n\n" +
+            "모든 정보 수정이 가능한 API입니다.\n" +
+            "만약 수정을 원치 않는 정보도 기존 값으로 넣어주시면 됩니다.\n" +
+            "해당 회원의 JWT 토큰으로만 접근 가능합니다.")
+    @PutMapping("")
+    public DataResponseDto<MemberDetailDto> updateMember(HttpServletRequest request, @RequestBody UpdateRequestDto requestDto) {
+        //Get member by jwt token
+        Member member = memberService.getMemberByJwt(request);
+
+        Member updatedMember = memberService.updateInfo(member, requestDto);
+        return DataResponseDto.of(MemberDetailDto.createDto(updatedMember), "회원 정보 수정 성공");
     }
 
     //TODO : delete할 때 회원의 비밀번호를 추가로 받는 등 -> 추가 확인 필요! -> 해당 계정을 inactivate 시키는 방향으로 진행!
@@ -82,21 +108,6 @@ public class MemberController {
         memberService.delete(member);
 
         return ResponseDto.of(true, "회원 삭제 성공");
-    }
-
-    //TODO : 민감한 정보를 수정할 때 회원의 비밀번호를 추가로 받는 등 -> 추가 확인 필요!
-    @ApiDocumentResponse
-    @Operation(summary = "Update member's info API", description = "회원 정보를 수정합니다.\n\n" +
-            "모든 정보 수정이 가능한 API입니다.\n" +
-            "만약 수정을 원치 않는 정보도 기존 값으로 넣어주시면 됩니다.\n" +
-            "해당 회원의 JWT 토큰으로만 접근 가능한 URL입니다.")
-    @PutMapping("")
-    public DataResponseDto<MemberDto> updateMember(HttpServletRequest request, @RequestBody UpdateRequestDto requestDto) {
-        //Get member by jwt token
-        Member member = memberService.getMemberByJwt(request);
-
-        Member updatedMember = memberService.updateInfo(member, requestDto);
-        return DataResponseDto.of(MemberDto.createDto(updatedMember), "회원 정보 수정 성공");
     }
 
 }

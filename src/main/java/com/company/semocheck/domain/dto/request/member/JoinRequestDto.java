@@ -12,5 +12,5 @@ public class JoinRequestDto {
     private Boolean agreeNotify;
     private Boolean sex;
     private Integer age;
-    private List<SubCategoryDto> categorys;
+    private List<SubCategoryDto> categories;
 }

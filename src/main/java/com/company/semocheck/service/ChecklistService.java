@@ -35,10 +35,6 @@ public class ChecklistService {
         return checklistRepository.findByPublishTrue();
     }
 
-    public List<Checklist> getAllMemberChecklists(Member member) {
-        return checklistRepository.findByOwner(member);
-    }
-
     public List<Checklist> getPublishedChecklistByQuery(String categoryMain, String categorySub, String title, String owner) {
 
         List<Checklist> checklists = getAllPublishedChecklists();
@@ -75,7 +71,7 @@ public class ChecklistService {
     }
 
     public List<Checklist> getMemberChecklistsByQuery(Member member, String categoryMain, String categorySub, String title, Boolean published, Boolean completed, Boolean owner) {
-        List<Checklist> checklists = getAllMemberChecklists(member);
+        List<Checklist> checklists = member.getChecklists();
         //Category MainName
         if(categoryMain != null){
             checklists = checklists.stream()

@@ -26,7 +26,6 @@ public class Step {
     @NotNull
     private Integer stepOrder;
     private String description;
-
     private Boolean isCheck;
 
     @ManyToOne(fetch = FetchType.LAZY)
