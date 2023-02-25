@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Data
@@ -58,6 +59,7 @@ public class ChecklistPostDto {
             dto.steps.add(stepPostDto);
         }
 
+        dto.steps.sort(Comparator.comparing(StepPostDto::getOrder));
         return dto;
     }
 }
