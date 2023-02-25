@@ -157,7 +157,7 @@ public class ChecklistController {
     @ApiDocumentResponse
     @Operation(summary = "Create new checklist API", description = "새로운 체크리스트를 생성합니다.\n\n" +
             "필수 목록 : [title]")
-    @PostMapping(value = "/api/members/checklists", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/api/members/checklists")
     private DataResponseDto<ChecklistPostDto> createChecklist(HttpServletRequest request, @RequestBody CreateChecklistRequestDto requestDto){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
@@ -202,7 +202,7 @@ public class ChecklistController {
             "수정을 하지 않더라도 기존 step id에 기존 정보를 포함시켜서 넘겨줘야 합니다.\n\n" +
             "step list 부분은 기존 정보를 넘기지 않을 시 삭제된 것으로 간주됩니다.\n\n" +
             "step id가 -1인 경우는 새로 추가된 step으로 간주됩니다.")
-    @PatchMapping("/api/members/checklists/{checklist_id}")
+    @PutMapping("/api/members/checklists/{checklist_id}")
     private DataResponseDto<ChecklistPostDto> updateChecklistInfo(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId, @RequestBody UpdateChecklistRequestDto requestDto){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);

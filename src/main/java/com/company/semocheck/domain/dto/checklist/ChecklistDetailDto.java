@@ -21,22 +21,22 @@ public class ChecklistDetailDto {
     private String ownerName;
     private Long originChecklistId;
     private SubCategoryDto category;
-    private List<StepDto> stepItems = new ArrayList<>();
     private String title;
     private String brief;
-
+    private List<StepDto> steps = new ArrayList<>();
     private Integer stepCount;
     private Integer viewCount;
     private Integer scrapCount;
     private Integer ageGroup;
-    private Boolean publish;
-
     private String createdDate;
     private String modifiedDate;
+    private FileDto fileDto;
 
+    //detail info
+    private Boolean publish;
     private Boolean complete;
     private String progress;
-    private FileDto fileDto;
+
 
     public static ChecklistDetailDto createDto(Checklist checklist) {
         ChecklistDetailDto dto = new ChecklistDetailDto();
@@ -61,10 +61,10 @@ public class ChecklistDetailDto {
         if(checklist.getFileDetail() != null) dto.fileDto = FileDto.createDto(checklist.getFileDetail());
 
         for (Step step : checklist.getSteps()) {
-            dto.stepItems.add(StepDto.createDto(step));
+            dto.steps.add(StepDto.createDto(step));
         }
 
-        dto.stepItems.sort(Comparator.comparing(StepDto::getOrder));
+        dto.steps.sort(Comparator.comparing(StepDto::getOrder));
         return dto;
     }
 }
