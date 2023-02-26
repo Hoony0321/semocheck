@@ -1,6 +1,6 @@
 package com.company.semocheck.domain;
 
-import com.company.semocheck.domain.dto.request.category.CreateCategoryRequestDto;
+import com.company.semocheck.domain.request.category.CreateCategoryRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

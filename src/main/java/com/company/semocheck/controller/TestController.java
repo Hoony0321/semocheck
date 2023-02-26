@@ -1,7 +1,7 @@
 package com.company.semocheck.controller;
 
 import com.company.semocheck.common.response.DataResponseDto;
-import com.company.semocheck.domain.dto.request.TestRequestDto;
+import com.company.semocheck.domain.request.TestRequestDto;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;

@@ -1,7 +1,7 @@
 package com.company.semocheck.domain;
 
-import com.company.semocheck.domain.dto.request.checklist.StepRequestDto;
-import com.company.semocheck.domain.dto.request.checklist.StepUpdateDto;
+import com.company.semocheck.domain.request.checklist.StepRequestDto;
+import com.company.semocheck.domain.request.checklist.StepUpdateDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

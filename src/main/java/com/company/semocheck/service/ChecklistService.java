@@ -2,14 +2,13 @@ package com.company.semocheck.service;
 
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.domain.*;
-import com.company.semocheck.domain.dto.request.checklist.*;
+import com.company.semocheck.domain.request.checklist.*;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.ChecklistRepository;
 import com.company.semocheck.repository.StepRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,19 +24,23 @@ public class ChecklistService {
     private final StepRepository stepRepository;
 
     public Checklist findById(Long id){
-        Optional<Checklist> findOne = checklistRepository.findById(id);
+        Optional<Checklist> findOne = checklistRepository.findByIdAndTemporaryIsNull(id);
         if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 id의 체크리스트는 존재하지 않습니다.");
 
         return findOne.get();
     }
 
-    public List<Checklist> getAllPublishedChecklists() {
-        return checklistRepository.findByPublishTrue();
+    public Checklist getMemberTempChecklistById(Member member, Long id){
+        Optional<Checklist> findOne = checklistRepository.findByIdAndTemporaryIsNotNull(id);
+        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 id의 체크리스트는 존재하지 않습니다.");
+        if(!findOne.get().getOwner().equals(member)) throw new GeneralException(Code.FORBIDDEN);
+        return findOne.get();
+
     }
 
     public List<Checklist> getPublishedChecklistByQuery(String categoryMain, String categorySub, String title, String owner) {
 
-        List<Checklist> checklists = getAllPublishedChecklists();
+        List<Checklist> checklists = checklistRepository.findByTemporaryIsNullAndPublishIsTrue();
 
         //Category MainName
         if(categoryMain != null){
@@ -71,7 +74,8 @@ public class ChecklistService {
     }
 
     public List<Checklist> getMemberChecklistsByQuery(Member member, String categoryMain, String categorySub, String title, Boolean published, Boolean completed, Boolean owner) {
-        List<Checklist> checklists = member.getChecklists();
+        List<Checklist> checklists = checklistRepository.findByOwnerAndTemporaryIsNull(member);
+
         //Category MainName
         if(categoryMain != null){
             checklists = checklists.stream()
@@ -126,7 +130,7 @@ public class ChecklistService {
 
     public List<Checklist> recommendChecklist(Member member) {
 
-        List<Checklist> checklists = checklistRepository.findByPublishTrue();
+        List<Checklist> checklists = checklistRepository.findByTemporaryIsNullAndPublishIsTrue();
 
         //filtering checklist by member's category
         List<SubCategory> subCategories = new ArrayList<>();
@@ -291,4 +295,8 @@ public class ChecklistService {
     }
 
 
+    public List<Checklist> getMemberTempChecklist(Member member) {
+        List<Checklist> checklists = checklistRepository.findByOwnerAndTemporaryIsNotNull(member);
+        return checklists;
+    }
 }

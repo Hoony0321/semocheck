@@ -8,7 +8,7 @@ import com.company.semocheck.domain.SubCategory;
 import com.company.semocheck.domain.MainCategory;
 import com.company.semocheck.domain.dto.category.MainCategoryDto;
 import com.company.semocheck.domain.dto.category.SubCategoryDto;
-import com.company.semocheck.domain.dto.request.category.CreateCategoryRequestDto;
+import com.company.semocheck.domain.request.category.CreateCategoryRequestDto;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;

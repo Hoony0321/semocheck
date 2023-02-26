@@ -1,8 +1,8 @@
 package com.company.semocheck.domain;
 
-import com.company.semocheck.domain.dto.request.checklist.CreateChecklistRequestDto;
-import com.company.semocheck.domain.dto.request.checklist.StepRequestDto;
-import com.company.semocheck.domain.dto.request.checklist.UpdateChecklistRequestDto;
+import com.company.semocheck.domain.request.checklist.CreateChecklistRequestDto;
+import com.company.semocheck.domain.request.checklist.StepRequestDto;
+import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -69,6 +69,9 @@ public class Checklist extends BaseTimeEntity{
 
     private Integer ageGroup;
 
+    //임시저장 페이지
+    private Integer temporary;
+
     //====== 진행 정보 =====//
     @ColumnDefault("0")
     private Boolean complete;
@@ -79,6 +82,27 @@ public class Checklist extends BaseTimeEntity{
 
     //====== 생성 메서드 ======//
     static public Checklist createEntity(CreateChecklistRequestDto requestDto, Member member, SubCategory category){
+        Checklist entity = new Checklist();
+
+        entity.title = requestDto.getTitle();
+        entity.brief = requestDto.getBrief();
+        entity.publish = requestDto.getPublish();
+        entity.temporary = requestDto.getTemporary();
+
+        //연관관계 설정
+        entity.setOwner(member); //owner
+        if(category != null) entity.setCategory(category); //category
+        if(requestDto.getSteps() != null){ //step
+            for (StepRequestDto stepRequestDto : requestDto.getSteps()) {
+                Step step = Step.createEntity(stepRequestDto, entity);
+                entity.addStep(step);
+            }
+        }
+
+        return entity;
+    }
+
+    static public Checklist createTempEntity(CreateChecklistRequestDto requestDto, Member member, SubCategory category){
         Checklist entity = new Checklist();
 
         entity.title = requestDto.getTitle();
@@ -124,6 +148,7 @@ public class Checklist extends BaseTimeEntity{
         this.title = requestDto.getTitle();
         this.brief = requestDto.getBrief();
         this.publish = requestDto.getPublish();
+        this.temporary = requestDto.getTemporary();
         this.setCategory(subCategory);
     }
 

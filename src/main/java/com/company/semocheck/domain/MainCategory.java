@@ -1,7 +1,7 @@
 package com.company.semocheck.domain;
 
-import com.company.semocheck.domain.dto.request.category.CreateCategoryRequestDto;
-import com.company.semocheck.domain.dto.request.category.UpdateMainCategoryRequestDto;
+import com.company.semocheck.domain.request.category.CreateCategoryRequestDto;
+import com.company.semocheck.domain.request.category.UpdateMainCategoryRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

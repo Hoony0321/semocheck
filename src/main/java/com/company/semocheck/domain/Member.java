@@ -2,8 +2,8 @@ package com.company.semocheck.domain;
 
 import com.company.semocheck.auth.oauth2.OAuth2Attributes;
 import com.company.semocheck.domain.dto.Role;
-import com.company.semocheck.domain.dto.request.member.JoinRequestDto;
-import com.company.semocheck.domain.dto.request.member.UpdateRequestDto;
+import com.company.semocheck.domain.request.member.JoinRequestDto;
+import com.company.semocheck.domain.request.member.UpdateRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

@@ -8,9 +8,10 @@ import com.company.semocheck.domain.Checklist;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.dto.checklist.ChecklistDetailDto;
 import com.company.semocheck.domain.dto.checklist.ChecklistPostDto;
-import com.company.semocheck.domain.dto.request.checklist.CreateChecklistRequestDto;
-import com.company.semocheck.domain.dto.request.checklist.UpdateChecklistRequestDto;
-import com.company.semocheck.domain.dto.request.checklist.UpdateStepRequestDto;
+import com.company.semocheck.domain.dto.checklist.TempChecklistDto;
+import com.company.semocheck.domain.request.checklist.CreateChecklistRequestDto;
+import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
+import com.company.semocheck.domain.request.checklist.UpdateStepRequestDto;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.service.ChecklistService;
 import com.company.semocheck.service.MemberService;
@@ -18,7 +19,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -105,13 +105,44 @@ public class ChecklistController {
     }
 
     @ApiDocumentResponse
+    @Operation(summary = "Get member's temporay checklist API", description = "회원의 임시 체크리스트를 조회합니다.\n\n" +
+            "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
+    @GetMapping("/api/members/checklists/temp")
+    private DataResponseDto<List<TempChecklistDto>> getMemberTempChecklists(HttpServletRequest request){
+        //Get member by jwt token
+        Member member = memberService.getMemberByJwt(request);
+
+        List<Checklist> checklists = checklistService.getMemberTempChecklist(member);
+
+        List<TempChecklistDto> tempChecklistDtos = new ArrayList<>();
+        for(Checklist checklist : checklists){
+            tempChecklistDtos.add(TempChecklistDto.createDto(checklist));
+        }
+
+        return DataResponseDto.of(tempChecklistDtos, "조회 성공");
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "Get detail info of member's temporay checklist by id API", description = "id를 통해 회원의 임시 체크리스트를 조회합니다.\n\n" +
+            "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
+    @GetMapping("/api/members/checklists/{checklist_id}/temp")
+    private DataResponseDto<TempChecklistDto> getMemberTempChecklistById(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId){
+        //Get member by jwt token
+        Member member = memberService.getMemberByJwt(request);
+
+        Checklist checklist = checklistService.getMemberTempChecklistById(member, checklistId);
+
+        return DataResponseDto.of(TempChecklistDto.createDto(checklist), "조회 성공");
+    }
+
+    @ApiDocumentResponse
     @Operation(summary = "Get simple info of checklist by id API (No Login)", description = "체크리스트 id를 통해 조회합니다. - 회원의 체크리스트가 아니더라도 조회 가능합니다.\n\n" +
             "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
     @GetMapping("/api/checklists/{checklist_id}")
     private DataResponseDto<ChecklistPostDto> getChecklistByIdNoLogin(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId){
         //Get checklist by id
         Checklist checklist = checklistService.findById(checklistId);
-        if(checklist.getPublish() == false) throw new GeneralException(Code.FORBIDDEN);
+        if(!checklist.getPublish()) throw new GeneralException(Code.NOT_FOUND, "해당 id의 체크리스트는 존재하지 않습니다.");
 
         return DataResponseDto.of(ChecklistPostDto.createDto(checklist), "조회 성공");
     }
