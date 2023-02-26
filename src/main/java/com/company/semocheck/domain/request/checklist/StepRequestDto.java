@@ -1,4 +1,4 @@
-package com.company.semocheck.domain.dto.request.checklist;
+package com.company.semocheck.domain.request.checklist;
 
 import lombok.Builder;
 import lombok.Data;

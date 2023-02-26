@@ -1,4 +1,4 @@
-package com.company.semocheck.domain.dto.request.category;
+package com.company.semocheck.domain.request.category;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

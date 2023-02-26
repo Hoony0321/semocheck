@@ -1,4 +1,4 @@
-package com.company.semocheck.domain.dto.response;
+package com.company.semocheck.domain.response;
 
 import com.company.semocheck.domain.dto.Token;
 import lombok.Builder;
