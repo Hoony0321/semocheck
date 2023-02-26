@@ -1,19 +1,16 @@
 package com.company.semocheck.controller;
 
 import com.company.semocheck.auth.jwt.JwtProvider;
-import com.company.semocheck.auth.jwt.JwtUtils;
 import com.company.semocheck.auth.oauth2.OAuth2Attributes;
 import com.company.semocheck.common.response.*;
 import com.company.semocheck.domain.Member;
-import com.company.semocheck.domain.RefreshToken;
 import com.company.semocheck.domain.dto.Token;
-import com.company.semocheck.domain.dto.response.LoginResponseDto;
+import com.company.semocheck.domain.response.LoginResponseDto;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.service.AuthService;
 import com.company.semocheck.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,11 +25,10 @@ public class AuthController {
 
     private final AuthService authService;
     private final MemberService memberService;
-
     private final JwtProvider jwtProvider;
-    private final JwtUtils jwtUtils;
 
 
+    //TODO : AuthService에서 login 로직 처리하도록 바꾸기
     @ApiDocumentResponse
     @Operation(summary = "Login API", description = "OAuth Token 받아서 JWT access & refresh Token을 반환합니다.")
     @GetMapping("/login")

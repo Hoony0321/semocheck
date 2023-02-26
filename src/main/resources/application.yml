@@ -59,8 +59,9 @@ cloud:
     stack:
       auto: false
 
+
+
 logging:
   level:
-    org:
-      hibernate:
-        type: trace
+    org.hibernate.type: trace
+    org.hibernate.type.descriptor.sql: trace
