@@ -32,6 +32,7 @@ public class ChecklistPostDto {
     private String createdDate;
     private String modifiedDate;
     private FileDto fileDto;
+    private Integer defaultImage;
 
 
 
@@ -41,6 +42,7 @@ public class ChecklistPostDto {
         dto.ownerName = checklist.getOwner().getName();
         dto.title = checklist.getTitle();
         dto.brief = checklist.getBrief();
+        dto.defaultImage = checklist.getDefaultImage();
 
         dto.stepCount = checklist.getStepCount();
         dto.viewCount = checklist.getViewCount();

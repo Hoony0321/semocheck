@@ -45,7 +45,7 @@ public class Checklist extends BaseTimeEntity{
     @Size(max = 60)
     private String title;
 
-    @Size(max = 255)
+    @Size(max = 250)
     private String brief;
 
     @ColumnDefault("0")
@@ -68,6 +68,8 @@ public class Checklist extends BaseTimeEntity{
     private Integer scrapCount;
 
     private Integer ageGroup;
+
+    private Integer defaultImage;
 
     //임시저장 페이지
     private Integer temporary;

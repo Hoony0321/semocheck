@@ -25,6 +25,7 @@ public class Step {
     private String name;
     @NotNull
     private Integer stepOrder;
+    @Size(max = 100)
     private String description;
     private Boolean isCheck;
 

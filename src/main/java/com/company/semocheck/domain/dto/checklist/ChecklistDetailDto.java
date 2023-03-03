@@ -31,6 +31,7 @@ public class ChecklistDetailDto {
     private String createdDate;
     private String modifiedDate;
     private FileDto fileDto;
+    private Integer defaultImage;
 
     //detail info
     private Boolean publish;
@@ -47,6 +48,7 @@ public class ChecklistDetailDto {
         dto.publish = checklist.getPublish();
         dto.complete = checklist.getComplete();
         dto.progress = checklist.getProgress();
+        dto.defaultImage = checklist.getDefaultImage();
 
         dto.stepCount = checklist.getStepCount();
         dto.viewCount = checklist.getViewCount();
