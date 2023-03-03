@@ -200,8 +200,8 @@ public class ChecklistController {
         Member member = memberService.getMemberByJwt(request);
 
         //Get checklist by id
-        Optional<Checklist> findOne = member.getChecklists().stream().filter(chk -> chk.getId().equals(checklistId)).findFirst();
-        if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, "이미 사용중인 체크리스트입니다.");
+        //Optional<Checklist> findOne = member.getChecklists().stream().filter(chk -> chk.getId().equals(checklistId)).findFirst();
+        //if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, "이미 사용중인 체크리스트입니다.");
 
         //Create checklist
         Checklist checklist = checklistService.findById(checklistId);
