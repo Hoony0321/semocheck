@@ -123,19 +123,6 @@ public class ChecklistController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Get detail info of member's temporay checklist by id API", description = "id를 통해 회원의 임시 체크리스트를 조회합니다.\n\n" +
-            "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
-    @GetMapping("/api/members/checklists/{checklist_id}/temp")
-    private DataResponseDto<TempChecklistDto> getMemberTempChecklistById(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId){
-        //Get member by jwt token
-        Member member = memberService.getMemberByJwt(request);
-
-        Checklist checklist = checklistService.getMemberTempChecklistById(member, checklistId);
-
-        return DataResponseDto.of(TempChecklistDto.createDto(checklist), "조회 성공");
-    }
-
-    @ApiDocumentResponse
     @Operation(summary = "Get simple info of checklist by id API (No Login)", description = "체크리스트 id를 통해 조회합니다. - 회원의 체크리스트가 아니더라도 조회 가능합니다.\n\n" +
             "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
     @GetMapping("/api/checklists/{checklist_id}")
