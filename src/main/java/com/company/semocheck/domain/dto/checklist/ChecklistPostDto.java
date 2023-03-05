@@ -15,26 +15,13 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class ChecklistPostDto {
+public class ChecklistPostDto extends ChecklistSimpleDto{
 
-    private Long checklistId;
+    //Post info
     private String ownerName;
     private Long originChecklistId;
-    private SubCategoryDto category;
-    private String title;
     private String brief;
     private List<StepPostDto> steps = new ArrayList<>();
-
-    private Integer stepCount;
-    private Integer viewCount;
-    private Integer scrapCount;
-    private Integer ageGroup;
-    private String createdDate;
-    private String modifiedDate;
-    private FileDto fileDto;
-    private Integer defaultImage;
-
-
 
     static public ChecklistPostDto createDto(Checklist checklist){
         ChecklistPostDto dto = new ChecklistPostDto();
@@ -47,18 +34,22 @@ public class ChecklistPostDto {
         dto.stepCount = checklist.getStepCount();
         dto.viewCount = checklist.getViewCount();
         dto.scrapCount = checklist.getScrapCount();
-        dto.ageGroup = checklist.getAgeGroup();
 
-        dto.createdDate = checklist.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));;
-        dto.modifiedDate = checklist.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));;;
+        dto.createdDate = checklist.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+        dto.modifiedDate = checklist.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
 
         if(checklist.getOrigin() != null) dto.originChecklistId = checklist.getOrigin().getId();
         if(checklist.getCategory() != null) dto.category = SubCategoryDto.createDto(checklist.getCategory());
         if(checklist.getFileDetail() != null) dto.fileDto = FileDto.createDto(checklist.getFileDetail());
 
-        for (Step step : checklist.getSteps()) {
+        for(Step step : checklist.getSteps()) {
             StepPostDto stepPostDto = StepPostDto.createDto(step);
             dto.steps.add(stepPostDto);
+        }
+
+        if(dto.viewCount >= 10){ // 조회수 10회 이상일 경우만
+            dto.avgAge = checklist.getAvgAge();
+            dto.avgSex = checklist.getViewCountFemale() > checklist.getViewCountMale();
         }
 
         dto.steps.sort(Comparator.comparing(StepPostDto::getOrder));

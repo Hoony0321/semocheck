@@ -15,30 +15,22 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class TempChecklistDto {
+public class ChecklistTempDto extends ChecklistSimpleDto {
 
-    private Long checklistId;
+    //post info
     private String ownerName;
     private Long originChecklistId;
-    private SubCategoryDto category;
-    private String title;
     private String brief;
     private List<StepPostDto> steps = new ArrayList<>();
+
+    //detail info
     private Boolean publish;
+
+    //temp info
     private Integer temporary;
 
-    private Integer stepCount;
-    private Integer viewCount;
-    private Integer scrapCount;
-    private Integer ageGroup;
-    private String createdDate;
-    private String modifiedDate;
-    private FileDto fileDto;
-
-
-
-    static public TempChecklistDto createDto(Checklist checklist){
-        TempChecklistDto dto = new TempChecklistDto();
+    static public ChecklistTempDto createDto(Checklist checklist){
+        ChecklistTempDto dto = new ChecklistTempDto();
         dto.checklistId = checklist.getId();
         dto.ownerName = checklist.getOwner().getName();
         dto.title = checklist.getTitle();
@@ -49,7 +41,7 @@ public class TempChecklistDto {
         dto.stepCount = checklist.getStepCount();
         dto.viewCount = checklist.getViewCount();
         dto.scrapCount = checklist.getScrapCount();
-        dto.ageGroup = checklist.getAgeGroup();
+
 
         dto.createdDate = checklist.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));;
         dto.modifiedDate = checklist.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));;;

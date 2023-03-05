@@ -67,7 +67,14 @@ public class Checklist extends BaseTimeEntity{
     @ColumnDefault("0")
     private Integer scrapCount;
 
-    private Integer ageGroup;
+    @ColumnDefault("0")
+    private Float avgAge;
+
+    @ColumnDefault("0")
+    private Integer viewCountMale;
+
+    @ColumnDefault("0")
+    private Integer viewCountFemale;
 
     private Integer defaultImage;
 
@@ -90,26 +97,6 @@ public class Checklist extends BaseTimeEntity{
         entity.brief = requestDto.getBrief();
         entity.publish = requestDto.getPublish();
         entity.temporary = requestDto.getTemporary();
-
-        //연관관계 설정
-        entity.setOwner(member); //owner
-        if(category != null) entity.setCategory(category); //category
-        if(requestDto.getSteps() != null){ //step
-            for (StepRequestDto stepRequestDto : requestDto.getSteps()) {
-                Step step = Step.createEntity(stepRequestDto, entity);
-                entity.addStep(step);
-            }
-        }
-
-        return entity;
-    }
-
-    static public Checklist createTempEntity(CreateChecklistRequestDto requestDto, Member member, SubCategory category){
-        Checklist entity = new Checklist();
-
-        entity.title = requestDto.getTitle();
-        entity.brief = requestDto.getBrief();
-        entity.publish = requestDto.getPublish();
 
         //연관관계 설정
         entity.setOwner(member); //owner
@@ -165,6 +152,21 @@ public class Checklist extends BaseTimeEntity{
 
         this.progress = String.format("%.2f", result);
     }
+
+    public void updateInfoByViewer(Member member) {
+        if(!member.getSex()){this.viewCountMale++;} // viewer = male
+        else{this.viewCountFemale++;} //viewer = female
+
+
+        int totalViewCount = this.viewCountFemale + this.viewCountMale;
+        float totalAge = this.avgAge * (totalViewCount - 1) + member.getAge();
+        this.avgAge = totalAge / totalViewCount;
+    }
+
+    public void increaseViewCount() {this.viewCount++;}
+
+    public void increaseScrapCount() {this.scrapCount++;}
+    public void decreaseScrapCount() {if(this.scrapCount > 0) this.scrapCount--;}
 
     //====== 연관관계 메서드======//
     public void setOwner(Member member){

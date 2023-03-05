@@ -41,6 +41,18 @@ public class MemberService {
         Member member = findByOAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
         return member;
     }
+
+    public Optional<Member> getMemberByJwtNoError(HttpServletRequest request){
+        String accessToken = jwtUtils.getAccessToken(request);
+        if(accessToken != null){
+            Claims claims = jwtUtils.parseClaims(accessToken);
+            Optional<Member> findOne = memberRepository.findByoAuthIdAndProvider((String) claims.get("oAuthId"), (String) claims.get("provider"));
+            return findOne;
+        }
+        else{
+            return Optional.empty();
+        }
+    }
     public Member findById(Long id){
         Optional<Member> findOne = memberRepository.findById(id);
         if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 정보의 회원은 존재하지 않습니다.");

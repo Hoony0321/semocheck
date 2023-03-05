@@ -39,6 +39,9 @@ public class ScrapService {
 
         Scrap scrap = Scrap.createEntity(member, checklist);
         member.addScrap(scrap);
+
+        //scrap count 증가
+        checklist.increaseScrapCount();
     }
 
     @Transactional
@@ -48,5 +51,8 @@ public class ScrapService {
 
         member.removeScrap(findOne.get());
         scrapRepository.delete(findOne.get());
+
+        //scrap count 감소
+        checklist.decreaseScrapCount();
     }
 }

@@ -30,14 +30,6 @@ public class ChecklistService {
         return findOne.get();
     }
 
-    public Checklist getMemberTempChecklistById(Member member, Long id){
-        Optional<Checklist> findOne = checklistRepository.findByIdAndTemporaryIsNotNull(id);
-        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 id의 체크리스트는 존재하지 않습니다.");
-        if(!findOne.get().getOwner().equals(member)) throw new GeneralException(Code.FORBIDDEN);
-        return findOne.get();
-
-    }
-
     public List<Checklist> getPublishedChecklistByQuery(String categoryMain, String categorySub, String title, String owner) {
 
         List<Checklist> checklists = checklistRepository.findByTemporaryIsNullAndPublishIsTrue();
@@ -268,6 +260,11 @@ public class ChecklistService {
         return checklist.getId();
     }
 
+    @Transactional
+    public void increaseViewCount(Checklist checklist) {
+        checklist.increaseViewCount();
+    }
+
     public List<Checklist> sortChecklists(List<Checklist> checklists, String sort, String direction) {
         if (sort.equals("date")) {
             if (direction.equals("asc")) {
@@ -298,5 +295,22 @@ public class ChecklistService {
     public List<Checklist> getMemberTempChecklist(Member member) {
         List<Checklist> checklists = checklistRepository.findByOwnerAndTemporaryIsNotNull(member);
         return checklists;
+    }
+
+    @Transactional
+    public Checklist getPublishedChecklistById(Long checklistId) {
+        //Get checklist by id
+        Checklist checklist = findById(checklistId);
+        if(!checklist.getPublish()) throw new GeneralException(Code.NOT_FOUND, "해당 id의 체크리스트는 존재하지 않습니다.");
+
+        //increase view count
+        checklist.increaseViewCount();
+
+        return checklist;
+    }
+
+    @Transactional
+    public void updateChecklistByViewer(Checklist checklist, Member member) {
+        checklist.updateInfoByViewer(member);
     }
 }
