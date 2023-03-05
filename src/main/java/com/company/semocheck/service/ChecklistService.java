@@ -181,6 +181,10 @@ public class ChecklistService {
             checklist.setFile(fileDetail);
         }
 
+        if(checklist.getDefaultImage() == null && checklist.getFileDetail() == null){
+            throw new GeneralException(Code.BAD_REQUEST, "이미지가 설정되지 않았습니다.");
+        }
+
         //Checklist 저장
         checklistRepository.save(checklist);
 
@@ -275,8 +279,20 @@ public class ChecklistService {
         //체크리스트 생성
         Checklist checklist = Checklist.createEntity(existedChecklist, member); //기존 체크리스트 정보를 토대로 새로운 체크리스트 생성
 
+        //이미지 설정
+        if(existedChecklist.getFileDetail() != null){
+            FileDetail fileDetail = fileService.copy(existedChecklist.getFileDetail());
+            checklist.setFile(fileDetail);
+        }
+
+        if(checklist.getDefaultImage() == null && checklist.getFileDetail() == null){
+            throw new GeneralException(Code.BAD_REQUEST, "이미지가 설정되지 않았습니다.");
+        }
+
         //Checklist 저장
         checklistRepository.save(checklist);
+
+
 
         return checklist.getId();
     }

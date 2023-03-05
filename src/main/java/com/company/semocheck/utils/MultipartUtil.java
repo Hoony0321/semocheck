@@ -20,7 +20,7 @@ public class MultipartUtil {
     }
 
     //파일 전체 경로 생성
-    public static String createPath(String folder, String fileName, String fileId, String format){
+    public static String  createPath(String folder, String fileName, String fileId, String format){
         return String.format("%s/%s_%s.%s", folder, fileName, fileId, format);
     }
 

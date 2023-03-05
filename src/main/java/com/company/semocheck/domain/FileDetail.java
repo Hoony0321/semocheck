@@ -19,6 +19,8 @@ public class FileDetail {
     @Id
     @Column(name="file_id")
     private String id;
+    @NotNull
+    private String folder;
 
     @NotNull
     private String name;
@@ -41,10 +43,25 @@ public class FileDetail {
 
         return FileDetail.builder()
                 .id(fileId)
+                .folder(folder)
                 .name(fileName)
                 .format(format)
                 .path(MultipartUtil.createPath(folder, fileName, fileId, format))
                 .bytes(multipartFile.getSize())
+                .build();
+    }
+
+    public static FileDetail copyEntity(FileDetail fileDetail){
+        final String fileId = MultipartUtil.createFileId();
+        final String path = MultipartUtil.createPath(fileDetail.getFolder(), fileDetail.getName(), fileId, fileDetail.getFormat());
+
+        return FileDetail.builder()
+                .id(fileId)
+                .folder(fileDetail.getFolder())
+                .name(fileDetail.getName())
+                .format(fileDetail.getFormat())
+                .path(path)
+                .bytes(fileDetail.getBytes())
                 .build();
     }
 }

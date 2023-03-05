@@ -6,6 +6,7 @@ import com.company.semocheck.common.response.Code;
 import com.company.semocheck.domain.FileDetail;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.FileDetailRepository;
+import com.company.semocheck.utils.MultipartUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -51,6 +52,20 @@ public class FileService {
         }
 
         //file save
+        save(fileDetail);
+        return fileDetail;
+    }
+
+    @Transactional
+    public FileDetail copy(FileDetail target){
+        FileDetail fileDetail = FileDetail.copyEntity(target);
+        try{
+            amazonS3Client.copyObject(new CopyObjectRequest(bucket, target.getPath(), bucket, fileDetail.getPath()));
+        }
+        catch (Exception e){
+            throw new GeneralException(Code.BAD_REQUEST, e.getMessage());
+        }
+
         save(fileDetail);
         return fileDetail;
     }
