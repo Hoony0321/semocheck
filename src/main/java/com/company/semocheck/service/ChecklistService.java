@@ -120,7 +120,7 @@ public class ChecklistService {
         return checklists;
     }
 
-    public List<Checklist> recommendChecklist(Member member) {
+    public List<Checklist> getRecommendChecklist(Member member) {
 
         List<Checklist> checklists = checklistRepository.findByTemporaryIsNullAndPublishIsTrue();
 
@@ -137,6 +137,27 @@ public class ChecklistService {
 
         return checklists;
 
+    }
+
+    public List<Checklist> getPopularChecklist() {
+        //TODO : temporary / publish false 빼고 조회하도록 변경.
+        List<Checklist> checklists = checklistRepository.findByTemporaryIsNullAndPublishIsTrue();
+
+        checklists.sort(Comparator.comparing(Checklist::getViewCount));
+        checklists = checklists.stream().limit(10).collect(Collectors.toList());
+
+        return checklists;
+    }
+
+    public List<Checklist> getSimilarChecklist(Checklist checklist) {
+        //TODO : 카테고리 말고도 그 외 정보를 토대로 조회하도록 변경
+        List<Checklist> checklists = checklistRepository.findByTemporaryIsNullAndPublishIsTrue();
+
+        checklists = checklists.stream().filter(chk -> chk.getCategory().equals(checklist.getCategory()))
+                                        .limit(5)
+                                        .collect(Collectors.toList());
+
+        return checklists;
     }
 
     @Transactional

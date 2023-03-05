@@ -1,6 +1,5 @@
 package com.company.semocheck.controller;
 
-import com.company.semocheck.auth.jwt.JwtUtils;
 import com.company.semocheck.common.response.ApiDocumentResponse;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.DataResponseDto;
@@ -160,11 +159,11 @@ public class ChecklistController {
     @ApiDocumentResponse
     @Operation(summary = "Get recommended checklist API", description = "회원의 정보를 토대로 체크리스트를 추천합니다.\n\n")
     @GetMapping("/api/members/checklists/recommend")
-    private DataResponseDto<SearchResultDto<ChecklistSimpleDto>> recommendChecklistByCategory(HttpServletRequest request){
+    private DataResponseDto<SearchResultDto<ChecklistSimpleDto>> getRecommendChecklistByCategory(HttpServletRequest request){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
-        List<Checklist> checklists = checklistService.recommendChecklist(member);
+        List<Checklist> checklists = checklistService.getRecommendChecklist(member);
 
         List<ChecklistSimpleDto> checklistSimpleDtos = new ArrayList<>();
         for(Checklist checklist : checklists){
@@ -172,6 +171,37 @@ public class ChecklistController {
         }
 
         //TODO : 만약 체크리스트 개수가 0개일 경우 세모체 스탠다드 체크리스트 반환하기.
+        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), "조회 성공");
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "Get popular checklist API", description = "인기 체크리스트를 반환합니다.\n\n" +
+            "조회수 순으로 10개의 체크리스트가 반환됩니다.")
+    @GetMapping("/api/checklists/popular")
+    private DataResponseDto<SearchResultDto<ChecklistSimpleDto>> getPopularChecklists(){
+        List<Checklist> checklists = checklistService.getPopularChecklist();
+
+        List<ChecklistSimpleDto> checklistSimpleDtos = new ArrayList<>();
+        for(Checklist checklist : checklists){
+            checklistSimpleDtos.add(ChecklistSimpleDto.createDto(checklist));
+        }
+
+        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), "조회 성공");
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "Get similar checklist API", description = "유사한 체크리스트를 반환합니다.\n\n" +
+            "유사도 순으로 5개의 체크리스트가 반환됩니다.")
+    @GetMapping("/api/checklists/{checklist_id}/similar")
+    private DataResponseDto<SearchResultDto<ChecklistSimpleDto>> getSimilarChecklists(@PathVariable("checklist_id") Long checklistId){
+        Checklist target = checklistService.findById(checklistId);
+        List<Checklist> checklists = checklistService.getSimilarChecklist(target);
+
+        List<ChecklistSimpleDto> checklistSimpleDtos = new ArrayList<>();
+        for(Checklist checklist : checklists){
+            checklistSimpleDtos.add(ChecklistSimpleDto.createDto(checklist));
+        }
+
         return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), "조회 성공");
     }
 

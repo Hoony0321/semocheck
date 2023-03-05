@@ -16,4 +16,8 @@ public interface ChecklistRepository extends JpaRepository<Checklist, Long> {
     List<Checklist> findByTemporaryIsNullAndPublishIsTrue();
     List<Checklist> findByOwnerAndTemporaryIsNull(Member owner);
     List<Checklist> findByOwnerAndTemporaryIsNotNull(Member owner);
+    List<Checklist> findTop10ByOrderByViewCountDesc();
+
+//    List<Checklist> findTop10AndTemporaryIsNullAndPublishIsTrueByOrderByViewCountDesc();
+
 }

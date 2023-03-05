@@ -35,6 +35,7 @@ public class Checklist extends BaseTimeEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "origin_checklist_id")
+    @JsonIgnore
     private Checklist origin;
 
     @ManyToOne
