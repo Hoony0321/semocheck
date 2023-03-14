@@ -6,6 +6,7 @@ import com.company.semocheck.domain.Checklist;
 import com.company.semocheck.domain.FileDetail;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.SubCategory;
+import com.company.semocheck.domain.dto.FileDto;
 import com.company.semocheck.domain.request.checklist.CreateChecklistRequestDto;
 import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import com.company.semocheck.exception.GeneralException;
@@ -100,7 +101,10 @@ public class ChecklistPageController {
     @GetMapping("/checklists/{checklist_id}")
     public String detail(@PathVariable("checklist_id") Long checklistId, Model model){
         Checklist checklist = checklistService.findById(checklistId);
+        FileDto fileDto = FileDto.createDto(checklist.getFileDetail());
+
         model.addAttribute("checklist", checklist);
+        model.addAttribute("imageUrl", fileDto.getPath());
         return "checklists/detail";
     }
 

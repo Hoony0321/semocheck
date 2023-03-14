@@ -11,6 +11,7 @@
         <div class="card">
           <div class="card-header"><h2 th:text="${checklist.title}"/></div>
           <div class="card-body">
+            <img th:src="${imageUrl}" class="img-fluid" alt="Checklist Image">
             <p class="card-title" th:text="${checklist.brief}"></p>
             <p class="card-text">Owner: <span th:text="${checklist.owner.name}"/></p>
             <p class="card-text">Category: <span th:text="${checklist.category.mainCategory.name + ' - ' + checklist.category.name}"/></p>
