@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StepRequestDto {
 
-    private Long stepId;
-    private String name;
-    private Integer order;
-    private String description;
+    public Long stepId;
+    public String name;
+    public Integer order;
+    public String description;
 
     @Builder
     public StepRequestDto(Long stepId, String name, Integer order, String description) {

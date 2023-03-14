@@ -1,24 +1,24 @@
 package com.company.semocheck.controller;
 
-import com.company.semocheck.auth.jwt.JwtUtils;
 import com.company.semocheck.common.response.ApiDocumentResponse;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.DataResponseDto;
 import com.company.semocheck.common.response.ResponseDto;
 import com.company.semocheck.domain.Checklist;
 import com.company.semocheck.domain.Member;
-import com.company.semocheck.domain.dto.ScrapDto;
+import com.company.semocheck.domain.dto.SearchResultDto;
+import com.company.semocheck.domain.dto.checklist.ChecklistSimpleDto;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.service.ChecklistService;
 import com.company.semocheck.service.MemberService;
 import com.company.semocheck.service.ScrapService;
-import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -51,14 +51,21 @@ public class ScrapController {
     @ApiDocumentResponse
     @Operation(summary = "Get member's scrap list API", description = "회원의 스크랩 리스트를 조회합니다.\n\n")
     @GetMapping("/api/members/scraps")
-    private DataResponseDto<List<ScrapDto>> getScraps(HttpServletRequest request){
+    private DataResponseDto<SearchResultDto> getScraps(HttpServletRequest request){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
         //Insert stepItem into checklist entity
-        List<ScrapDto> dtos = scrapService.getScrap(member);
+        List<Checklist> checklists = scrapService.getScrap(member);
 
-        return DataResponseDto.of(dtos, "조회 성공");
+        //Return checklists to searchResults
+        List<ChecklistSimpleDto> checklistSimpleDtos = new ArrayList<>();
+        for(Checklist checklist : checklists){
+            checklistSimpleDtos.add(ChecklistSimpleDto.createDto(checklist));
+        }
+
+
+        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), "조회 성공");
     }
 
     @ApiDocumentResponse

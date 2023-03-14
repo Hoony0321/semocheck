@@ -226,14 +226,10 @@ public class ChecklistController {
             "다른 사람의 체크리스트만 사용가능합니다.\n\n" +
             "자신의 체크리스트는 이미 사용중인 상태입니다.\n\n" +
             "따라서 만약 checklist가 자기 소유일경우 에러를 발생합니다. - 400 Bad request")
-    @PostMapping(value = "/api/members/checklists/{checklist_id}")
+    @PostMapping(value = "/api/members/checklists/{checklist_id}/use")
     private DataResponseDto<Long> useExistedChecklist(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
-
-        //Get checklist by id
-        //Optional<Checklist> findOne = member.getChecklists().stream().filter(chk -> chk.getId().equals(checklistId)).findFirst();
-        //if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, "이미 사용중인 체크리스트입니다.");
 
         //Create checklist
         Checklist checklist = checklistService.findById(checklistId);

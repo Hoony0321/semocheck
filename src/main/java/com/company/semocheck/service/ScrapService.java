@@ -22,14 +22,13 @@ public class ScrapService {
 
     private final ScrapRepository scrapRepository;
 
-    public List<ScrapDto> getScrap(Member member) {
-        List<ScrapDto> scrapDtos = new ArrayList<>();
+    public List<Checklist> getScrap(Member member) {
+        List<Checklist> checklists = new ArrayList<>();
         for (Scrap scrap : member.getScraps()) {
-            ScrapDto dto = ScrapDto.createDto(scrap);
-            scrapDtos.add(dto);
+            checklists.add(scrap.getChecklist());
         }
 
-        return scrapDtos;
+        return checklists;
     }
 
     @Transactional

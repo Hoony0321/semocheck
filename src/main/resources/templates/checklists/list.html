@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+    <div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>TITLE</th>
+                <th>CATEGORY</th>
+                <th>PUBLISH</th>
+                <th>BRIEF</th>
+            </tr>
+            </thead>
+            <tbody> <tr th:each="checklist : ${checklists}">
+                <td th:text="${checklist.id}"></td>
+                <td th:text="${checklist.title}"></td>
+                <td th:text="${checklist.category.name}"></td>
+                <td th:text="${checklist.publish}"></td>
+                <td th:text="${checklist.brief}"></td>
+                <td>
+                    <a href="#" th:href="@{/checklists/{id} (id=${checklist.id})}"
+                       class="btn btn-primary" role="button">상세정보</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:replace="fragments/footer :: footer"/>
+</div> <!-- /container -->
+</body>
+</html>

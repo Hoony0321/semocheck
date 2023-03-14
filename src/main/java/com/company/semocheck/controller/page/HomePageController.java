@@ -1,15 +1,14 @@
-package com.company.semocheck.controller;
+package com.company.semocheck.controller.page;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequiredArgsConstructor
 @Controller
-public class HomeController {
+public class HomePageController {
     @GetMapping("/")
     public String home(){
-        return "index";
+        return "home";
     }
 }

@@ -135,5 +135,10 @@ public class CategoryService {
     }
 
 
+    public SubCategory findSubCategoryById(Long id) {
+        Optional<SubCategory> findOne = subCategoryRepository.findById(id);
+        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 id의 2차 카테고리는 존재하지 않습니다.");
 
+        return findOne.get();
+    }
 }

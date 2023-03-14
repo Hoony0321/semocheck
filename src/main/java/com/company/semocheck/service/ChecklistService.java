@@ -24,12 +24,14 @@ public class ChecklistService {
     private final StepRepository stepRepository;
 
     public Checklist findById(Long id){
-        Optional<Checklist> findOne = checklistRepository.findByIdAndTemporaryIsNull(id);
+        Optional<Checklist> findOne = checklistRepository.findById(id);
         if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 id의 체크리스트는 존재하지 않습니다.");
 
         return findOne.get();
     }
-
+    public List<Checklist> getAllChecklist(){
+         return checklistRepository.findAll();
+    }
     public List<Checklist> getPublishedChecklistByQuery(String categoryMain, String categorySub, String title, String owner) {
 
         List<Checklist> checklists = checklistRepository.findByTemporaryIsNullAndPublishIsTrue();
@@ -181,7 +183,7 @@ public class ChecklistService {
             checklist.setFile(fileDetail);
         }
 
-        if(checklist.getDefaultImage() == null && checklist.getFileDetail() == null){
+        if(checklist.getTemporary() == null && checklist.getDefaultImage() == null && checklist.getFileDetail() == null){
             throw new GeneralException(Code.BAD_REQUEST, "이미지가 설정되지 않았습니다.");
         }
 
@@ -189,6 +191,12 @@ public class ChecklistService {
         checklistRepository.save(checklist);
 
         return checklist.getId();
+    }
+
+    @Transactional
+    public void adminDeleteChecklist(Checklist checklist, Member member) {
+        if(checklist.getOwner().equals(member)) member.removeChecklist(checklist);
+        checklistRepository.delete(checklist);
     }
 
     @Transactional
@@ -257,7 +265,12 @@ public class ChecklistService {
             FileDetail newImageFile = fileService.findById(requestDto.getFileId());
             checklist.setFile(newImageFile);
         }
+
         else{ checklist.setFile(null); }
+
+        if(checklist.getTemporary() == null && checklist.getDefaultImage() == null && checklist.getFileDetail() == null){
+            throw new GeneralException(Code.BAD_REQUEST, "이미지가 설정되지 않았습니다.");
+        }
 
     }
 

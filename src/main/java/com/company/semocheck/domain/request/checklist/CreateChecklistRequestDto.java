@@ -22,4 +22,17 @@ public class CreateChecklistRequestDto {
 
     private Integer temporary;
     private String fileId;
+
+    @Builder
+    public CreateChecklistRequestDto(String title, String brief, String mainCategoryName, String subCategoryName, Boolean publish, List<StepRequestDto> steps, Integer defaultImage, Integer temporary, String fileId) {
+        this.title = title;
+        this.brief = brief;
+        this.mainCategoryName = mainCategoryName;
+        this.subCategoryName = subCategoryName;
+        this.publish = publish;
+        this.steps = steps;
+        this.defaultImage = defaultImage;
+        this.temporary = temporary;
+        this.fileId = fileId;
+    }
 }

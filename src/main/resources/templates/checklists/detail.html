@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+  <!-- checklist details page -->
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header"><h2 th:text="${checklist.title}"/></div>
+          <div class="card-body">
+            <p class="card-title" th:text="${checklist.brief}"></p>
+            <p class="card-text">Owner: <span th:text="${checklist.owner.name}"/></p>
+            <p class="card-text">Category: <span th:text="${checklist.category.mainCategory.name + ' - ' + checklist.category.name}"/></p>
+            <h3 class="card-text">Steps</h3>
+            <ul class="list-group list-group-flush">
+              <th:block th:each="step : ${checklist.steps}">
+                <li class="list-group-item">
+                  <div>
+                    <h5 th:text="${step.name}"/>
+                    <p th:text="${step.description}"/>
+                  </div>
+                </li>
+              </th:block>
+            </ul>
+          </div>
+          <div class="card-footer">
+            <form th:action="@{/checklists/{id}/delete (id=${checklist.id})}" method="post" style="display: inline;">
+              <button type="submit" class="btn btn-danger btn-sm float-right">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div th:replace="fragments/footer :: footer"/>
+</div> <!-- /container -->
+</body>
+</html>

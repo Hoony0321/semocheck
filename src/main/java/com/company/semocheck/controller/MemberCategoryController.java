@@ -8,6 +8,8 @@ import com.company.semocheck.common.response.ResponseDto;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.SubCategory;
 import com.company.semocheck.domain.dto.category.MemberCategoryDto;
+import com.company.semocheck.domain.request.memberCategory.CreateMemberCategoryRequest;
+import com.company.semocheck.domain.request.memberCategory.DeleteMemberCategoryRequest;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.service.CategoryService;
 import com.company.semocheck.service.MemberService;
@@ -43,12 +45,12 @@ public class MemberCategoryController {
 
     @ApiDocumentResponse
     @Operation(summary = "Add new member's category by category name API", description = "멤버 관심 카테고리 리스트에 새로운 카테고리를 추가합니다.")
-    @PostMapping("/api/members/categories/{main_name}/sub/{sub_name}")
-    public ResponseDto addMemberCategory(HttpServletRequest request, @PathVariable("main_name") String mainName, @PathVariable("sub_name") String subName){
+    @PostMapping("/api/members/categories")
+    public ResponseDto addMemberCategory(HttpServletRequest request, @RequestBody CreateMemberCategoryRequest requestDto){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
-        SubCategory category = categoryService.findSubCategoryByName(mainName, subName);
+        SubCategory category = categoryService.findSubCategoryByName(requestDto.getMainName(), requestDto.getSubName());
 
         memberService.addMemberCategory(member, category);
         return ResponseDto.of(true, "카테고리 추가 성공");
@@ -56,12 +58,12 @@ public class MemberCategoryController {
     
     @ApiDocumentResponse
     @Operation(summary = "Delete member's category by category name API", description = "멤버 관심 카테고리 리스트에서 해당 이름의 카테고리를 삭제합니다.")
-    @DeleteMapping("/api/members/categories/{main_name}/sub/{sub_name}")
-    public ResponseDto deleteMemberCategory(HttpServletRequest request, @PathVariable("main_name") String mainName, @PathVariable("sub_name") String subName){
+    @DeleteMapping("/api/members/categories")
+    public ResponseDto deleteMemberCategory(HttpServletRequest request, @RequestBody DeleteMemberCategoryRequest requestDto){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
-        SubCategory category = categoryService.findSubCategoryByName(mainName, subName);
+        SubCategory category = categoryService.findSubCategoryByName(requestDto.getMainName(), requestDto.getSubName());
 
         memberService.deleteMemberCategory(member, category);
         return ResponseDto.of(true, "카테고리 삭제 성공");
