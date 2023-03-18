@@ -65,7 +65,7 @@ public class ChecklistController {
             checklistSimpleDtos.add(ChecklistSimpleDto.createDto(checklist));
         }
 
-        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), "조회 성공");
+        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), Code.SUCCESS_READ);
     }
 
     @ApiDocumentResponse
@@ -103,7 +103,7 @@ public class ChecklistController {
             checklistSimpleDtos.add(ChecklistSimpleDto.createDto(checklist));
         }
 
-        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), "조회 성공");
+        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), Code.SUCCESS_READ);
     }
 
     @ApiDocumentResponse
@@ -121,7 +121,7 @@ public class ChecklistController {
             checklistTempDtos.add(ChecklistTempDto.createDto(checklist));
         }
 
-        return DataResponseDto.of(SearchResultDto.createDto(checklistTempDtos), "조회 성공");
+        return DataResponseDto.of(SearchResultDto.createDto(checklistTempDtos), Code.SUCCESS_READ);
     }
 
     @ApiDocumentResponse
@@ -138,7 +138,7 @@ public class ChecklistController {
         //modify checklist's avgAge & avgSex
         if(findOne.isPresent()){checklistService.updateChecklistByViewer(checklist, findOne.get());}
 
-        return DataResponseDto.of(ChecklistPostDto.createDto(checklist), "조회 성공");
+        return DataResponseDto.of(ChecklistPostDto.createDto(checklist), Code.SUCCESS_READ);
     }
 
     @ApiDocumentResponse
@@ -153,7 +153,7 @@ public class ChecklistController {
         Checklist checklist = checklistService.findById(checklistId);
         if(!checklist.getOwner().equals(member)) throw new GeneralException(Code.FORBIDDEN);
 
-        return DataResponseDto.of(ChecklistDetailDto.createDto(checklist), "조회 성공");
+        return DataResponseDto.of(ChecklistDetailDto.createDto(checklist), Code.SUCCESS_READ);
     }
 
     @ApiDocumentResponse
@@ -171,7 +171,7 @@ public class ChecklistController {
         }
 
         //TODO : 만약 체크리스트 개수가 0개일 경우 세모체 스탠다드 체크리스트 반환하기.
-        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), "조회 성공");
+        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), Code.SUCCESS_READ);
     }
 
     @ApiDocumentResponse
@@ -186,7 +186,7 @@ public class ChecklistController {
             checklistSimpleDtos.add(ChecklistSimpleDto.createDto(checklist));
         }
 
-        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), "조회 성공");
+        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), Code.SUCCESS_READ);
     }
 
     @ApiDocumentResponse
@@ -202,7 +202,7 @@ public class ChecklistController {
             checklistSimpleDtos.add(ChecklistSimpleDto.createDto(checklist));
         }
 
-        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), "조회 성공");
+        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), Code.SUCCESS_READ);
     }
 
 
@@ -218,7 +218,7 @@ public class ChecklistController {
         //Create a checklist Entity
         Long checklistId = checklistService.createChecklist(requestDto, member);
 
-        return DataResponseDto.of(checklistId, "체크리스트 생성 성공");
+        return DataResponseDto.of(checklistId, Code.SUCCESS_CREATE);
     }
 
     @ApiDocumentResponse
@@ -235,7 +235,7 @@ public class ChecklistController {
         Checklist checklist = checklistService.findById(checklistId);
         Long newChecklistId = checklistService.useChecklist(checklist, member);
 
-        return DataResponseDto.of(newChecklistId, "체크리스트 생성 성공");
+        return DataResponseDto.of(newChecklistId, Code.SUCCESS_CREATE);
     }
 
     //======= update method ======//
@@ -260,7 +260,7 @@ public class ChecklistController {
         //Update checklist's info Entity
         checklistService.updateChecklist(checklist, requestDto);
 
-        return ResponseDto.of(true, "체크리스트 수정 성공");
+        return ResponseDto.of(true, Code.SUCCESS_UPDATE);
     }
 
 
@@ -283,7 +283,7 @@ public class ChecklistController {
         //TODO : order 중복에 따른 에러 처리 + 순차적으로 증가하게 설정
         checklistService.updateStepProgress(checklist, requestDto);
 
-        return ResponseDto.of(true, "수정 성공");
+        return ResponseDto.of(true, Code.SUCCESS_UPDATE);
     }
 
     //======= delete method ======//
@@ -302,6 +302,6 @@ public class ChecklistController {
         //Delete checklist
         checklistService.deleteChecklist(checklist, member);
 
-        return ResponseDto.of(true, "삭제 성공");
+        return ResponseDto.of(true, Code.SUCCESS_DELETE);
     }
 }

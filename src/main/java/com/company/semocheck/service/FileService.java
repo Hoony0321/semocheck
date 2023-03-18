@@ -3,6 +3,7 @@ package com.company.semocheck.service;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.company.semocheck.common.response.Code;
+import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.FileDetail;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.FileDetailRepository;
@@ -48,7 +49,7 @@ public class FileService {
             amazonS3Client.putObject(new PutObjectRequest(bucket, fullPath, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         }catch (IOException e){
-            throw new GeneralException(Code.BAD_REQUEST, e.getMessage());
+            throw new GeneralException(Code.BAD_REQUEST);
         }
 
         //file save
@@ -63,7 +64,7 @@ public class FileService {
             amazonS3Client.copyObject(new CopyObjectRequest(bucket, target.getPath(), bucket, fileDetail.getPath()));
         }
         catch (Exception e){
-            throw new GeneralException(Code.BAD_REQUEST, e.getMessage());
+            throw new GeneralException(Code.BAD_REQUEST);
         }
 
         save(fileDetail);
@@ -73,14 +74,14 @@ public class FileService {
     @Transactional
     public void save(FileDetail fileDetail){
         Optional<FileDetail> findOne = fileDetailRepository.findById(fileDetail.getId());
-        if(findOne.isPresent()) throw new GeneralException(Code.NOT_FOUND, "이미 저장된 파일입니다.");
+        if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.EXISTED_FILE);
 
         try{
             fileDetailRepository.save(fileDetail);
         } catch (Exception e){
             //delete file on aws
             amazonS3Client.deleteObject(bucket, fileDetail.getPath());
-            throw new GeneralException(Code.TRANSACTION_NOT_COMMITED, "트랜잭션 실패");
+            throw new GeneralException(Code.TRANSACTION_NOT_COMMITED);
         }
     }
 
@@ -93,7 +94,7 @@ public class FileService {
 
     public FileDetail findById(String id) {
         Optional<FileDetail> findOne = fileDetailRepository.findById(id);
-        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 번호의 파일은 존재하지 않습니다.");
+        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_FILE);
 
         return findOne.get();
     }

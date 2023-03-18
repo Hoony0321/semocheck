@@ -3,6 +3,7 @@ package com.company.semocheck.service;
 import com.company.semocheck.auth.jwt.JwtUtils;
 import com.company.semocheck.auth.oauth2.OAuth2Attributes;
 import com.company.semocheck.common.response.Code;
+import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.MemberCategory;
 import com.company.semocheck.domain.SubCategory;
@@ -55,14 +56,14 @@ public class MemberService {
     }
     public Member findById(Long id){
         Optional<Member> findOne = memberRepository.findById(id);
-        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 정보의 회원은 존재하지 않습니다.");
+        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_MEMBER);
 
         return findOne.get();
     }
 
     public Member findByOAuthIdAndProvider(String oAuthId, String provider){
         Optional<Member> findOne = memberRepository.findByoAuthIdAndProvider(oAuthId, provider);
-        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 계정의 회원은 존재하지 않습니다.");
+        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_MEMBER);
 
         return findOne.get();
     }
@@ -115,7 +116,7 @@ public class MemberService {
     public void addMemberCategory(Member member, SubCategory category) {
         Optional<MemberCategory> findOne = member.getCategories().stream()
                 .filter(ct -> ct.getSubCategory().getId().equals(category.getId())).findFirst();
-        if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, "이미 동일한 카테고리가 존재합니다.");
+        if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.EXISTED_CATEGORY);
 
         MemberCategory memberCategory = MemberCategory.createEntity(member, category);
         member.addCategory(memberCategory);
@@ -125,7 +126,7 @@ public class MemberService {
     public void deleteMemberCategory(Member member, SubCategory category) {
         Optional<MemberCategory> findOne = member.getCategories().stream()
                 .filter(ct -> ct.getSubCategory().getId().equals(category.getId())).findFirst();
-        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "관심 카테고리 리스트에 해당 이름의 카테고리는 존재하지 않습니다.");
+        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_CHECKLIST);
 
         member.removeCategory(findOne.get());
         memberCategoryRepository.delete(findOne.get());

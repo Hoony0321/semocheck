@@ -1,9 +1,6 @@
 package com.company.semocheck.controller;
 
-import com.company.semocheck.common.response.ApiDocumentResponse;
-import com.company.semocheck.common.response.Code;
-import com.company.semocheck.common.response.DataResponseDto;
-import com.company.semocheck.common.response.ResponseDto;
+import com.company.semocheck.common.response.*;
 import com.company.semocheck.domain.Checklist;
 import com.company.semocheck.domain.FileDetail;
 import com.company.semocheck.domain.Member;
@@ -36,7 +33,7 @@ public class FileController {
     @GetMapping("/api/files/{id}")
     public DataResponseDto<FileDetail> getFileDetil(@PathVariable("id") String id){
         FileDetail file = fileService.findById(id);
-        return DataResponseDto.of(file, "조회 성공");
+        return DataResponseDto.of(file, Code.SUCCESS_READ);
     }
 
     @ApiDocumentResponse
@@ -44,15 +41,15 @@ public class FileController {
     @PostMapping("/api/files")
     private DataResponseDto<FileDto> uploadFile(@RequestParam(required = false) String object, @RequestParam(value = "file", required = false) MultipartFile file) {
         //check validation
-        if (file == null || file.isEmpty()) throw new GeneralException(Code.BAD_REQUEST, "파일이 없습니다.");
-        if (object == null) throw new GeneralException(Code.BAD_REQUEST, "object가 없습니다.");
-        if(!availableObjects.contains(object)) throw new GeneralException(Code.BAD_REQUEST, "잘못된 object입니다.");
+        if (file == null || file.isEmpty()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_FILE);
+        if (object == null) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_OBJECT);
+        if(!availableObjects.contains(object)) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_OBJECT);
 
         //file upload
         String location = String.format("%s/files", object);
         FileDetail fileDetail = fileService.upload(location, file);
 
-        return DataResponseDto.of(FileDto.createDto(fileDetail), "업로드 성공");
+        return DataResponseDto.of(FileDto.createDto(fileDetail));
     }
 
     @ApiDocumentResponse
@@ -62,7 +59,7 @@ public class FileController {
         FileDetail fileDetail = fileService.findById(id);
         fileService.removeFile(fileDetail);
 
-        return ResponseDto.of(true, "삭제 성공");
+        return ResponseDto.of(true, Code.SUCCESS_DELETE);
     }
 
 

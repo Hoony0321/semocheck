@@ -8,26 +8,34 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum Code {
 
-    OK(200, HttpStatus.OK, "Ok"),
+    //SUCCESS CODE 모음
+    SUCCESS(200, HttpStatus.OK, "성공"),
+    SUCCESS_READ(200, HttpStatus.OK, "조회 성공"),
+    SUCCESS_CREATE(200, HttpStatus.OK, "생성 성공"),
+    SUCCESS_ADD(200, HttpStatus.OK, "추가 성공"),
+    SUCCESS_DELETE(200, HttpStatus.OK, "삭제 성공"),
+    SUCCESS_UPDATE(200, HttpStatus.OK, "수정 성공"),
 
-    //JWT 토큰 에러 모음
-    JWT_INVALID_SIGN(401, HttpStatus.UNAUTHORIZED, "잘못된 JWT 서명입니다."),
-    JWT_EXPIRED(401, HttpStatus.UNAUTHORIZED, "만료된 JWT 토큰입니다."),
-    JWT_UNSUPPORTED(400, HttpStatus.BAD_REQUEST, "지원되지 않는 JWT 토큰입니다."),
-    JWT_INVALID(400, HttpStatus.BAD_REQUEST,  "올바른 JWT 토큰이 아닙니다."),
-    JWT_PROCESS_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR,  "토큰 처리 과정 중에 에러가 발생했습니다."),
+
+    //JWT CODE 모음
+    JWT_SUCCESS_REFRESH(200, HttpStatus.OK, "재발급 성공"),
+    JWT_INVALID_SIGN(401, HttpStatus.UNAUTHORIZED, "잘못된 서명"),
+    JWT_EXPIRED(401, HttpStatus.UNAUTHORIZED, "만료된 토큰"),
+    JWT_UNSUPPORTED(400, HttpStatus.BAD_REQUEST, "지원되지 않는 토큰"),
+    JWT_INVALID(400, HttpStatus.BAD_REQUEST,  "올바르지 않은 토큰."),
+    JWT_PROCESS_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR,  "토큰 처리 에러"),
 
     //일반적인 API 에러 모음
-    BAD_REQUEST(400, HttpStatus.BAD_REQUEST,  "잘못된 요청입니다."),
+    BAD_REQUEST(400, HttpStatus.BAD_REQUEST,  "잘못된 요청"),
     UNAUTHORIZED(401, HttpStatus.UNAUTHORIZED, "안증 실패"),
-    FORBIDDEN(403, HttpStatus.FORBIDDEN, "권한이 없습니다."),
+    FORBIDDEN(403, HttpStatus.FORBIDDEN, "권한 없음"),
 
-    NOT_FOUND(404, HttpStatus.NOT_FOUND, "존재하지 않는 리소스입니다."),
+    NOT_FOUND(404, HttpStatus.NOT_FOUND, "존재하지 않는 리소스"),
 
-    CONSTRAINT_NOT_VALID(410, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
-    TRANSACTION_NOT_COMMITED(411, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    CONSTRAINT_NOT_VALID(410, HttpStatus.BAD_REQUEST, "제약조건 위배"),
+    TRANSACTION_NOT_COMMITED(411, HttpStatus.BAD_REQUEST, "트랜잭션 커밋 실패"),
 
-    INTERNAL_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다.");
+    INTERNAL_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생");
 
     private final Integer code;
     private final HttpStatus httpStatus;

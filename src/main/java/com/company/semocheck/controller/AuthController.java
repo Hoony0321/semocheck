@@ -40,7 +40,7 @@ public class AuthController {
         //해당 oauth_id로 가입된 계정 있는지 확인 -> 없으면 회원가입 진행
         Optional<Member> findOne = memberService.checkByOAuthIdAndProvider(attributes.getId(), provider);
         if(findOne.isEmpty()){ //최초 로그인하는 경우 -> error response
-            throw new GeneralException(Code.NOT_FOUND, "해당 계정의 회원은 존재하지 않습니다.");
+            throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_MEMBER);
         }
         else{ //기존 계정 존재하는 경우 -> db에 있는 memeber 반환
             member = findOne.get();
@@ -65,7 +65,7 @@ public class AuthController {
                 .refreshToken(refreshToken).build();
         Token newToken = authService.reissueToken(token);
 
-        return DataResponseDto.of(newToken, "JWT token 재발급 성공");
+        return DataResponseDto.of(newToken, Code.JWT_SUCCESS_REFRESH);
     }
 
 }

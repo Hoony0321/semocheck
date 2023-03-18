@@ -1,6 +1,7 @@
 package com.company.semocheck.exception;
 
 import com.company.semocheck.common.response.Code;
+import com.company.semocheck.common.response.ErrorMessages;
 import lombok.Getter;
 
 @Getter
@@ -22,8 +23,8 @@ public class GeneralException extends RuntimeException{
         this.errorCode = Code.INTERNAL_ERROR;
     }
 
-    public GeneralException(Code errorCode, String message){
-        super(message);
+    public GeneralException(Code errorCode, ErrorMessages errorMessages){
+        super(errorMessages.getMessage());
         this.errorCode = errorCode;
     }
 }

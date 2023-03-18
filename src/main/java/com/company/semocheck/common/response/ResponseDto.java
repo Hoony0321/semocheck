@@ -19,15 +19,11 @@ public class ResponseDto {
     @Schema(description = "성공 메세지")
     private final String message;
 
-    public static ResponseDto of(Boolean success, String message){
-        return new ResponseDto(success, Code.OK.name(), message);
-    }
-
     public static ResponseDto of(Boolean success, Code code) {
         return new ResponseDto(success, code.name(), code.getMessage());
     }
 
-    public static ResponseDto of(Boolean success, Code code, String message) {
-        return new ResponseDto(success, code.name(), code.getMessage(message));
-    }
+//    public static ResponseDto of(Boolean success, Code code, String message) {
+//        return new ResponseDto(success, code.name(), code.getMessage(message));
+//    }
 }

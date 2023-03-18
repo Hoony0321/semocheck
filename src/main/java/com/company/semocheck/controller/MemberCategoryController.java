@@ -40,7 +40,7 @@ public class MemberCategoryController {
 
         List<MemberCategoryDto> categories = memberService.getCategories(member);
 
-        return DataResponseDto.of(categories, "조회 성공");
+        return DataResponseDto.of(categories, Code.SUCCESS_READ);
     }
 
     @ApiDocumentResponse
@@ -53,7 +53,7 @@ public class MemberCategoryController {
         SubCategory category = categoryService.findSubCategoryByName(requestDto.getMainName(), requestDto.getSubName());
 
         memberService.addMemberCategory(member, category);
-        return ResponseDto.of(true, "카테고리 추가 성공");
+        return ResponseDto.of(true, Code.SUCCESS_ADD);
     }
     
     @ApiDocumentResponse
@@ -66,7 +66,7 @@ public class MemberCategoryController {
         SubCategory category = categoryService.findSubCategoryByName(requestDto.getMainName(), requestDto.getSubName());
 
         memberService.deleteMemberCategory(member, category);
-        return ResponseDto.of(true, "카테고리 삭제 성공");
+        return ResponseDto.of(true, Code.SUCCESS_DELETE);
     }
 
 

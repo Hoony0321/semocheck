@@ -27,11 +27,6 @@ public class ErrorResponseDto{
         this.message = errorCode.getMessage();
     }
 
-    private ErrorResponseDto(Code errorCode, Exception e){
-        this.code = errorCode.name();
-        this.message = errorCode.getMessage(e.getMessage());
-    }
-
     private ErrorResponseDto(Code errorCode, String message){
         this.code = errorCode.name();
         this.message = errorCode.getMessage(message);
@@ -47,12 +42,6 @@ public class ErrorResponseDto{
         return ResponseEntity
                 .status(errorCode.getCode())
                 .body(new ErrorResponseDto(errorCode, e.getMessage()));
-    }
-
-    public static ResponseEntity<ErrorResponseDto> of(Code errorCode, String message,  Exception e){
-        return ResponseEntity
-                .status(errorCode.getCode())
-                .body(new ErrorResponseDto(errorCode, message));
     }
 
 }

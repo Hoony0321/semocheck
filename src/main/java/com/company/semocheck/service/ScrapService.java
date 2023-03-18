@@ -1,6 +1,7 @@
 package com.company.semocheck.service;
 
 import com.company.semocheck.common.response.Code;
+import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.Checklist;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.Scrap;
@@ -34,7 +35,7 @@ public class ScrapService {
     @Transactional
     public void createScrap(Member member, Checklist checklist) {
         Optional<Scrap> findOne = member.getScraps().stream().filter(scrap -> scrap.getChecklist().getId().equals(checklist.getId())).findFirst();
-        if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, "이미 스크랩한 체크리스트입니다.");
+        if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.EXISTED_SCRAP);
 
         Scrap scrap = Scrap.createEntity(member, checklist);
         member.addScrap(scrap);
@@ -46,7 +47,8 @@ public class ScrapService {
     @Transactional
     public void deleteScrap(Member member, Checklist checklist) {
         Optional<Scrap> findOne = scrapRepository.findByChecklist(checklist);
-        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 id의 체크리스트는 스크랩 목록에 존재하지 않습니다.");
+        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_SCRAP);
+
 
         member.removeScrap(findOne.get());
         scrapRepository.delete(findOne.get());

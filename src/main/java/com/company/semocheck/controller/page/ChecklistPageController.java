@@ -1,6 +1,7 @@
 package com.company.semocheck.controller.page;
 
 import com.company.semocheck.common.response.Code;
+import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.controller.page.forms.CreateChecklistForm;
 import com.company.semocheck.domain.Checklist;
 import com.company.semocheck.domain.FileDetail;
@@ -67,7 +68,7 @@ public class ChecklistPageController {
 
 
         //check validation
-        if (image == null || image.isEmpty()) throw new GeneralException(Code.BAD_REQUEST, "파일이 없습니다.");
+        if (image == null || image.isEmpty()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_FILE);
 
         //file upload
         String location = String.format("%s/files", "checklists");

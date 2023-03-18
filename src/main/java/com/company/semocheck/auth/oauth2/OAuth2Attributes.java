@@ -1,6 +1,7 @@
 package com.company.semocheck.auth.oauth2;
 
 import com.company.semocheck.common.response.Code;
+import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.exception.GeneralException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,14 +59,14 @@ public class OAuth2Attributes {
                         .encode().build().toUri();
                 break;
             default :
-                throw new GeneralException(Code.BAD_REQUEST, "지원하지 않는 provider 입니다.");
+                throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.JWT_INVALID_PROVIDER);
         }
 
         try{
             if(requestEntity == null) responseEntity = restTemplate.getForEntity(requestUrl, Object.class);
             else responseEntity = restTemplate.postForEntity(requestUrl, requestEntity, Object.class);}
         catch (Exception e){
-            throw new GeneralException(Code.BAD_REQUEST, "OAuth 인증 실패");}
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.FAIL_AUTHENTICATION_OAUTH);}
 
         //받아온 사용자 정보를 동일한 form으로 변환
         ObjectMapper objectMapper = new ObjectMapper();
@@ -102,7 +103,7 @@ public class OAuth2Attributes {
         String profile = (String) kakaoProfile.get("profile_image_url");
 
         if(oAuthId == null || name == null || email == null)
-            throw new GeneralException(Code.BAD_REQUEST, "OAuth 정보가 충분하지 않습니다.");
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVAILD_ARGUMENT);
 
         return new OAuth2Attributes(oAuthId, name, email, profile);
     }
@@ -115,7 +116,7 @@ public class OAuth2Attributes {
         String profile = (String) attributes.get("picture");
 
         if(oAuthId == null || name == null || email == null)
-            throw new GeneralException(Code.BAD_REQUEST, "OAuth 정보가 충분하지 않습니다.");
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVAILD_ARGUMENT);
 
         return new OAuth2Attributes(oAuthId, name, email, profile);
     }

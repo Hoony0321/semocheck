@@ -61,7 +61,7 @@ public class CategoryController {
         }
 
 
-        return DataResponseDto.of(CategoryDtos, "조회 성공");
+        return DataResponseDto.of(CategoryDtos, Code.SUCCESS_READ);
     }
 
     @ApiDocumentResponse
@@ -75,7 +75,7 @@ public class CategoryController {
             categoryDtos.add(MainCategoryDto.createDto(mainCategory));
         }
 
-        return DataResponseDto.of(categoryDtos, "조회 성공");
+        return DataResponseDto.of(categoryDtos, Code.SUCCESS_READ);
     }
 
 
@@ -84,7 +84,7 @@ public class CategoryController {
     @PostMapping("/api/categories")
     public ResponseDto createCategories(@RequestBody CreateCategoryRequestDto requestDto){
         categoryService.createCategory(requestDto);
-        return ResponseDto.of(true, "카테고리 생성 성공");
+        return ResponseDto.of(true,  Code.SUCCESS_CREATE);
     }
 
     @ApiDocumentResponse
@@ -99,7 +99,7 @@ public class CategoryController {
 
         else categoryService.removeSubCategory(mainName, subName);
 
-        return ResponseDto.of(true, "카테고리 삭제 성공");
+        return ResponseDto.of(true, Code.SUCCESS_DELETE);
     }
 
     //=== 추후에 category 정보 업데이트가 필요한 경우 사용 ===//

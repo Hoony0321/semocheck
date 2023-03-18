@@ -39,7 +39,7 @@ public class ReportController {
 
         Report report = reportService.findById(reportId);
 
-        return DataResponseDto.of(ReportDto.createDto(report), "조회 성공");
+        return DataResponseDto.of(ReportDto.createDto(report), Code.SUCCESS_READ);
     }
 
     @ApiDocumentResponse
@@ -57,7 +57,7 @@ public class ReportController {
             reportDtos.add(ReportDto.createDto(report));
         }
 
-        return DataResponseDto.of(SearchResultDto.createDto(reportDtos), "조회 성공");
+        return DataResponseDto.of(SearchResultDto.createDto(reportDtos), Code.SUCCESS_READ);
     }
 
     //======= create method ======//
@@ -71,7 +71,7 @@ public class ReportController {
 
         Long reportId = reportService.createReport(member, requestDto);
 
-        return DataResponseDto.of(reportId, "신고 접수 성공");
+        return DataResponseDto.of(reportId, Code.SUCCESS_CREATE);
     }
 
     //======= update method ======//
@@ -92,7 +92,7 @@ public class ReportController {
 
         reportService.modifyReport(report, requestDto);
 
-        return DataResponseDto.of(reportId, "신고 수정 성공");
+        return DataResponseDto.of(reportId, Code.SUCCESS_UPDATE);
     }
 
     //======= delete method ======//
@@ -106,7 +106,7 @@ public class ReportController {
 
         reportService.deleteReport(reportId);
 
-        return ResponseDto.of(true, "삭제 성공");
+        return ResponseDto.of(true, Code.SUCCESS_DELETE);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.company.semocheck.domain;
 
 import com.company.semocheck.common.response.Code;
+import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.dto.ReportStatus;
 import com.company.semocheck.domain.dto.ReportType;
 import com.company.semocheck.domain.request.report.CreateReportRequest;
@@ -70,7 +71,7 @@ public class Report {
         try{
             return ReportType.valueOf(type);
         }catch (IllegalArgumentException e){
-            throw new GeneralException(Code.BAD_REQUEST, "잘못된 유형입니다.");
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_REPORT_TYPE);
         }
     }
 }

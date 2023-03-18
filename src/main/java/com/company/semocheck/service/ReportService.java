@@ -23,7 +23,7 @@ public class ReportService {
 
     public Report findById(Long id){
         Optional<Report> findOne = reportRepository.findById(id);
-        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 id는 존재하지 않습니다.");
+        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND);
 
         return findOne.get();
     }

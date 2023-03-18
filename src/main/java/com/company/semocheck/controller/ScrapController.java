@@ -1,9 +1,6 @@
 package com.company.semocheck.controller;
 
-import com.company.semocheck.common.response.ApiDocumentResponse;
-import com.company.semocheck.common.response.Code;
-import com.company.semocheck.common.response.DataResponseDto;
-import com.company.semocheck.common.response.ResponseDto;
+import com.company.semocheck.common.response.*;
 import com.company.semocheck.domain.Checklist;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.dto.SearchResultDto;
@@ -40,12 +37,12 @@ public class ScrapController {
 
         //Get checklist by id
         Checklist checklist = checklistService.findById(checklistId);
-        if(checklist.getOwner().equals(member)) throw new GeneralException(Code.BAD_REQUEST, "자신의 체크리스트를 스크랩할 수 없습니다.");
+        if(checklist.getOwner().equals(member)) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.CANT_OWNED_SCRAP);
 
         //Insert stepItem into checklist entity
         scrapService.createScrap(member, checklist);
 
-        return ResponseDto.of(true, "스크랩 성공");
+        return ResponseDto.of(true, Code.SUCCESS_CREATE);
     }
 
     @ApiDocumentResponse
@@ -65,7 +62,7 @@ public class ScrapController {
         }
 
 
-        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), "조회 성공");
+        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), Code.SUCCESS_READ);
     }
 
     @ApiDocumentResponse
@@ -81,6 +78,6 @@ public class ScrapController {
         //Insert stepItem into checklist entity
         scrapService.deleteScrap(member, checklist);
 
-        return ResponseDto.of(true, "삭제 성공");
+        return ResponseDto.of(true, Code.SUCCESS_DELETE);
     }
 }

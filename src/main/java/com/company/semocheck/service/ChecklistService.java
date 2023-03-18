@@ -1,6 +1,7 @@
 package com.company.semocheck.service;
 
 import com.company.semocheck.common.response.Code;
+import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.*;
 import com.company.semocheck.domain.request.checklist.*;
 import com.company.semocheck.exception.GeneralException;
@@ -25,7 +26,7 @@ public class ChecklistService {
 
     public Checklist findById(Long id){
         Optional<Checklist> findOne = checklistRepository.findById(id);
-        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, "해당 id의 체크리스트는 존재하지 않습니다.");
+        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_CHECKLIST);
 
         return findOne.get();
     }
@@ -171,7 +172,7 @@ public class ChecklistService {
             category = categoryService.findSubCategoryByName(requestDto.getMainCategoryName(), requestDto.getSubCategoryName());
         }
         else if(requestDto.getSubCategoryName() != null) {
-            throw new GeneralException(Code.BAD_REQUEST, "1차 카테고리가 정의되지 않았습니다.");
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_CATEGORY);
         }
 
         //Checklist 생성
@@ -184,7 +185,7 @@ public class ChecklistService {
         }
 
         if(checklist.getTemporary() == null && checklist.getDefaultImage() == null && checklist.getFileDetail() == null){
-            throw new GeneralException(Code.BAD_REQUEST, "이미지가 설정되지 않았습니다.");
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_IMAGE);
         }
 
         //Checklist 저장
@@ -209,7 +210,7 @@ public class ChecklistService {
     public void updateChecklist(Checklist checklist, UpdateChecklistRequestDto requestDto) {
         //check origin checklist validation
         if(checklist.getOrigin() != null && requestDto.getPublish()){ //origin checklist가 존재하면 publish true 불가능.
-            throw new GeneralException(Code.FORBIDDEN, "해당 체크리스트는 공개할 수 없습니다.");
+            throw new GeneralException(Code.FORBIDDEN, ErrorMessages.NOT_PUBLISHED);
         }
 
         //category validation
@@ -225,7 +226,7 @@ public class ChecklistService {
             requestDto.getSteps().stream().forEach(s -> orderList.add(s.getOrder()));
             Collections.sort(orderList);
             for(int i = 1; i <= orderList.size(); i++){
-                if(!orderList.get(i-1).equals(i)) throw new GeneralException(Code.BAD_REQUEST, "스텝의 순서 오류");
+                if(!orderList.get(i-1).equals(i)) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_STEP);
             }
 
             //step update & add & delete
@@ -244,7 +245,7 @@ public class ChecklistService {
                         int updateIdx = checklist.getSteps().indexOf(findOne.get());
                         modifedList.set(updateIdx, true);
                     } // existed step info update
-                    else throw new GeneralException(Code.NOT_FOUND, "not found step id - " + step.getStepId()); // not found step id
+                    else throw new GeneralException(Code.NOT_FOUND, ErrorMessages.INVALID_STEP); // not found step id
                 }
             }
 
@@ -269,7 +270,7 @@ public class ChecklistService {
         else{ checklist.setFile(null); }
 
         if(checklist.getTemporary() == null && checklist.getDefaultImage() == null && checklist.getFileDetail() == null){
-            throw new GeneralException(Code.BAD_REQUEST, "이미지가 설정되지 않았습니다.");
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_IMAGE);
         }
 
     }
@@ -280,7 +281,7 @@ public class ChecklistService {
         for (StepUpdateDto step : requestDto.getSteps()) {
             Optional<Step> findOne = checklist.getSteps().stream().filter(_step -> step.getStepId().equals(_step.getId())).findFirst();
             if(findOne.isPresent()){ findOne.get().update(step); } // existed step info update
-            else throw new GeneralException(Code.NOT_FOUND, "not found step id - " + step.getStepId()); // not found step id
+            else throw new GeneralException(Code.NOT_FOUND, ErrorMessages.INVALID_STEP); // not found step id
         }
 
         //checklist progress 수정
@@ -299,7 +300,7 @@ public class ChecklistService {
         }
 
         if(checklist.getDefaultImage() == null && checklist.getFileDetail() == null){
-            throw new GeneralException(Code.BAD_REQUEST, "이미지가 설정되지 않았습니다.");
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_IMAGE);
         }
 
         //Checklist 저장
@@ -351,7 +352,7 @@ public class ChecklistService {
     public Checklist getPublishedChecklistById(Long checklistId) {
         //Get checklist by id
         Checklist checklist = findById(checklistId);
-        if(!checklist.getPublish()) throw new GeneralException(Code.NOT_FOUND, "해당 id의 체크리스트는 존재하지 않습니다.");
+        if(!checklist.getPublish()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_CHECKLIST);
 
         //increase view count
         checklist.increaseViewCount();

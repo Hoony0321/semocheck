@@ -2,10 +2,7 @@ package com.company.semocheck.controller;
 
 import com.company.semocheck.auth.jwt.JwtProvider;
 import com.company.semocheck.auth.oauth2.OAuth2Attributes;
-import com.company.semocheck.common.response.ApiDocumentResponse;
-import com.company.semocheck.common.response.Code;
-import com.company.semocheck.common.response.DataResponseDto;
-import com.company.semocheck.common.response.ResponseDto;
+import com.company.semocheck.common.response.*;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.dto.member.MemberDetailDto;
 import com.company.semocheck.domain.dto.Token;
@@ -44,7 +41,7 @@ public class MemberController {
         OAuth2Attributes attributes = OAuth2Attributes.of(provider, oAuth2Info);
 
         Optional<Member> findOne = memberService.checkByOAuthIdAndProvider(attributes.getId(), provider);
-        if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, "이미 존재하는 회원입니다.");
+        if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.EXISTED_MEMBER);
 
         //새로운 회원 생성 & 초기 정보 세팅
         Long id = memberService.join(attributes, provider, joinRequestDto, fcmToken);
@@ -58,7 +55,7 @@ public class MemberController {
                 .refreshToken(jwtToken.getRefreshToken())
                 .id(member.getId()).build();
 
-        return DataResponseDto.of(response, "회원가입 성공");
+        return DataResponseDto.of(response, Code.SUCCESS_CREATE);
     }
 
     @ApiDocumentResponse
@@ -78,7 +75,7 @@ public class MemberController {
     public DataResponseDto<MemberDetailDto> getMemberDetailInfo(HttpServletRequest request){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
-        return DataResponseDto.of(MemberDetailDto.createDto(member), "회원 정보 조회 성공");
+        return DataResponseDto.of(MemberDetailDto.createDto(member), Code.SUCCESS_READ);
     }
 
     //TODO : 민감한 정보를 수정할 때 회원의 비밀번호를 추가로 받는 등 -> 추가 확인 필요!
@@ -93,7 +90,7 @@ public class MemberController {
         Member member = memberService.getMemberByJwt(request);
 
         Member updatedMember = memberService.updateInfo(member, requestDto);
-        return DataResponseDto.of(MemberDetailDto.createDto(updatedMember), "회원 정보 수정 성공");
+        return DataResponseDto.of(MemberDetailDto.createDto(updatedMember), Code.SUCCESS_UPDATE);
     }
 
     //TODO : delete할 때 회원의 비밀번호를 추가로 받는 등 -> 추가 확인 필요! -> 해당 계정을 inactivate 시키는 방향으로 진행!
@@ -107,7 +104,7 @@ public class MemberController {
         Member member = memberService.getMemberByJwt(request);
         memberService.delete(member);
 
-        return ResponseDto.of(true, "회원 삭제 성공");
+        return ResponseDto.of(true, Code.SUCCESS_DELETE);
     }
 
 }
