@@ -8,7 +8,7 @@ import com.company.semocheck.domain.dto.member.MemberDetailDto;
 import com.company.semocheck.domain.dto.Token;
 import com.company.semocheck.domain.dto.member.MemberDto;
 import com.company.semocheck.domain.request.member.JoinRequestDto;
-import com.company.semocheck.domain.request.member.UpdateRequestDto;
+import com.company.semocheck.domain.request.member.UpdateMemberRequest;
 import com.company.semocheck.domain.response.LoginResponseDto;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.service.MemberService;
@@ -85,7 +85,7 @@ public class MemberController {
             "만약 수정을 원치 않는 정보도 기존 값으로 넣어주시면 됩니다.\n" +
             "해당 회원의 JWT 토큰으로만 접근 가능합니다.")
     @PutMapping("")
-    public DataResponseDto<MemberDetailDto> updateMember(HttpServletRequest request, @RequestBody UpdateRequestDto requestDto) {
+    public DataResponseDto<MemberDetailDto> updateInfo(HttpServletRequest request, @RequestBody UpdateMemberRequest requestDto) {
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 

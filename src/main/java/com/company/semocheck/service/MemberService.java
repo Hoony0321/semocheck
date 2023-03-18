@@ -10,7 +10,7 @@ import com.company.semocheck.domain.SubCategory;
 import com.company.semocheck.domain.dto.category.MemberCategoryDto;
 import com.company.semocheck.domain.dto.category.SubCategoryDto;
 import com.company.semocheck.domain.request.member.JoinRequestDto;
-import com.company.semocheck.domain.request.member.UpdateRequestDto;
+import com.company.semocheck.domain.request.member.UpdateMemberRequest;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.MemberCategoryRepository;
 import com.company.semocheck.repository.MemberRepository;
@@ -98,7 +98,10 @@ public class MemberService {
     }
 
     @Transactional
-    public Member updateInfo(Member member, UpdateRequestDto requestDto) {
+    public Member updateInfo(Member member, UpdateMemberRequest requestDto) {
+        if(requestDto.getName() == null || requestDto.getAgreeNotify() == null){
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVAILD_ARGUMENT);
+        }
         member.updateInfo(requestDto);
         return member;
     }
