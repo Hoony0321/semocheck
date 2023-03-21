@@ -2,6 +2,7 @@ package com.company.semocheck.service;
 
 import com.company.semocheck.auth.jwt.JwtUtils;
 import com.company.semocheck.auth.oauth2.OAuth2Attributes;
+import com.company.semocheck.common.Constants;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.Member;
@@ -9,7 +10,7 @@ import com.company.semocheck.domain.MemberCategory;
 import com.company.semocheck.domain.SubCategory;
 import com.company.semocheck.domain.dto.category.MemberCategoryDto;
 import com.company.semocheck.domain.dto.category.SubCategoryDto;
-import com.company.semocheck.domain.request.member.JoinRequestDto;
+import com.company.semocheck.domain.request.member.CreateMemberRequest;
 import com.company.semocheck.domain.request.member.UpdateMemberRequest;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.MemberCategoryRepository;
@@ -74,15 +75,20 @@ public class MemberService {
     }
 
     @Transactional
-    public Long join(OAuth2Attributes attributes, String provider, JoinRequestDto joinRequestDto, String fcmToken){
+    public Long createMember(OAuth2Attributes attributes, String provider, CreateMemberRequest createMemberRequest, String fcmToken){
+        //verify provider
+        if(!provider.equals(Constants.PROVIDER_KAKAO) && !provider.equals(Constants.PROVIDER_GOOGLE)){
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_PROVIDER);
+        }
+
         Member member = Member.createEntity(attributes, provider);
 
         //TODO : fcmToken 세팅
         //회원 기본정보 setting
-        member.setInfoNewMember(joinRequestDto);
+        member.setInfoNewMember(createMemberRequest);
 
         //category setting
-        for (SubCategoryDto dto : joinRequestDto.getCategories()) {
+        for (SubCategoryDto dto : createMemberRequest.getCategories()) {
             SubCategory subCategory = categoryService.findSubCategoryByName(dto.getMain(), dto.getName());
             this.addMemberCategory(member, subCategory);
         }

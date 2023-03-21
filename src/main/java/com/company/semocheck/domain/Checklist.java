@@ -1,6 +1,6 @@
 package com.company.semocheck.domain;
 
-import com.company.semocheck.domain.request.checklist.CreateChecklistRequestDto;
+import com.company.semocheck.domain.request.checklist.CreateChecklistRequest;
 import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -91,7 +91,7 @@ public class Checklist extends BaseTimeEntity{
     private String progress;
 
     //====== 생성 메서드 ======//
-    static public Checklist createEntity(CreateChecklistRequestDto requestDto, Member member, SubCategory category){
+    static public Checklist createEntity(CreateChecklistRequest requestDto, Member member, SubCategory category){
         Checklist entity = new Checklist();
 
         entity.title = requestDto.getTitle();
@@ -108,6 +108,8 @@ public class Checklist extends BaseTimeEntity{
                 Step step = Step.createEntity(stepRequestDto, entity);
                 entity.addStep(step);
             }
+
+            entity.stepCount = requestDto.getSteps().size();
         }
 
         return entity;
@@ -142,6 +144,8 @@ public class Checklist extends BaseTimeEntity{
         this.publish = requestDto.getPublish();
         this.temporary = requestDto.getTemporary();
         this.setCategory(subCategory);
+
+        this.stepCount = this.steps.size();
     }
 
     public void updateProgress(){

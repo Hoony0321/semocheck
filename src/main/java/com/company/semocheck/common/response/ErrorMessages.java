@@ -7,6 +7,7 @@ public enum ErrorMessages {
 
     //members
     NOT_FOUND_MEMBER("해당 회원을 찾을 수 없습니다."),
+    INVALID_PROVIDER("유효하지 않은 provider입니다."),
     EXISTED_MEMBER("해당 회원은 이미 존재합니다."),
 
     //jwt

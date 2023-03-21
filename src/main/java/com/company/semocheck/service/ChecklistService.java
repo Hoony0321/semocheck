@@ -164,7 +164,7 @@ public class ChecklistService {
     }
 
     @Transactional
-    public Long createChecklist(CreateChecklistRequestDto requestDto, Member member){
+    public Long createChecklist(CreateChecklistRequest requestDto, Member member){
         SubCategory category = null;
 
         //Category Entity 찾기
@@ -223,7 +223,10 @@ public class ChecklistService {
         if(requestDto.getSteps() != null){
             //step validation
             List<Integer> orderList = new ArrayList<>();
-            requestDto.getSteps().stream().forEach(s -> orderList.add(s.getOrder()));
+            requestDto.getSteps().stream().forEach(s -> {
+                if(s.getStepId() == null || s.getName() == null) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_STEP);
+                orderList.add(s.getOrder());
+            });
             Collections.sort(orderList);
             for(int i = 1; i <= orderList.size(); i++){
                 if(!orderList.get(i-1).equals(i)) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_STEP);

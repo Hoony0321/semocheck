@@ -11,7 +11,7 @@ import com.company.semocheck.domain.dto.checklist.ChecklistDetailDto;
 import com.company.semocheck.domain.dto.checklist.ChecklistPostDto;
 import com.company.semocheck.domain.dto.checklist.ChecklistSimpleDto;
 import com.company.semocheck.domain.dto.checklist.ChecklistTempDto;
-import com.company.semocheck.domain.request.checklist.CreateChecklistRequestDto;
+import com.company.semocheck.domain.request.checklist.CreateChecklistRequest;
 import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
 import com.company.semocheck.domain.request.checklist.UpdateStepRequestDto;
 import com.company.semocheck.exception.GeneralException;
@@ -49,7 +49,7 @@ public class ChecklistController {
             "sort : [date, view, scrap]\n\n" +
             "direction : [asc, desc]\n\n")
     @GetMapping("/api/checklists")
-    private DataResponseDto<SearchResultDto<ChecklistSimpleDto>> getChecklistsByQuery(@RequestParam(name = "category_main", required = false) String categoryMain, @RequestParam(name = "category_sub", required = false) String categorySub,
+    public DataResponseDto<SearchResultDto<ChecklistSimpleDto>> getChecklistsByQuery(@RequestParam(name = "category_main", required = false) String categoryMain, @RequestParam(name = "category_sub", required = false) String categorySub,
                                                                   @RequestParam(required = false) String title, @RequestParam(required = false) String owner,
                                                                   @RequestParam(required = false, defaultValue = "date") String sort,
                                                                   @RequestParam(required = false, defaultValue = "desc") String direction){
@@ -81,7 +81,7 @@ public class ChecklistController {
             "sort : [date, view, scrap]\n\n" +
             "direction : [asc, desc]\n\n")
     @GetMapping("/api/members/checklists")
-    private DataResponseDto<SearchResultDto<ChecklistSimpleDto>> getMemberChecklistsByQuery(HttpServletRequest request, @RequestParam(name = "category_main", required = false) String categoryMain, @RequestParam(name = "category_sub", required = false) String categorySub,
+    public DataResponseDto<SearchResultDto<ChecklistSimpleDto>> getMemberChecklistsByQuery(HttpServletRequest request, @RequestParam(name = "category_main", required = false) String categoryMain, @RequestParam(name = "category_sub", required = false) String categorySub,
                                                                         @RequestParam(required = false) String title,
                                                                         @RequestParam(required = false) Boolean published,
                                                                         @RequestParam(required = false) Boolean completed,
@@ -110,7 +110,7 @@ public class ChecklistController {
     @Operation(summary = "Get member's temporay checklist API", description = "회원의 임시 체크리스트를 조회합니다.\n\n" +
             "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
     @GetMapping("/api/members/checklists/temp")
-    private DataResponseDto<SearchResultDto<ChecklistTempDto>> getMemberTempChecklists(HttpServletRequest request){
+    public DataResponseDto<SearchResultDto<ChecklistTempDto>> getMemberTempChecklists(HttpServletRequest request){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
@@ -128,7 +128,7 @@ public class ChecklistController {
     @Operation(summary = "Get checklist by id API (Not need login)", description = "체크리스트 id를 통해 조회합니다.\n\n" +
             "회원의 체크리스트가 아니더라도 조회 가능합니다.")
     @GetMapping("/api/checklists/{checklist_id}")
-    private DataResponseDto<ChecklistPostDto> getPublishedChecklist(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId){
+    public DataResponseDto<ChecklistPostDto> getPublishedChecklist(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId){
         //Get member by jwt token
         Optional<Member> findOne = memberService.getMemberByJwtNoError(request);
 
@@ -145,7 +145,7 @@ public class ChecklistController {
     @Operation(summary = "Get checklist by id API", description = "체크리스트 id를 통해 조회합니다.\n\n" +
             "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
     @GetMapping("/api/members/checklists/{checklist_id}")
-    private DataResponseDto<ChecklistDetailDto> getMemberChecklistById(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId){
+    public DataResponseDto<ChecklistDetailDto> getMemberChecklistById(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
@@ -159,7 +159,7 @@ public class ChecklistController {
     @ApiDocumentResponse
     @Operation(summary = "Get recommended checklist API", description = "회원의 정보를 토대로 체크리스트를 추천합니다.\n\n")
     @GetMapping("/api/members/checklists/recommend")
-    private DataResponseDto<SearchResultDto<ChecklistSimpleDto>> getRecommendChecklistByCategory(HttpServletRequest request){
+    public DataResponseDto<SearchResultDto<ChecklistSimpleDto>> getRecommendChecklistByCategory(HttpServletRequest request){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
@@ -178,7 +178,7 @@ public class ChecklistController {
     @Operation(summary = "Get popular checklist API", description = "인기 체크리스트를 반환합니다.\n\n" +
             "조회수 순으로 10개의 체크리스트가 반환됩니다.")
     @GetMapping("/api/checklists/popular")
-    private DataResponseDto<SearchResultDto<ChecklistSimpleDto>> getPopularChecklists(){
+    public DataResponseDto<SearchResultDto<ChecklistSimpleDto>> getPopularChecklists(){
         List<Checklist> checklists = checklistService.getPopularChecklist();
 
         List<ChecklistSimpleDto> checklistSimpleDtos = new ArrayList<>();
@@ -193,7 +193,7 @@ public class ChecklistController {
     @Operation(summary = "Get similar checklist API", description = "유사한 체크리스트를 반환합니다.\n\n" +
             "유사도 순으로 5개의 체크리스트가 반환됩니다.")
     @GetMapping("/api/checklists/{checklist_id}/similar")
-    private DataResponseDto<SearchResultDto<ChecklistSimpleDto>> getSimilarChecklists(@PathVariable("checklist_id") Long checklistId){
+    public DataResponseDto<SearchResultDto<ChecklistSimpleDto>> getSimilarChecklists(@PathVariable("checklist_id") Long checklistId){
         Checklist target = checklistService.findById(checklistId);
         List<Checklist> checklists = checklistService.getSimilarChecklist(target);
 
@@ -211,7 +211,7 @@ public class ChecklistController {
     @Operation(summary = "Create new checklist API", description = "새로운 체크리스트를 생성합니다.\n\n" +
             "필수 목록 : [title]")
     @PostMapping(value = "/api/members/checklists")
-    private ResponseDto createChecklist(HttpServletRequest request, @RequestBody CreateChecklistRequestDto requestDto){
+    private ResponseDto createChecklist(HttpServletRequest request, @RequestBody CreateChecklistRequest requestDto){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 

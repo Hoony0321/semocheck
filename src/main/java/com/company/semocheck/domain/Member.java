@@ -2,7 +2,7 @@ package com.company.semocheck.domain;
 
 import com.company.semocheck.auth.oauth2.OAuth2Attributes;
 import com.company.semocheck.domain.dto.Role;
-import com.company.semocheck.domain.request.member.JoinRequestDto;
+import com.company.semocheck.domain.request.member.CreateMemberRequest;
 import com.company.semocheck.domain.request.member.UpdateMemberRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -115,10 +115,10 @@ public class Member extends BaseTimeEntity{
     public void removeReport(Report report){ this.reports.remove(report); }
 
     //====== 정보 수정 메서드 ======//
-    public void setInfoNewMember(JoinRequestDto joinRequestDto){
-        this.age = joinRequestDto.getAge();
-        this.sex = joinRequestDto.getSex();
-        this.agreeNotify = joinRequestDto.getAgreeNotify();
+    public void setInfoNewMember(CreateMemberRequest createMemberRequest){
+        this.age = createMemberRequest.getAge();
+        this.sex = createMemberRequest.getSex();
+        this.agreeNotify = createMemberRequest.getAgreeNotify();
     }
 
     public void updateInfo(UpdateMemberRequest requestDto) {

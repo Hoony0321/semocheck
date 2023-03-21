@@ -8,14 +8,13 @@ import com.company.semocheck.domain.FileDetail;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.SubCategory;
 import com.company.semocheck.domain.dto.FileDto;
-import com.company.semocheck.domain.request.checklist.CreateChecklistRequestDto;
+import com.company.semocheck.domain.request.checklist.CreateChecklistRequest;
 import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.service.CategoryService;
 import com.company.semocheck.service.ChecklistService;
 import com.company.semocheck.service.FileService;
 import com.company.semocheck.service.MemberService;
-import com.company.semocheck.utils.MultipartUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,7 +32,6 @@ public class ChecklistPageController {
     private final ChecklistService checklistService;
     private final CategoryService categoryService;
     private final MemberService memberService;
-
     private final FileService fileService;
 
     @GetMapping("/checklists/new")
@@ -75,7 +73,7 @@ public class ChecklistPageController {
         FileDetail fileDetail = fileService.upload(location, image);
 
         //Create a checklist request
-        CreateChecklistRequestDto requestDto = CreateChecklistRequestDto.builder()
+        CreateChecklistRequest requestDto = CreateChecklistRequest.builder()
                 .title(form.getTitle())
                 .brief(form.getBrief())
                 .publish(form.getPublish())
@@ -95,6 +93,7 @@ public class ChecklistPageController {
     @GetMapping("/checklists")
     public String checklists(Model model){
         List<Checklist> checklists = checklistService.getAllChecklist();
+        Collections.reverse(checklists);
         model.addAttribute("checklists", checklists);
         return "checklists/list";
     }

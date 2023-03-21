@@ -7,7 +7,7 @@ import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.dto.member.MemberDetailDto;
 import com.company.semocheck.domain.dto.Token;
 import com.company.semocheck.domain.dto.member.MemberDto;
-import com.company.semocheck.domain.request.member.JoinRequestDto;
+import com.company.semocheck.domain.request.member.CreateMemberRequest;
 import com.company.semocheck.domain.request.member.UpdateMemberRequest;
 import com.company.semocheck.domain.response.LoginResponseDto;
 import com.company.semocheck.exception.GeneralException;
@@ -36,7 +36,7 @@ public class MemberController {
             "return data : jwt access token / jwt refresh token / member id\n\n")
     @PostMapping("")
     public DataResponseDto<LoginResponseDto> joinMember(@RequestParam("oAuthToken") String oAuthToken, @RequestParam("provider") String provider,
-                                                        @RequestParam("fcmToken") String fcmToken, @RequestBody JoinRequestDto joinRequestDto){
+                                                        @RequestParam("fcmToken") String fcmToken, @RequestBody CreateMemberRequest createMemberRequest){
         Map<String, Object> oAuth2Info = OAuth2Attributes.getOAuthInfo(oAuthToken, provider);
         OAuth2Attributes attributes = OAuth2Attributes.of(provider, oAuth2Info);
 
@@ -44,7 +44,7 @@ public class MemberController {
         if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.EXISTED_MEMBER);
 
         //새로운 회원 생성 & 초기 정보 세팅
-        Long id = memberService.join(attributes, provider, joinRequestDto, fcmToken);
+        Long id = memberService.createMember(attributes, provider, createMemberRequest, fcmToken);
 
         //generate jwt token
         Member member = memberService.findById(id);
