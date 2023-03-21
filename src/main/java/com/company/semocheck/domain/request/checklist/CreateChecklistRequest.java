@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class CreateChecklistRequestDto {
+public class CreateChecklistRequest {
 
     private String title;
     private String brief;
@@ -24,7 +24,7 @@ public class CreateChecklistRequestDto {
     private String fileId;
 
     @Builder
-    public CreateChecklistRequestDto(String title, String brief, String mainCategoryName, String subCategoryName, Boolean publish, List<StepRequestDto> steps, Integer defaultImage, Integer temporary, String fileId) {
+    public CreateChecklistRequest(String title, String brief, String mainCategoryName, String subCategoryName, Boolean publish, List<StepRequestDto> steps, Integer defaultImage, Integer temporary, String fileId) {
         this.title = title;
         this.brief = brief;
         this.mainCategoryName = mainCategoryName;
