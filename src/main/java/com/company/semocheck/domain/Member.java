@@ -111,6 +111,10 @@ public class Member extends BaseTimeEntity{
     public void removeScrap(Scrap scrap) {this.scraps.remove(scrap);}
     public void addCategory(MemberCategory category){ this.categories.add(category); }
     public void removeCategory(MemberCategory category){this.categories.remove(category);}
+    public void setCategory(List<MemberCategory> category){
+        this.categories.clear();
+        this.categories.addAll(category);
+    }
     public void addReport(Report report){ this.reports.add(report); }
     public void removeReport(Report report){ this.reports.remove(report); }
 

@@ -88,10 +88,12 @@ public class MemberService {
         member.setInfoNewMember(createMemberRequest);
 
         //category setting
+        List<SubCategory> categories = new ArrayList<>();
         for (SubCategoryDto dto : createMemberRequest.getCategories()) {
             SubCategory subCategory = categoryService.findSubCategoryByName(dto.getMain(), dto.getName());
-            this.addMemberCategory(member, subCategory);
+            categories.add(subCategory);
         }
+        this.addMemberCategory(member, categories);
 
         memberRepository.save(member);
 
@@ -122,22 +124,46 @@ public class MemberService {
     }
 
     @Transactional
-    public void addMemberCategory(Member member, SubCategory category) {
-        Optional<MemberCategory> findOne = member.getCategories().stream()
-                .filter(ct -> ct.getSubCategory().getId().equals(category.getId())).findFirst();
-        if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.EXISTED_CATEGORY);
+    public void addMemberCategory(Member member, List<SubCategory> categories) {
+        for (SubCategory category : categories) {
+            Optional<MemberCategory> findOne = member.getCategories().stream()
+                    .filter(ct -> ct.getSubCategory().getId().equals(category.getId())).findFirst();
+            if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.EXISTED_CATEGORY);
 
-        MemberCategory memberCategory = MemberCategory.createEntity(member, category);
-        member.addCategory(memberCategory);
+            MemberCategory memberCategory = MemberCategory.createEntity(member, category);
+            member.addCategory(memberCategory);
+        }
     }
 
     @Transactional
-    public void deleteMemberCategory(Member member, SubCategory category) {
-        Optional<MemberCategory> findOne = member.getCategories().stream()
-                .filter(ct -> ct.getSubCategory().getId().equals(category.getId())).findFirst();
-        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_CHECKLIST);
+    public void updateMemberCategory(Member member, List<SubCategory> categories) {
+        // clear memberCategory
+        for (MemberCategory category : member.getCategories()) {
+            memberCategoryRepository.delete(category);
+        }
 
-        member.removeCategory(findOne.get());
-        memberCategoryRepository.delete(findOne.get());
+        // add new memberCategory
+        List<MemberCategory> memberCategories = new ArrayList<>();
+        for(SubCategory category : categories){
+            MemberCategory memberCategory = MemberCategory.createEntity(member, category);
+            memberCategoryRepository.save(memberCategory);
+            memberCategories.add(memberCategory);
+        }
+
+        member.setCategory(memberCategories);
     }
+
+    @Transactional
+    public void deleteMemberCategory(Member member, List<SubCategory> categories) {
+        for(SubCategory category : categories){
+            Optional<MemberCategory> findOne = member.getCategories().stream()
+                    .filter(ct -> ct.getSubCategory().getId().equals(category.getId())).findFirst();
+            if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_CHECKLIST);
+
+            member.removeCategory(findOne.get());
+            memberCategoryRepository.delete(findOne.get());
+        }
+    }
+
+
 }
