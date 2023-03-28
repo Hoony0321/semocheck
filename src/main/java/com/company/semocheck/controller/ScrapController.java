@@ -4,7 +4,7 @@ import com.company.semocheck.common.response.*;
 import com.company.semocheck.domain.Checklist;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.dto.SearchResultDto;
-import com.company.semocheck.domain.dto.checklist.ChecklistSimpleDto;
+import com.company.semocheck.domain.dto.checklist.ChecklistPostSimpleDto;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.service.ChecklistService;
 import com.company.semocheck.service.MemberService;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Tag(name = "스크랩", description = "스크랩 관련 API 모음입니다.")
@@ -38,6 +39,7 @@ public class ScrapController {
         //Get checklist by id
         Checklist checklist = checklistService.findById(checklistId);
         if(checklist.getOwner().equals(member)) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.CANT_OWNED_SCRAP);
+        if(checklist.getPublish().equals(false)) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.CANT_PRIAVTE_SCRAP);
 
         //Insert stepItem into checklist entity
         scrapService.createScrap(member, checklist);
@@ -56,13 +58,13 @@ public class ScrapController {
         List<Checklist> checklists = scrapService.getScrap(member);
 
         //Return checklists to searchResults
-        List<ChecklistSimpleDto> checklistSimpleDtos = new ArrayList<>();
+        List<ChecklistPostSimpleDto> checklistPostSimpleDtos = new ArrayList<>();
         for(Checklist checklist : checklists){
-            checklistSimpleDtos.add(ChecklistSimpleDto.createDto(checklist));
+            checklistPostSimpleDtos.add(ChecklistPostSimpleDto.createDto(checklist, Optional.of(member)));
         }
 
 
-        return DataResponseDto.of(SearchResultDto.createDto(checklistSimpleDtos), Code.SUCCESS_READ);
+        return DataResponseDto.of(SearchResultDto.createDto(checklistPostSimpleDtos), Code.SUCCESS_READ);
     }
 
     @ApiDocumentResponse

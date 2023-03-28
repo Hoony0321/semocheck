@@ -130,6 +130,5 @@ public class Member extends BaseTimeEntity{
         this.sex = requestDto.getSex();
         this.name = requestDto.getName();
         this.agreeNotify = requestDto.getAgreeNotify();
-        this.picture = requestDto.getPicture();
     }
 }

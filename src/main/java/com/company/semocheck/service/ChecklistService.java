@@ -282,8 +282,9 @@ public class ChecklistService {
     public void updateStepProgress(Checklist checklist, UpdateStepRequestDto requestDto) {
         //step progress update
         for (StepUpdateDto step : requestDto.getSteps()) {
+            if(step.getStepId() == null || step.getIsCheck() == null) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_STEP);
             Optional<Step> findOne = checklist.getSteps().stream().filter(_step -> step.getStepId().equals(_step.getId())).findFirst();
-            if(findOne.isPresent()){ findOne.get().update(step); } // existed step info update
+            if(findOne.isPresent()){ findOne.get().update(step.getIsCheck()); } // existed step info update
             else throw new GeneralException(Code.NOT_FOUND, ErrorMessages.INVALID_STEP); // not found step id
         }
 
@@ -346,7 +347,7 @@ public class ChecklistService {
     }
 
 
-    public List<Checklist> getMemberTempChecklist(Member member) {
+    public List<Checklist> getMemberTempChecklists(Member member) {
         List<Checklist> checklists = checklistRepository.findByOwnerAndTemporaryIsNotNull(member);
         return checklists;
     }

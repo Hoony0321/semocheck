@@ -61,8 +61,8 @@ public class Step {
         this.description = dto.getDescription();
     }
 
-    public void update(StepUpdateDto dto){
-        this.isCheck = dto.getIsCheck();
+    public void update(boolean isCheck){
+        this.isCheck = isCheck;
     }
 
     //====== 연관관계 메서드 ======//
