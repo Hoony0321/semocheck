@@ -102,6 +102,15 @@ public class Member extends BaseTimeEntity{
         return entity;
     }
 
+    //====== 기타 메서드 ======//
+    public List<Checklist> getChecklists() {
+        return checklists.stream().filter(chk -> chk.getTemporary() == null).toList();
+    }
+
+    public List<Checklist> getTempChecklists() {
+        return checklists.stream().filter(chk -> chk.getTemporary() != null).toList();
+    }
+
     //====== 연관관계 메서드 ======//
     public void addChecklist(Checklist checklist){
         this.checklists.add(checklist);

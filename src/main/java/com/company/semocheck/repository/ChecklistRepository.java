@@ -13,6 +13,7 @@ public interface ChecklistRepository extends JpaRepository<Checklist, Long> {
 
     Optional<Checklist> findByIdAndTemporaryIsNull(Long id);
     Optional<Checklist> findByIdAndTemporaryIsNotNull(Long id);
+    List<Checklist> findByTemporaryIsNull();
     List<Checklist> findByTemporaryIsNullAndPublishIsTrue();
     List<Checklist> findByOwnerAndTemporaryIsNull(Member owner);
     List<Checklist> findByOwnerAndTemporaryIsNotNull(Member owner);

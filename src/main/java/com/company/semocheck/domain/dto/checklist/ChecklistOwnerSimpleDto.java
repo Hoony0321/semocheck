@@ -24,7 +24,7 @@ public class ChecklistOwnerSimpleDto {
     private Integer stepCount;
     private Float avgAge;
     private Boolean avgSex;
-    private String progress;
+    private Integer progress;
 
     //Image
     private Integer defaultImage;

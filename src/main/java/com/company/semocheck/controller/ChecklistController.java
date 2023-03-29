@@ -1,9 +1,6 @@
 package com.company.semocheck.controller;
 
-import com.company.semocheck.common.response.ApiDocumentResponse;
-import com.company.semocheck.common.response.Code;
-import com.company.semocheck.common.response.DataResponseDto;
-import com.company.semocheck.common.response.ResponseDto;
+import com.company.semocheck.common.response.*;
 import com.company.semocheck.domain.Checklist;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.dto.SearchResultDto;
@@ -149,7 +146,7 @@ public class ChecklistController {
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
-        List<Checklist> checklists = checklistService.getMemberTempChecklists(member);
+        List<Checklist> checklists = member.getTempChecklists();
 
         List<ChecklistTempSimpleDto> checklistTempSimpleDtos = new ArrayList<>();
         for(Checklist checklist : checklists){
@@ -167,8 +164,8 @@ public class ChecklistController {
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
-        Checklist checklist = checklistService.findById(checklistId);
-        if(checklist.getTemporary() == null) throw new GeneralException(Code.BAD_REQUEST);
+        Checklist checklist = checklistService.findTempById(checklistId);
+        if(!checklist.getOwner().equals(member)) throw new GeneralException(Code.FORBIDDEN);
 
         return DataResponseDto.of(ChecklistTempDetailDto.createDto(checklist), Code.SUCCESS_READ);
     }

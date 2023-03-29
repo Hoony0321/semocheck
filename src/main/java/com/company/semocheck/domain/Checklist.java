@@ -86,9 +86,8 @@ public class Checklist extends BaseTimeEntity{
     @ColumnDefault("0")
     private Boolean complete;
 
-    @Size(max = 10)
     @ColumnDefault("0")
-    private String progress;
+    private Integer progress;
 
     //====== 생성 메서드 ======//
     static public Checklist createEntity(CreateChecklistRequest requestDto, Member member, SubCategory category){
@@ -149,15 +148,15 @@ public class Checklist extends BaseTimeEntity{
     }
 
     public void updateProgress(){
-        int total = this.steps.size();
+        int totalStepNum = this.steps.size();
         int checkNum = 0;
         for (Step step : this.steps) {
             if(step.getIsCheck()) checkNum += 1;
         }
-        float result = checkNum / (float)total * 100f; //백분율 표시
-        if(result == 100f) this.complete = true; //진행도 100%일 경우 complete true로 변경
+        int result = checkNum * 100 / totalStepNum; //백분율 표시
+        if(result == 100) this.complete = true; //진행도 100%일 경우 complete true로 변경
 
-        this.progress = String.format("%.2f", result);
+        this.progress = result;
     }
 
     public void updateInfoByViewer(Member member) {

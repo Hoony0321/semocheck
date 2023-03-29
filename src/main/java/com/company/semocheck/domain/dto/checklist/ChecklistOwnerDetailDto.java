@@ -44,7 +44,7 @@ public class ChecklistOwnerDetailDto {
     //detail info
     private Boolean publish;
     private Boolean complete;
-    private String progress;
+    private Integer progress;
 
 
     public static ChecklistOwnerDetailDto createDto(Checklist checklist) {

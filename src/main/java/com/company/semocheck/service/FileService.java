@@ -61,7 +61,7 @@ public class FileService {
     public FileDetail copy(FileDetail target){
         FileDetail fileDetail = FileDetail.copyEntity(target);
         try{
-            amazonS3Client.copyObject(new CopyObjectRequest(bucket, target.getPath(), bucket, fileDetail.getPath()));
+            amazonS3Client.copyObject(new CopyObjectRequest(bucket, target.getPath(), bucket, fileDetail.getPath()).withCannedAccessControlList(CannedAccessControlList.PublicRead));
         }
         catch (Exception e){
             throw new GeneralException(Code.BAD_REQUEST);
