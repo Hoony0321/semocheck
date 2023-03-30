@@ -46,6 +46,9 @@ public enum ErrorMessages {
     CANT_OWNED_SCRAP("자신의 체크리스트를 스크랩할 수 없습니다."),
     CANT_PRIAVTE_SCRAP("비공개 체크리스트는 스크랩할 수 없습니다."),
 
+    //notices
+    NOT_FOUND_NOTICE("해당 공지사항을 찾을 수 없습니다."),
+
     //general
     INVAILD_ARGUMENT("유효하지 않은 인자입니다.");
 
