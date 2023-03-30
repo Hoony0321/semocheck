@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class ReportDto {
 
     private Long id;
+    private Long checklistId;
     private ReportType type;
     private ReportStatus status;
     private String content;
@@ -26,6 +27,7 @@ public class ReportDto {
     static public ReportDto createDto(Report report) {
         ReportDto dto = new ReportDto();
         dto.id = report.getId();
+        dto.checklistId = report.getChecklist().getId();
         dto.type = report.getType();
         dto.status = report.getStatus();
         dto.content = report.getContent();

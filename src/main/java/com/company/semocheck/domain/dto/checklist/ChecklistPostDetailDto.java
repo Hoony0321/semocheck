@@ -35,6 +35,7 @@ public class ChecklistPostDetailDto {
     private Float avgAge;
     private Boolean avgSex;
     private Boolean isScrap;
+    private Boolean isOwner;
 
     //Image
     private Integer defaultImage;
@@ -63,11 +64,19 @@ public class ChecklistPostDetailDto {
             dto.avgAge = checklist.getAvgAge();
             dto.avgSex = checklist.getViewCountFemale() > checklist.getViewCountMale();
         }
-        if(findOne.isEmpty()) dto.isScrap = null;
-        else {
-            Optional<Scrap> scrap = findOne.get().getScraps().stream().filter(s -> s.getChecklist().getId().equals(checklist.getId())).findFirst();
-            if(scrap.isEmpty()) dto.isScrap = false;
+
+        if(findOne.isEmpty()){
+            dto.isScrap = false;
+            dto.isOwner = false;
+        }
+        else{
+            Member member = findOne.get();
+            Optional<Scrap> findScrap = member.getScraps().stream().filter(s -> s.getChecklist().getId().equals(checklist.getId())).findFirst();
+            if(findScrap.isEmpty()) dto.isScrap = false;
             else dto.isScrap = true;
+
+            if(checklist.getOwner().equals(member)) dto.isOwner = true;
+            else dto.isOwner = false;
         }
 
         for(Step step : checklist.getSteps()) {

@@ -1,9 +1,7 @@
 package com.company.semocheck.controller;
 
-import com.company.semocheck.common.response.ApiDocumentResponse;
-import com.company.semocheck.common.response.Code;
-import com.company.semocheck.common.response.DataResponseDto;
-import com.company.semocheck.common.response.ResponseDto;
+import com.company.semocheck.common.response.*;
+import com.company.semocheck.domain.Checklist;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.Report;
 import com.company.semocheck.domain.dto.SearchResultDto;
@@ -11,6 +9,7 @@ import com.company.semocheck.domain.dto.report.ReportDto;
 import com.company.semocheck.domain.request.report.CreateReportRequest;
 import com.company.semocheck.domain.request.report.UpdateReportRequest;
 import com.company.semocheck.exception.GeneralException;
+import com.company.semocheck.service.ChecklistService;
 import com.company.semocheck.service.MemberService;
 import com.company.semocheck.service.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +27,10 @@ import java.util.List;
 public class ReportController {
 
     private final ReportService reportService;
+
     private final MemberService memberService;
+    private final ChecklistService checklistService;
+
 
     //======= read method ======//
     @ApiDocumentResponse
@@ -69,7 +71,12 @@ public class ReportController {
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
-        Long reportId = reportService.createReport(member, requestDto);
+        //Get checklist by checklistId
+        if(requestDto.getChecklistId() == null) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_CHECKLIST );
+        Checklist checklist = checklistService.findById(requestDto.getChecklistId());
+
+
+        Long reportId = reportService.createReport(member, checklist, requestDto);
 
         return DataResponseDto.of(reportId, Code.SUCCESS_CREATE);
     }

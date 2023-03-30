@@ -29,6 +29,12 @@ public class Report {
 
     @NotNull
     @JsonIgnore
+    @JoinColumn(name = "checklist_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Checklist checklist;
+
+    @NotNull
+    @JsonIgnore
     @JoinColumn(name = "member_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Member writer;
@@ -45,8 +51,9 @@ public class Report {
     @Size(max = 500)
     private String content;
 
-    static public Report createEntity(Member member, CreateReportRequest requestDto){
+    static public Report createEntity(Member member, Checklist checklist, CreateReportRequest requestDto){
         Report entity = new Report();
+        entity.checklist = checklist;
         entity.content = requestDto.getContent();
         entity.status = ReportStatus.IN_PROGRESS;
 

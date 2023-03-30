@@ -1,6 +1,7 @@
 package com.company.semocheck.service;
 
 import com.company.semocheck.common.response.Code;
+import com.company.semocheck.domain.Checklist;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.Report;
 import com.company.semocheck.domain.request.report.CreateReportRequest;
@@ -33,8 +34,8 @@ public class ReportService {
     }
 
     @Transactional
-    public Long createReport(Member member, CreateReportRequest requestDto){
-        Report report = Report.createEntity(member, requestDto);
+    public Long createReport(Member member, Checklist checklist, CreateReportRequest requestDto){
+        Report report = Report.createEntity(member, checklist, requestDto);
 
         //연관관계 설정
         report.setWriter(member);
