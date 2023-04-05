@@ -6,10 +6,10 @@ import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.dto.SearchResultDto;
 import com.company.semocheck.domain.dto.checklist.ChecklistTempDetailDto;
 import com.company.semocheck.domain.dto.checklist.ChecklistTempSimpleDto;
-import com.company.semocheck.domain.request.checklist.CreateChecklistRequest;
-import com.company.semocheck.domain.request.checklist.DeleteTempChecklistRequest;
+import com.company.semocheck.domain.request.tempChecklist.DeleteTempChecklistRequest;
 import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
 import com.company.semocheck.domain.request.tempChecklist.CreateTempChecklistRequest;
+import com.company.semocheck.domain.request.tempChecklist.UpdateTempChecklistRequest;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.service.MemberService;
 import com.company.semocheck.service.TempChecklistService;
@@ -89,7 +89,7 @@ public class TempChecklistController {
             "step list 부분은 기존 정보를 넘기지 않을 시 삭제된 것으로 간주됩니다.\n\n" +
             "step id가 -1인 경우는 새로 추가된 step으로 간주됩니다.")
     @PutMapping("/api/members/checklists/temp/{checklist_id}")
-    private ResponseDto updateChecklistInfo(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId, @RequestBody UpdateChecklistRequestDto requestDto){
+    private ResponseDto updateChecklistInfo(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId, @RequestBody UpdateTempChecklistRequest requestDto){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 

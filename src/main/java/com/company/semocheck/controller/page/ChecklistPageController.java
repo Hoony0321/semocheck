@@ -77,8 +77,7 @@ public class ChecklistPageController {
                 .title(form.getTitle())
                 .brief(form.getBrief())
                 .publish(form.getPublish())
-                .fileId(fileDetail.getId())
-                .defaultImage(1)
+                .imageId(fileDetail.getId())
                 .mainCategoryName(subCategory.getMainCategory().getName())
                 .subCategoryName(subCategory.getName())
                 .steps(form.getSteps())
@@ -101,7 +100,7 @@ public class ChecklistPageController {
     @GetMapping("/checklists/{checklist_id}")
     public String detail(@PathVariable("checklist_id") Long checklistId, Model model){
         Checklist checklist = checklistService.findById(checklistId);
-        FileDto fileDto = FileDto.createDto(checklist.getFileDetail());
+        FileDto fileDto = FileDto.createDto(checklist.getImage());
 
         model.addAttribute("checklist", checklist);
         model.addAttribute("imageUrl", fileDto.getPath());

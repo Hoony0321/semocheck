@@ -31,8 +31,9 @@ public class ChecklistTempDetailDto {
     private Integer temporary;
 
     //Image
-    private Integer defaultImage;
-    private FileDto fileDto;
+    private FileDto image;
+    private FileDto defaultImage;
+    private String colorCode;
 
     //Date
     private String createdDate;
@@ -57,8 +58,9 @@ public class ChecklistTempDetailDto {
         dto.steps.sort(Comparator.comparing(StepPostDto::getOrder));
 
         //Image
-        dto.defaultImage = checklist.getDefaultImage();
-        if(checklist.getFileDetail() != null) dto.fileDto = FileDto.createDto(checklist.getFileDetail());
+        if(checklist.getImage() != null) dto.image = FileDto.createDto(checklist.getImage());
+        if(checklist.getDefaultImage() != null) dto.defaultImage = FileDto.createDto(checklist.getDefaultImage());
+        dto.colorCode = checklist.getColorCode();
 
         //Date
         dto.createdDate = checklist.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));

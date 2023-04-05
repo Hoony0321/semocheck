@@ -193,15 +193,13 @@ public class ChecklistService {
         //Checklist 생성
         Checklist checklist = Checklist.createEntity(requestDto, member, category);
 
-        //image file
-        if(requestDto.getFileId() != null){
-            FileDetail fileDetail = fileService.findById(requestDto.getFileId());
-            checklist.setFile(fileDetail);
-        }
-
-        //TODO 해당 부분 확실히 잡고 갈것
-        if(checklist.getDefaultImage() == null && checklist.getFileDetail() == null){
-            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.REQUIRED_FIELD_IMAGE);
+        //image setting
+        if(requestDto.getImageId() != null){
+            FileDetail fileDetail = fileService.findById(requestDto.getImageId());
+            checklist.setImage(fileDetail);
+        } else if(requestDto.getDefaultImageId() != null){
+            FileDetail fileDetail = fileService.findById(requestDto.getImageId());
+            checklist.setImage(fileDetail);
         }
 
         //Checklist 저장
@@ -281,17 +279,18 @@ public class ChecklistService {
         checklist.updateInfo(requestDto, subCategory);
 
         //image 설정
-        if(requestDto.getFileId() != null){
-            FileDetail newImageFile = fileService.findById(requestDto.getFileId());
-            checklist.setFile(newImageFile);
+        if(requestDto.getImageId() != null){
+            FileDetail newImageFile = fileService.findById(requestDto.getImageId());
+            checklist.setImage(newImageFile);
+        }else{
+            checklist.setImage(null);
         }
-
-        else{ checklist.setFile(null); }
-
-        if(checklist.getTemporary() == null && checklist.getDefaultImage() == null && checklist.getFileDetail() == null){
-            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_IMAGE);
+        if(requestDto.getDefaultImageId() != null){
+            FileDetail newDefaultImageFile = fileService.findById(requestDto.getDefaultImageId());
+            checklist.setDefaultImage(newDefaultImageFile);
+        }else{
+            checklist.setDefaultImage(null);
         }
-
     }
 
     @Transactional
@@ -311,22 +310,19 @@ public class ChecklistService {
     @Transactional
     public Long useChecklist(Checklist existedChecklist, Member member) {
         //체크리스트 생성
-        Checklist checklist = Checklist.createEntity(existedChecklist, member); //기존 체크리스트 정보를 토대로 새로운 체크리스트 생성
+        Checklist checklist = Checklist.copyEntity(existedChecklist, member); //기존 체크리스트 정보를 토대로 새로운 체크리스트 생성
 
         //이미지 설정
-        if(existedChecklist.getFileDetail() != null){
-            FileDetail fileDetail = fileService.copy(existedChecklist.getFileDetail());
-            checklist.setFile(fileDetail);
-        }
-
-        if(checklist.getDefaultImage() == null && checklist.getFileDetail() == null){
-            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_IMAGE);
+        if(existedChecklist.getImage() != null){
+            FileDetail fileDetail = fileService.copy(existedChecklist.getImage());
+            checklist.setImage(fileDetail);
+        } else if (existedChecklist.getDefaultImage() != null) {
+            FileDetail fileDetail = fileService.copy(existedChecklist.getDefaultImage());
+            checklist.setImage(fileDetail);
         }
 
         //Checklist 저장
         checklistRepository.save(checklist);
-
-
 
         return checklist.getId();
     }

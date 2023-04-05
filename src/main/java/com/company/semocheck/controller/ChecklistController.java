@@ -194,10 +194,13 @@ public class ChecklistController {
             "필수 목록 : [title]")
     @PostMapping(value = "/api/members/checklists")
     private ResponseDto createChecklist(HttpServletRequest request, @RequestBody CreateChecklistRequest requestDto){
-        //Get member by jwt token
+        // get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
-        //Create a checklist Entity
+        // validate requestDto
+        requestDto.validate();
+
+        // create a checklist Entity
         Long checklistId = checklistService.createChecklist(requestDto, member);
 
         return DataResponseDto.of(checklistId, Code.SUCCESS_CREATE);

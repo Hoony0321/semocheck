@@ -1,9 +1,11 @@
 package com.company.semocheck.domain;
 
+import com.company.semocheck.domain.dto.FileDto;
 import com.company.semocheck.domain.request.checklist.CreateChecklistRequest;
 import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
 import com.company.semocheck.domain.request.tempChecklist.CreateTempChecklistRequest;
+import com.company.semocheck.domain.request.tempChecklist.UpdateTempChecklistRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -53,10 +55,6 @@ public class Checklist extends BaseTimeEntity{
     @ColumnDefault("0")
     private Boolean publish;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "file_id")
-    private FileDetail fileDetail;
-
     @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL)
     private List<Step> steps = new ArrayList<>();
 
@@ -78,7 +76,16 @@ public class Checklist extends BaseTimeEntity{
     @ColumnDefault("0")
     private Integer viewCountFemale;
 
-    private Integer defaultImage;
+    //====== 이미지 관련 정보 =======//
+
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "image_id")
+    private FileDetail image;
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "default_image_id")
+    private FileDetail defaultImage;
+
+    private String colorCode;
 
     //임시저장 페이지
     private Integer temporary;
@@ -97,7 +104,7 @@ public class Checklist extends BaseTimeEntity{
         entity.title = requestDto.getTitle();
         entity.brief = requestDto.getBrief();
         entity.publish = requestDto.getPublish();
-        entity.defaultImage = requestDto.getDefaultImage();
+        entity.colorCode = requestDto.getColorCode();
 
         //연관관계 설정
         entity.setOwner(member); //owner
@@ -121,7 +128,7 @@ public class Checklist extends BaseTimeEntity{
         entity.brief = requestDto.getBrief();
         entity.publish = requestDto.getPublish();
         entity.temporary = requestDto.getTemporary();
-        entity.defaultImage = requestDto.getDefaultImage();
+        entity.colorCode = requestDto.getColorCode();
 
         //연관관계 설정
         entity.setOwner(member); //owner
@@ -138,13 +145,13 @@ public class Checklist extends BaseTimeEntity{
         return entity;
     }
 
-    static public Checklist createEntity(Checklist checklist, Member member){
+    static public Checklist copyEntity(Checklist checklist, Member member){
         Checklist entity = new Checklist();
 
         entity.title = checklist.getTitle();
         entity.brief = checklist.getBrief();
         entity.publish = false;
-        entity.defaultImage = checklist.getDefaultImage();
+        entity.colorCode = checklist.getColorCode();
 
         //연관관계 설정
         entity.setOrigin(checklist); //origin
@@ -155,6 +162,7 @@ public class Checklist extends BaseTimeEntity{
                 Step _step = Step.createEntity(step, entity);
                 entity.addStep(_step);
             }
+            entity.stepCount = checklist.getSteps().size();
         }
 
         return entity;
@@ -165,9 +173,8 @@ public class Checklist extends BaseTimeEntity{
         this.title = requestDto.getTitle();
         this.brief = requestDto.getBrief();
         this.publish = requestDto.getPublish();
-        //TODO updateInfo 수정
+        this.colorCode = requestDto.getColorCode();
         this.setCategory(subCategory);
-
         this.stepCount = this.steps.size();
     }
 
@@ -181,6 +188,16 @@ public class Checklist extends BaseTimeEntity{
         if(result == 100) this.complete = true; //진행도 100%일 경우 complete true로 변경
 
         this.progress = result;
+    }
+
+    public void updateTempInfo(UpdateTempChecklistRequest requestDto, SubCategory subCategory) {
+        this.title = requestDto.getTitle();
+        this.brief = requestDto.getBrief();
+        this.publish = requestDto.getPublish();
+        this.temporary = requestDto.getTemporary();
+        this.colorCode = requestDto.getColorCode();
+        this.setCategory(subCategory);
+        this.stepCount = this.steps.size();
     }
 
     public void updateInfoByViewer(Member member) {
@@ -208,7 +225,10 @@ public class Checklist extends BaseTimeEntity{
     public void addStep(Step step){
         this.steps.add(step);
     }
-    public void setFile(FileDetail fileDetail){this.fileDetail = fileDetail;}
+    public void setImage(FileDetail image){this.image = image;}
+    public void setDefaultImage(FileDetail defaultImage){this.defaultImage = defaultImage;}
     public void removeStep(Step step) { this.steps.remove(step); }
     public void setOrigin(Checklist checklist) {this.origin = checklist;}
+
+
 }

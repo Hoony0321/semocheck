@@ -6,6 +6,7 @@ import com.company.semocheck.domain.*;
 import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
 import com.company.semocheck.domain.request.tempChecklist.CreateTempChecklistRequest;
+import com.company.semocheck.domain.request.tempChecklist.UpdateTempChecklistRequest;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.ChecklistRepository;
 import com.company.semocheck.repository.StepRepository;
@@ -36,7 +37,7 @@ public class TempChecklistService {
     }
 
     @Transactional
-    public void updateChecklist(Checklist checklist, UpdateChecklistRequestDto requestDto) {
+    public void updateChecklist(Checklist checklist, UpdateTempChecklistRequest requestDto) {
         //check origin checklist validation
         if(checklist.getOrigin() != null && requestDto.getPublish()){ //origin checklist가 존재하면 publish true 불가능.
             throw new GeneralException(Code.FORBIDDEN, ErrorMessages.NOT_PUBLISHED);
@@ -91,17 +92,20 @@ public class TempChecklistService {
         }
 
         //checklist 기본 정보 수정
-        checklist.updateInfo(requestDto, subCategory);
+        checklist.updateTempInfo(requestDto, subCategory);
 
         //image 설정
-        if(requestDto.getFileId() != null){
-            FileDetail newImageFile = fileService.findById(requestDto.getFileId());
-            checklist.setFile(newImageFile);
+        if(requestDto.getImageId() != null){
+            FileDetail newImageFile = fileService.findById(requestDto.getImageId());
+            checklist.setImage(newImageFile);
+        }else{
+            checklist.setImage(null);
         }
-        else{ checklist.setFile(null); }
-
-        if(checklist.getTemporary() == null && checklist.getDefaultImage() == null && checklist.getFileDetail() == null){
-            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.REQUIRED_FIELD_IMAGE);
+        if(requestDto.getDefaultImageId() != null){
+            FileDetail newDefaultImageFile = fileService.findById(requestDto.getDefaultImageId());
+            checklist.setDefaultImage(newDefaultImageFile);
+        }else{
+            checklist.setDefaultImage(null);
         }
     }
 
@@ -127,14 +131,12 @@ public class TempChecklistService {
         Checklist checklist = Checklist.createEntity(requestDto, member, category);
 
         //image file
-        if(requestDto.getFileId() != null){
-            FileDetail fileDetail = fileService.findById(requestDto.getFileId());
-            checklist.setFile(fileDetail);
-        }
-
-        //TODO 해당 부분 확실히 잡고 갈것
-        if(checklist.getDefaultImage() == null && checklist.getFileDetail() == null){
-            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.REQUIRED_FIELD_IMAGE);
+        if(requestDto.getImageId() != null){
+            FileDetail fileDetail = fileService.findById(requestDto.getImageId());
+            checklist.setImage(fileDetail);
+        } else if (requestDto.getDefaultImageId() != null) {
+            FileDetail fileDetail = fileService.findById(requestDto.getDefaultImageId());
+            checklist.setDefaultImage(fileDetail);
         }
 
         //Checklist 저장

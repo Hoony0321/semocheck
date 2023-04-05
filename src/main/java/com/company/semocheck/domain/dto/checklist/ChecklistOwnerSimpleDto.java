@@ -1,6 +1,7 @@
 package com.company.semocheck.domain.dto.checklist;
 
 import com.company.semocheck.domain.Checklist;
+import com.company.semocheck.domain.FileDetail;
 import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.Scrap;
 import com.company.semocheck.domain.dto.FileDto;
@@ -27,8 +28,9 @@ public class ChecklistOwnerSimpleDto {
     private Integer progress;
 
     //Image
-    private Integer defaultImage;
-    private FileDto fileDto;
+    private FileDto image;
+    private FileDto defaultImage;
+    private String colorCode;
 
     //Date
     private String createdDate;
@@ -50,8 +52,9 @@ public class ChecklistOwnerSimpleDto {
         }
 
         //Image
-        dto.defaultImage = checklist.getDefaultImage();
-        if(checklist.getFileDetail() != null) dto.fileDto = FileDto.createDto(checklist.getFileDetail());
+        if(checklist.getImage() != null) dto.image = FileDto.createDto(checklist.getImage());
+        if(checklist.getDefaultImage() != null) dto.defaultImage = FileDto.createDto(checklist.getDefaultImage());
+        dto.colorCode = checklist.getColorCode();
 
         //Date
         dto.createdDate = checklist.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));

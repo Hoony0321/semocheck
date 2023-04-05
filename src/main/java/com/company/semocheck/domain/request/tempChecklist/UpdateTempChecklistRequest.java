@@ -1,6 +1,6 @@
-package com.company.semocheck.domain.request.checklist;
+package com.company.semocheck.domain.request.tempChecklist;
 
-import lombok.Builder;
+import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,8 +8,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class UpdateChecklistRequestDto {
-
+public class UpdateTempChecklistRequest {
     private String title;
     private String brief;
     private String mainCategoryName;
@@ -18,5 +17,6 @@ public class UpdateChecklistRequestDto {
     private String imageId;
     private String defaultImageId;
     private String colorCode;
+    private Integer temporary;
     private List<StepRequestDto> steps;
 }
