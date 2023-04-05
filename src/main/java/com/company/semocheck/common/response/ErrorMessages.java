@@ -35,6 +35,7 @@ public enum ErrorMessages {
     NOT_FOUND_IMAGE("해당 이미지를 찾을 수 없습니다."),
     NOT_PUBLISHED("해당 체크리스트는 공개할 수 없습니다."),
     INVALID_STEP("스텝 정보가 유효하지 않습니다."),
+    REQUIRED_FIELD_IMAGE("이미지 필드는 필수입니다."),
 
     //files
     NOT_FOUND_FILE("파일을 찾을 수 없습니다"),
@@ -48,6 +49,9 @@ public enum ErrorMessages {
 
     //notices
     NOT_FOUND_NOTICE("해당 공지사항을 찾을 수 없습니다."),
+
+    //temp checklists
+    REQUIRED_FIELD_TEMPORARY("임시 여부 필드는 필수입니다."),
 
     //general
     INVAILD_ARGUMENT("유효하지 않은 인자입니다.");

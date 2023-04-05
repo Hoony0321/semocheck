@@ -1,17 +1,15 @@
-package com.company.semocheck.domain.request.checklist;
+package com.company.semocheck.domain.request.tempChecklist;
 
-
+import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-
 @Data
 @NoArgsConstructor
-public class CreateChecklistRequest {
-
+public class CreateTempChecklistRequest {
     private String title;
     private String brief;
     private String mainCategoryName;
@@ -19,10 +17,11 @@ public class CreateChecklistRequest {
     private Boolean publish;
     private List<StepRequestDto> steps;
     private Integer defaultImage;
+    private Integer temporary;
     private String fileId;
 
     @Builder
-    public CreateChecklistRequest(String title, String brief, String mainCategoryName, String subCategoryName, Boolean publish, List<StepRequestDto> steps, Integer defaultImage, String fileId) {
+    public CreateTempChecklistRequest(String title, String brief, String mainCategoryName, String subCategoryName, Boolean publish, List<StepRequestDto> steps, Integer defaultImage, Integer temporary, String fileId) {
         this.title = title;
         this.brief = brief;
         this.mainCategoryName = mainCategoryName;
@@ -30,6 +29,7 @@ public class CreateChecklistRequest {
         this.publish = publish;
         this.steps = steps;
         this.defaultImage = defaultImage;
+        this.temporary = temporary;
         this.fileId = fileId;
     }
 }

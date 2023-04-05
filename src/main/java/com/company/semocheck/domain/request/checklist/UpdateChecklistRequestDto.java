@@ -16,7 +16,6 @@ public class UpdateChecklistRequestDto {
     private String subCategoryName;
     private Boolean publish;
     private String fileId;
-
-    private Integer temporary;
+    private Integer defaultImage;
     private List<StepRequestDto> steps;
 }

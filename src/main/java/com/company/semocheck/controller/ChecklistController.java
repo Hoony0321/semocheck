@@ -139,38 +139,6 @@ public class ChecklistController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Get member's temporay checklists API", description = "회원의 임시 체크리스트 목록을 조회합니다.\n\n" +
-            "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
-    @GetMapping("/api/members/checklists/temp")
-    public DataResponseDto<SearchResultDto<ChecklistTempSimpleDto>> getMemberTempChecklists(HttpServletRequest request){
-        //Get member by jwt token
-        Member member = memberService.getMemberByJwt(request);
-
-        List<Checklist> checklists = member.getTempChecklists();
-
-        List<ChecklistTempSimpleDto> checklistTempSimpleDtos = new ArrayList<>();
-        for(Checklist checklist : checklists){
-            checklistTempSimpleDtos.add(ChecklistTempSimpleDto.createDto(checklist));
-        }
-
-        return DataResponseDto.of(SearchResultDto.createDto(checklistTempSimpleDtos), Code.SUCCESS_READ);
-    }
-
-    @ApiDocumentResponse
-    @Operation(summary = "Get member's temporay checklist by id API", description = "회원의 임시 체크리스트를 id를 통해 조회합니다.\n\n" +
-            "해당 멤버 소유의 체크리스트만 접근 가능합니다.")
-    @GetMapping("/api/members/checklists/temp/{checklist_id}")
-    public DataResponseDto<ChecklistTempDetailDto> getMemberTempChecklistById(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId){
-        //Get member by jwt token
-        Member member = memberService.getMemberByJwt(request);
-
-        Checklist checklist = checklistService.findTempById(checklistId);
-        if(!checklist.getOwner().equals(member)) throw new GeneralException(Code.FORBIDDEN);
-
-        return DataResponseDto.of(ChecklistTempDetailDto.createDto(checklist), Code.SUCCESS_READ);
-    }
-
-    @ApiDocumentResponse
     @Operation(summary = "Get recommended checklist API", description = "회원의 정보를 토대로 체크리스트를 추천합니다.\n\n")
     @GetMapping("/api/members/checklists/recommend")
     public DataResponseDto<SearchResultDto<ChecklistPostSimpleDto>> getRecommendChecklistByCategory(HttpServletRequest request){

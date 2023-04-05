@@ -24,6 +24,7 @@ public class ChecklistService {
     private final FileService fileService;
     private final StepRepository stepRepository;
 
+    //transactional method
     public Checklist findById(Long id){
         Optional<Checklist> findOne = checklistRepository.findByIdAndTemporaryIsNull(id);
         if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_CHECKLIST);
@@ -31,12 +32,26 @@ public class ChecklistService {
         return findOne.get();
     }
 
-    public List<Checklist> getAllChecklist(){
+    //transactional method
+    public List<Checklist> findByMember(Member member){
+        return member.getChecklists().stream()
+                .filter(chk -> chk.getTemporary() == null)
+                .collect(Collectors.toList());
+    }
+
+    //transactional method
+    public List<Checklist> findAllChecklists(){
         return checklistRepository.findByTemporaryIsNull();
     }
 
+    //transactional method
+    public List<Checklist> findPublishedChecklists(){
+        return checklistRepository.findByTemporaryIsNullAndPublishIsTrue();
+    }
+
+    //service method
     public List<Checklist> getPublishedChecklistByQuery(String categoryMain, String categorySub, String title, String owner) {
-        List<Checklist> checklists = checklistRepository.findByTemporaryIsNullAndPublishIsTrue();
+        List<Checklist> checklists = findPublishedChecklists();
 
         //Category MainName
         if(categoryMain != null){
@@ -70,7 +85,7 @@ public class ChecklistService {
     }
 
     public List<Checklist> getMemberChecklistsByQuery(Member member, String categoryMain, String categorySub, String title, Boolean published, Boolean completed, Boolean owner) {
-        List<Checklist> checklists = checklistRepository.findByOwnerAndTemporaryIsNull(member);
+        List<Checklist> checklists = findByMember(member);
 
         //Category MainName
         if(categoryMain != null){
@@ -125,7 +140,7 @@ public class ChecklistService {
     }
 
     public List<Checklist> getRecommendChecklist(Member member) {
-        List<Checklist> checklists = checklistRepository.findByTemporaryIsNullAndPublishIsTrue();
+        List<Checklist> checklists = findPublishedChecklists();
 
         //filtering checklist by member's category
         List<SubCategory> subCategories = new ArrayList<>();
@@ -144,7 +159,7 @@ public class ChecklistService {
 
     public List<Checklist> getPopularChecklist() {
         //TODO : temporary / publish false 빼고 조회하도록 변경.
-        List<Checklist> checklists = checklistRepository.findByTemporaryIsNullAndPublishIsTrue();
+        List<Checklist> checklists = findPublishedChecklists();
 
         checklists.sort(Comparator.comparing(Checklist::getViewCount));
         checklists = checklists.stream().limit(10).collect(Collectors.toList());
@@ -154,7 +169,7 @@ public class ChecklistService {
 
     public List<Checklist> getSimilarChecklist(Checklist checklist) {
         //TODO : 카테고리 말고도 그 외 정보를 토대로 조회하도록 변경
-        List<Checklist> checklists = checklistRepository.findByTemporaryIsNullAndPublishIsTrue();
+        List<Checklist> checklists = findPublishedChecklists();
 
         checklists = checklists.stream().filter(chk -> chk.getCategory().equals(checklist.getCategory()))
                                         .limit(5)
@@ -184,8 +199,9 @@ public class ChecklistService {
             checklist.setFile(fileDetail);
         }
 
-        if(checklist.getTemporary() == null && checklist.getDefaultImage() == null && checklist.getFileDetail() == null){
-            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_IMAGE);
+        //TODO 해당 부분 확실히 잡고 갈것
+        if(checklist.getDefaultImage() == null && checklist.getFileDetail() == null){
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.REQUIRED_FIELD_IMAGE);
         }
 
         //Checklist 저장
@@ -346,12 +362,6 @@ public class ChecklistService {
         return checklists;
     }
 
-
-    public List<Checklist> getMemberTempChecklists(Member member) {
-        List<Checklist> checklists = checklistRepository.findByOwnerAndTemporaryIsNotNull(member);
-        return checklists;
-    }
-
     @Transactional
     public Checklist getPublishedChecklistById(Long checklistId) {
         //Get checklist by id
@@ -367,13 +377,5 @@ public class ChecklistService {
     @Transactional
     public void updateChecklistByViewer(Checklist checklist, Member member) {
         checklist.updateInfoByViewer(member);
-    }
-
-    //* temp checklist api *//
-    public Checklist findTempById(Long id){
-        Optional<Checklist> findOne = checklistRepository.findByIdAndTemporaryIsNotNull(id);
-        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_CHECKLIST);
-
-        return findOne.get();
     }
 }

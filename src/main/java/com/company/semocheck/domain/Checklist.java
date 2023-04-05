@@ -3,6 +3,7 @@ package com.company.semocheck.domain;
 import com.company.semocheck.domain.request.checklist.CreateChecklistRequest;
 import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
+import com.company.semocheck.domain.request.tempChecklist.CreateTempChecklistRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -96,6 +97,29 @@ public class Checklist extends BaseTimeEntity{
         entity.title = requestDto.getTitle();
         entity.brief = requestDto.getBrief();
         entity.publish = requestDto.getPublish();
+        entity.defaultImage = requestDto.getDefaultImage();
+
+        //연관관계 설정
+        entity.setOwner(member); //owner
+        if(category != null) entity.setCategory(category); //category
+        if(requestDto.getSteps() != null){ //step
+            for (StepRequestDto stepRequestDto : requestDto.getSteps()) {
+                Step step = Step.createEntity(stepRequestDto, entity);
+                entity.addStep(step);
+            }
+
+            entity.stepCount = requestDto.getSteps().size();
+        }
+
+        return entity;
+    }
+
+    static public Checklist createEntity(CreateTempChecklistRequest requestDto, Member member, SubCategory category){
+        Checklist entity = new Checklist();
+
+        entity.title = requestDto.getTitle();
+        entity.brief = requestDto.getBrief();
+        entity.publish = requestDto.getPublish();
         entity.temporary = requestDto.getTemporary();
         entity.defaultImage = requestDto.getDefaultImage();
 
@@ -141,7 +165,7 @@ public class Checklist extends BaseTimeEntity{
         this.title = requestDto.getTitle();
         this.brief = requestDto.getBrief();
         this.publish = requestDto.getPublish();
-        this.temporary = requestDto.getTemporary();
+        //TODO updateInfo 수정
         this.setCategory(subCategory);
 
         this.stepCount = this.steps.size();

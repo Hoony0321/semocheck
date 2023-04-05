@@ -92,7 +92,7 @@ public class ChecklistPageController {
 
     @GetMapping("/checklists")
     public String checklists(Model model){
-        List<Checklist> checklists = checklistService.getAllChecklist();
+        List<Checklist> checklists = checklistService.findAllChecklists();
         Collections.reverse(checklists);
         model.addAttribute("checklists", checklists);
         return "checklists/list";
