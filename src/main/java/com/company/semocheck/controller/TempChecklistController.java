@@ -126,7 +126,7 @@ public class TempChecklistController {
     @ApiDocumentResponse
     @Operation(summary = "Delete a temp checklist API", description = "회원의 임시 체크리스트를 삭제합니다.\n\n" +
             "회원의 체크리스트가 아닌 경우 삭제가 불가능합니다. - 403 Forbidden error")
-    @DeleteMapping("/api/members/checklists")
+    @DeleteMapping("/api/members/checklists/temp")
     private ResponseDto deleteChecklistByList(HttpServletRequest request, @RequestBody DeleteTempChecklistRequest requestDto){
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
