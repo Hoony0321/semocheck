@@ -107,9 +107,6 @@ public class MemberService {
 
     @Transactional
     public Member updateInfo(Member member, UpdateMemberRequest requestDto) {
-        if(requestDto.getName() == null || requestDto.getAgreeNotify() == null || requestDto.getAge() == null || requestDto.getSex() == null){
-            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVAILD_ARGUMENT);
-        }
         member.updateInfo(requestDto);
         return member;
     }

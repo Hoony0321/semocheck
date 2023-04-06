@@ -137,9 +137,8 @@ public class Member extends BaseTimeEntity{
     }
 
     public void updateInfo(UpdateMemberRequest requestDto) {
-        this.age = requestDto.getAge();
-        this.sex = requestDto.getSex();
-        this.name = requestDto.getName();
-        this.agreeNotify = requestDto.getAgreeNotify();
+        if(requestDto.getAgreeNotify() != null) this.agreeNotify = requestDto.getAgreeNotify();
+        if(requestDto.getName() != null) this.name = requestDto.getName();
+        if(requestDto.getAge() != null) this.age = requestDto.getAge();
     }
 }
