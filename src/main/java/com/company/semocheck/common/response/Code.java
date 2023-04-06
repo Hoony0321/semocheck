@@ -32,7 +32,7 @@ public enum Code {
 
     NOT_FOUND(404, HttpStatus.NOT_FOUND, "존재하지 않는 리소스"),
     ILLEGAL_ARGUMENT(402, HttpStatus.BAD_REQUEST, "잘못된 매개변수"),
-
+    ILLEGAL_REQUEST_FORM(402, HttpStatus.BAD_REQUEST, "잘못된 요청 형식"),
     CONSTRAINT_NOT_VALID(410, HttpStatus.BAD_REQUEST, "제약조건 위배"),
     TRANSACTION_NOT_COMMITED(411, HttpStatus.BAD_REQUEST, "트랜잭션 커밋 실패"),
 

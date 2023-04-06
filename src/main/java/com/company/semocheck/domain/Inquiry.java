@@ -1,6 +1,7 @@
 package com.company.semocheck.domain;
 
 import com.company.semocheck.domain.request.inquiry.CreateInquiryRequest;
+import com.company.semocheck.domain.request.inquiry.UpdateInquiryRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -46,18 +47,24 @@ public class Inquiry extends BaseTimeEntity {
 
     static public Inquiry createEntity(Member member, CreateInquiryRequest requestDto){
         Inquiry entity = new Inquiry();
-        entity.member = member;
         entity.title = requestDto.getTitle();
         entity.content = requestDto.getContent();
-        entity.status = InquiryStatus.REGISTERED;
+        entity.status = InquiryStatus.STAND_BY;
         return entity;
     }
 
     //====== 연관관계 메서드 ======//
     public void addInquiryComment(InquiryComment inquiryComment){
-        inquiryComments.add(inquiryComment);
-        inquiryComment.setInquiry(this);
+        this.status = InquiryStatus.COMPLETED;
+        this.inquiryComments.add(inquiryComment);
     }
 
+    public void setMember(Member member){
+        this.member = member;
+    }
 
+    public void updateInfo(UpdateInquiryRequest updateRequest) {
+        if(updateRequest.getTitle() != null) this.title = updateRequest.getTitle();
+        if(updateRequest.getContent() != null) this.content = updateRequest.getContent();
+    }
 }

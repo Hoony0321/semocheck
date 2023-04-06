@@ -49,7 +49,7 @@ public class ReportController {
     @GetMapping("/api/members/reports")
     private DataResponseDto<SearchResultDto<ReportDto>> getMemberReports(HttpServletRequest request){
 
-        //Get member by jwt token
+        //get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
         List<Report> reports = reportService.getMemberReports(member);

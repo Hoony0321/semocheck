@@ -74,6 +74,9 @@ public class Member extends BaseTimeEntity{
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Report> reports = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Inquiry> inquiries = new ArrayList<>();
+
     @Builder
     public Member(String oAuthId, String provider, String email, String name, String picture, Role role, Boolean agreeNotify, Boolean sex, Integer age) {
         this.oAuthId = oAuthId;
@@ -128,6 +131,8 @@ public class Member extends BaseTimeEntity{
     }
     public void addReport(Report report){ this.reports.add(report); }
     public void removeReport(Report report){ this.reports.remove(report); }
+    public void addInquiry(Inquiry inquiry){this.inquiries.add(inquiry);}
+    public void removeInquiry(Inquiry inquiry) {this.inquiries.remove(inquiry);}
 
     //====== 정보 수정 메서드 ======//
     public void setInfoNewMember(CreateMemberRequest createMemberRequest){
@@ -141,4 +146,5 @@ public class Member extends BaseTimeEntity{
         if(requestDto.getName() != null) this.name = requestDto.getName();
         if(requestDto.getAge() != null) this.age = requestDto.getAge();
     }
+
 }
