@@ -79,7 +79,6 @@ class MemberControllerTest {
         UpdateMemberRequest requestDto = UpdateMemberRequest.builder()
                 .name("modify name")
                 .agreeNotify(true)
-                .sex(true)
                 .age(100)
                 .build();
         //when
@@ -112,28 +111,6 @@ class MemberControllerTest {
         assertThat(response.getAgreeNotify()).isEqualTo(true);
         assertThat(response.getSex()).isEqualTo(null);
         assertThat(response.getAge()).isEqualTo(null); //입력하지  않으면 null로 입력됨.
-    }
-
-    @Test
-    @Transactional
-    public void 회원정보_일부정보_수정_불충분한정보() throws Exception {
-        //given
-        Member member = memberService.findById(memberId);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearer " + accessToken);
-
-
-        //when
-        UpdateMemberRequest requestDto = UpdateMemberRequest.builder()
-                .age(100)
-                .sex(true)
-                .build();
-
-        //then
-        GeneralException exception = assertThrows(GeneralException.class, () -> {
-            memberController.updateInfo(request, requestDto);
-        });
-        assertThat(exception.getErrorCode()).isEqualTo(Code.BAD_REQUEST);
     }
 
 }

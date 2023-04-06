@@ -14,7 +14,7 @@ public class UpdateMemberRequest {
     private Integer age;
 
     @Builder
-    public UpdateMemberRequest(String name, Boolean agreeNotify Integer age) {
+    public UpdateMemberRequest(String name, Boolean agreeNotify, Integer age) {
         this.name = name;
         this.agreeNotify = agreeNotify;
         this.age = age;

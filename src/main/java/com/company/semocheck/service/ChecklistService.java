@@ -374,4 +374,12 @@ public class ChecklistService {
     public void updateChecklistByViewer(Checklist checklist, Member member) {
         checklist.updateInfoByViewer(member);
     }
+
+    @Transactional
+    public void restartProgress(Checklist checklist) {
+        // isCheck reset
+        checklist.getSteps().stream().forEach(step -> step.update(false));
+        // progress reset
+        checklist.updateProgress();
+    }
 }

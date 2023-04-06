@@ -248,8 +248,6 @@ public class ChecklistController {
         return ResponseDto.of(true, Code.SUCCESS_UPDATE);
     }
 
-
-
     @ApiDocumentResponse
     @Operation(summary = "Update checklist progress API", description = "해당 체크리스트의 진행 정보를 수정합니다.\n\n" +
             "회원의 체크리스트가 아닌 경우 수정할 수 없습니다. - 403 Forbidden error\n\n" +
@@ -267,6 +265,24 @@ public class ChecklistController {
         //Insert stepItem into checklist entity
         //TODO : order 중복에 따른 에러 처리 + 순차적으로 증가하게 설정
         checklistService.updateStepProgress(checklist, requestDto);
+
+        return ResponseDto.of(true, Code.SUCCESS_UPDATE);
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "Restart checklist progress API", description = "해당 체크리스트의 진행 정보를 초기화합니다.\n\n" +
+            "회원의 체크리스트가 아닌 경우 수정할 수 없습니다. - 403 Forbidden error")
+    @PutMapping("/api/members/checklists/{checklist_id}/restart")
+    private ResponseDto restartProgress(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId){
+        //Get member by jwt token
+        Member member = memberService.getMemberByJwt(request);
+
+        //Get checklist by id
+        Checklist checklist = checklistService.findById(checklistId);
+        if(!checklist.getOwner().equals(member)) throw new GeneralException(Code.FORBIDDEN);
+
+        //Restart checklist's progress
+        checklistService.restartProgress(checklist);
 
         return ResponseDto.of(true, Code.SUCCESS_UPDATE);
     }
