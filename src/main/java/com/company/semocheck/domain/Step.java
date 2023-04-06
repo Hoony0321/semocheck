@@ -1,13 +1,13 @@
 package com.company.semocheck.domain;
 
 import com.company.semocheck.domain.request.checklist.StepRequestDto;
-import com.company.semocheck.domain.request.checklist.StepUpdateDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 @Entity
@@ -27,11 +27,15 @@ public class Step {
     private Integer stepOrder;
     @Size(max = 100)
     private String description;
+
+    @NotNull
+    @ColumnDefault("0")
     private Boolean isCheck;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "checklist_id")
     @JsonIgnore
+    @NotNull
     private Checklist checklist;
 
     static public Step createEntity(StepRequestDto requestDto, Checklist checklist){

@@ -25,6 +25,7 @@ public class SubCategory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "main_category_id")
     @JsonIgnore
+    @NotNull
     private MainCategory mainCategory;
 
     static public SubCategory createEntity(CreateCategoryRequestDto requestDto, MainCategory mainCategory){

@@ -30,10 +30,12 @@ public class Member extends BaseTimeEntity{
     @Column(name = "oauth_id", nullable = false)
     private String oAuthId;
 
+    @Size(max = 20)
     @NotNull
     @Column(nullable = false)
     private String provider;
 
+    @Size(max = 50)
     @NotNull
     @Column(nullable = false)
     private String email;
