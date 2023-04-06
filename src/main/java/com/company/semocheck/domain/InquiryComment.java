@@ -1,5 +1,6 @@
 package com.company.semocheck.domain;
 
+import com.company.semocheck.domain.request.inquiry.CreateInquiryCommentRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -33,17 +34,14 @@ public class InquiryComment extends BaseTimeEntity{
     @JoinColumn(name = "writer_id")
     private Member writer;
 
-    static public InquiryComment createEntity(Member member, Inquiry inquiry, String content){
+    static public InquiryComment createEntity(CreateInquiryCommentRequest request){
         InquiryComment entity = new InquiryComment();
-        entity.inquiry = inquiry;
-        entity.content = content;
-        entity.writer = member;
+        entity.content = request.getContent();
         return entity;
     }
 
     //======= 연관관계 메서드 =======//
-    public void setInquiry(Inquiry inquiry){
-        this.inquiry = inquiry;
-        inquiry.getInquiryComments().add(this);
-    }
+    public void setInquiry(Inquiry inquiry){this.inquiry = inquiry;}
+
+    public void setWriter(Member member){this.writer = member;}
 }
