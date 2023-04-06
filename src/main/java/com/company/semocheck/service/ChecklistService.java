@@ -198,8 +198,8 @@ public class ChecklistService {
             FileDetail fileDetail = fileService.findById(requestDto.getImageId());
             checklist.setImage(fileDetail);
         } else if(requestDto.getDefaultImageId() != null){
-            FileDetail fileDetail = fileService.findById(requestDto.getImageId());
-            checklist.setImage(fileDetail);
+            FileDetail fileDetail = fileService.findById(requestDto.getDefaultImageId());
+            checklist.setDefaultImage(fileDetail);
         }
 
         //Checklist 저장

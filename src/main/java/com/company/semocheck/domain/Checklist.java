@@ -81,7 +81,7 @@ public class Checklist extends BaseTimeEntity{
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "image_id")
     private FileDetail image;
-    @OneToOne(cascade = CascadeType.REMOVE)
+    @OneToOne
     @JoinColumn(name = "default_image_id")
     private FileDetail defaultImage;
 
