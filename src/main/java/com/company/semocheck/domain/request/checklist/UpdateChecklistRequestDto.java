@@ -18,5 +18,6 @@ public class UpdateChecklistRequestDto {
     private String imageId;
     private String defaultImageId;
     private String colorCode;
+    private Integer temporary;
     private List<StepRequestDto> steps;
 }

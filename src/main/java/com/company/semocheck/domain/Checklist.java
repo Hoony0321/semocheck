@@ -176,6 +176,8 @@ public class Checklist extends BaseTimeEntity{
         this.colorCode = requestDto.getColorCode();
         this.setCategory(subCategory);
         this.stepCount = this.steps.size();
+
+        if(requestDto.getTemporary() != null) this.temporary = temporary;
     }
 
     public void updateProgress(){
