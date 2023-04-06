@@ -53,6 +53,21 @@ public class FileController {
     }
 
     @ApiDocumentResponse
+    @Operation(summary = "upload category default image file api", description = "카테고리 디폴트 이미지 파일을 업로드합니다.")
+    @PostMapping("/api/files/categories")
+    private DataResponseDto<FileDto> uploadDefaultImageFile(@RequestParam(value = "file", required = false) MultipartFile file, @RequestParam(value = "main") String mainCategoryName, @RequestParam(value = "sub") String subCategoryName) {
+        //check validation
+        if (file == null || file.isEmpty()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_FILE);
+        if (mainCategoryName == null || subCategoryName == null) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_OBJECT);
+
+        //file upload
+        String location = String.format("categories/%s/%s", mainCategoryName, subCategoryName);
+        FileDetail fileDetail = fileService.upload(location, file);
+
+        return DataResponseDto.of(FileDto.createDto(fileDetail));
+    }
+
+    @ApiDocumentResponse
     @Operation(summary = "delete file api", description = "파일을 삭제합니다.")
     @DeleteMapping("/api/files/{id}")
     private ResponseDto deleteFile(@PathVariable("id") String id){

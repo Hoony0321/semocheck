@@ -4,13 +4,16 @@ import com.company.semocheck.common.response.ApiDocumentResponse;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.DataResponseDto;
 import com.company.semocheck.common.response.ResponseDto;
+import com.company.semocheck.domain.FileDetail;
 import com.company.semocheck.domain.SubCategory;
 import com.company.semocheck.domain.MainCategory;
+import com.company.semocheck.domain.dto.FileDto;
 import com.company.semocheck.domain.dto.category.MainCategoryDto;
 import com.company.semocheck.domain.dto.category.SubCategoryDto;
 import com.company.semocheck.domain.request.category.CreateCategoryRequestDto;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.service.CategoryService;
+import com.company.semocheck.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +21,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @RestController
 @Tag(name = "카테고리", description = "카테고리 관련 API 모음입니다.")
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
+
+    private final FileService fileService;
 
 
     //TODO : TEST 필요
@@ -100,6 +106,22 @@ public class CategoryController {
         else categoryService.removeSubCategory(mainName, subName);
 
         return ResponseDto.of(true, Code.SUCCESS_DELETE);
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "Get ranodm category's default image API", description = "카테고리 랜덤 디폴트 이미지를 조회합니다.")
+    @GetMapping("/api/categories/image")
+    public DataResponseDto<FileDto> getDefaultImage(@RequestParam("main") String mainCategoryName, @RequestParam("sub") String subCategoryName){
+        String folderName = "categories/" +  mainCategoryName + "/" + subCategoryName;
+        List<FileDetail> files = fileService.findByFolder(folderName);
+        if(files.size() == 0) throw new GeneralException(Code.NOT_FOUND);
+
+        // get random element of files
+        Random rand = new Random();
+        int randomIndex = rand.nextInt(files.size());
+        FileDetail fileDetail = files.get(randomIndex);
+
+        return DataResponseDto.of(FileDto.createDto(fileDetail), Code.SUCCESS_READ);
     }
 
     //=== 추후에 category 정보 업데이트가 필요한 경우 사용 ===//

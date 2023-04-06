@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -97,6 +98,12 @@ public class FileService {
         if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_FILE);
 
         return findOne.get();
+    }
+
+    public List<FileDetail> findByFolder(String folder){
+        List<FileDetail> fileDetails = fileDetailRepository.findAllByFolder(folder);
+        if(fileDetails.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_FILE);
+        return fileDetails;
     }
 
 }
