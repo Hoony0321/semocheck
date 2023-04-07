@@ -55,7 +55,8 @@ public class InquiryController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "get inquiry by id API", description = "해당 번호의 문의를 조회합니다.\n\n")
+    @Operation(summary = "get inquiry by id API", description = "해당 번호의 문의를 조회합니다.\n\n" +
+            "[Inquiry Status] : STAND_BY / COMPLETED")
     @GetMapping("/api/members/inquiries/{inquiry_id}")
     private DataResponseDto<InquiryDetailDto> getInquiryById(HttpServletRequest request, @PathVariable("inquiry_id") Long inquiryId){
         //get member by jwt token

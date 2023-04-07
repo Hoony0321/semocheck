@@ -45,7 +45,8 @@ public class ReportController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "get member's report API", description = "해당 회원의 신고를 조회합니다.\n\n")
+    @Operation(summary = "get member's report API", description = "해당 회원의 신고를 조회합니다.\n\n" +
+            "[Report Status] : IN_PROGRESS / COMPLETED / CANCELED\n\n")
     @GetMapping("/api/members/reports")
     private DataResponseDto<SearchResultDto<ReportDto>> getMemberReports(HttpServletRequest request){
 
@@ -64,7 +65,8 @@ public class ReportController {
 
     //======= create method ======//
     @ApiDocumentResponse
-    @Operation(summary = "create report API", description = "신고를 접수합니다.\n\n")
+    @Operation(summary = "create report API", description = "신고를 접수합니다.\n\n" +
+            "[Report Type] : ERROR / PERFORMANCE / USAGE / SECURITY / COMPILANCE\n\n")
     @PostMapping("/api/members/reports")
     private DataResponseDto<Long> createReport(HttpServletRequest request, @RequestBody CreateReportRequest requestDto){
 
