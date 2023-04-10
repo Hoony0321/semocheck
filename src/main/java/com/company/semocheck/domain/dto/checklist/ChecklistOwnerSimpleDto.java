@@ -35,6 +35,7 @@ public class ChecklistOwnerSimpleDto {
     //Date
     private String createdDate;
     private String modifiedDate;
+    private String checkedDate;
 
     static public ChecklistOwnerSimpleDto createDto(Checklist checklist) {
         ChecklistOwnerSimpleDto dto = new ChecklistOwnerSimpleDto();
@@ -59,6 +60,7 @@ public class ChecklistOwnerSimpleDto {
         //Date
         dto.createdDate = checklist.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
         dto.modifiedDate = checklist.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+        dto.checkedDate = checklist.getCheckedDate() != null ? checklist.getCheckedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) : null;
 
         return dto;
     }

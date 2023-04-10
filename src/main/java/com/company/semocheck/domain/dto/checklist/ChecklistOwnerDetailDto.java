@@ -44,6 +44,7 @@ public class ChecklistOwnerDetailDto {
     //Date
     private String createdDate;
     private String modifiedDate;
+    private String checkedDate;
 
     //detail info
     private Boolean publish;
@@ -88,6 +89,7 @@ public class ChecklistOwnerDetailDto {
         //Date
         dto.createdDate = checklist.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
         dto.modifiedDate = checklist.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+        dto.checkedDate = checklist.getCheckedDate() != null ? checklist.getCheckedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) : null;
 
         return dto;
     }
