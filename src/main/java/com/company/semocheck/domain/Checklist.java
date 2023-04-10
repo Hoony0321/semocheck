@@ -185,15 +185,9 @@ public class Checklist extends BaseTimeEntity{
     }
 
     public void updateProgress(){
-        int totalStepNum = this.steps.size();
-        int checkNum = 0;
-        for (Step step : this.steps) {
-            if(step.getIsCheck()) checkNum += 1;
-        }
-        int result = checkNum * 100 / totalStepNum; //백분율 표시
-        if(result == 100) this.complete = true; //진행도 100%일 경우 complete true로 변경
-
-        this.progress = result;
+        long count = this.steps.stream().filter(step -> step.getIsCheck()).count();
+        this.progress = (int) (count * 100 / this.stepCount);
+        if(this.progress == 100) this.complete = true; //진행도 100%일 경우 complete true로 변경
     }
 
     public void updateCheckedDate() {this.checkedDate = LocalDateTime.now();}
