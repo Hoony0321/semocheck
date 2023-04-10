@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,6 +97,9 @@ public class Checklist extends BaseTimeEntity{
 
     @ColumnDefault("0")
     private Integer progress;
+
+    @Column(name = "checked_date")
+    private LocalDateTime checkedDate;
 
     //====== 생성 메서드 ======//
     static public Checklist createEntity(CreateChecklistRequest requestDto, Member member, SubCategory category){
@@ -192,6 +196,8 @@ public class Checklist extends BaseTimeEntity{
         this.progress = result;
     }
 
+    public void updateCheckedDate() {this.checkedDate = LocalDateTime.now();}
+
     public void updateTempInfo(UpdateTempChecklistRequest requestDto, SubCategory subCategory) {
         this.title = requestDto.getTitle();
         this.brief = requestDto.getBrief();
@@ -231,6 +237,4 @@ public class Checklist extends BaseTimeEntity{
     public void setDefaultImage(FileDetail defaultImage){this.defaultImage = defaultImage;}
     public void removeStep(Step step) { this.steps.remove(step); }
     public void setOrigin(Checklist checklist) {this.origin = checklist;}
-
-
 }

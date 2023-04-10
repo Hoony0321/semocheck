@@ -305,6 +305,7 @@ public class ChecklistService {
 
         //checklist progress 수정
         checklist.updateProgress();
+        checklist.updateCheckedDate();
     }
 
     @Transactional
