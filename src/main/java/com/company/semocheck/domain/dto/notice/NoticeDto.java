@@ -4,6 +4,8 @@ import com.company.semocheck.domain.Notice;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.format.DateTimeFormatter;
+
 @Data
 @NoArgsConstructor
 public class NoticeDto {
@@ -11,6 +13,7 @@ public class NoticeDto {
     private String title;
     private String content;
     private String noticeType;
+    private String createdDate;
 
     static public NoticeDto createDto(Notice notice) {
         NoticeDto dto = new NoticeDto();
@@ -18,6 +21,7 @@ public class NoticeDto {
         dto.title = notice.getTitle();
         dto.content = notice.getContent();
         dto.noticeType = notice.getType().toString();
+        dto.createdDate = notice.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
         return dto;
     }
 }
