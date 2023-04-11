@@ -18,6 +18,7 @@ import org.hibernate.annotations.DynamicInsert;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -76,16 +77,8 @@ public class Checklist extends BaseTimeEntity{
     private Integer temporary; //임시저장 페이지
 
     //====== 카운트 정보 =======//
-    @ColumnDefault("0")
-    private Integer scrapCount;
-    @ColumnDefault("0")
-    private Integer viewCount;
-    @ColumnDefault("0")
-    private Integer viewCountMale;
-    @ColumnDefault("0")
-    private Integer viewCountFemale;
-    @ColumnDefault("0")
-    private Float avgAge;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "checklist", cascade = CascadeType.ALL)
+    private ChecklistStats statsInfo;
 
     //====== 진행 정보 =====//
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "checklist", cascade = CascadeType.ALL)
@@ -95,12 +88,14 @@ public class Checklist extends BaseTimeEntity{
     static public Checklist createEntity(CreateChecklistRequest requestDto, Member member, SubCategory category){
         Checklist entity = new Checklist();
         ChecklistUsage usageInfo = new ChecklistUsage(entity);
+        ChecklistStats statsInfo = new ChecklistStats(entity);
 
         entity.title = requestDto.getTitle();
         entity.brief = requestDto.getBrief();
         entity.publish = requestDto.getPublish();
         entity.colorCode = requestDto.getColorCode();
         entity.usageInfo = usageInfo;
+        entity.statsInfo = statsInfo;
 
         //연관관계 설정
         entity.setOwner(member); //owner
@@ -119,12 +114,16 @@ public class Checklist extends BaseTimeEntity{
 
     static public Checklist createEntity(CreateTempChecklistRequest requestDto, Member member, SubCategory category){
         Checklist entity = new Checklist();
+        ChecklistUsage usageInfo = new ChecklistUsage(entity);
+        ChecklistStats statsInfo = new ChecklistStats(entity);
 
         entity.title = requestDto.getTitle();
         entity.brief = requestDto.getBrief();
         entity.publish = requestDto.getPublish();
         entity.temporary = requestDto.getTemporary();
         entity.colorCode = requestDto.getColorCode();
+        entity.usageInfo = usageInfo;
+        entity.statsInfo = statsInfo;
 
         //연관관계 설정
         entity.setOwner(member); //owner
@@ -143,11 +142,15 @@ public class Checklist extends BaseTimeEntity{
 
     static public Checklist copyEntity(Checklist checklist, Member member){
         Checklist entity = new Checklist();
+        ChecklistUsage usageInfo = new ChecklistUsage(entity);
+        ChecklistStats statsInfo = new ChecklistStats(entity);
 
         entity.title = checklist.getTitle();
         entity.brief = checklist.getBrief();
         entity.publish = false;
         entity.colorCode = checklist.getColorCode();
+        entity.usageInfo = usageInfo;
+        entity.statsInfo = statsInfo;
 
         //연관관계 설정
         entity.setOrigin(checklist); //origin
@@ -191,20 +194,12 @@ public class Checklist extends BaseTimeEntity{
         this.stepCount = this.steps.size();
     }
 
-    public void updateInfoByViewer(Member member) {
-        if(!member.getSex()){this.viewCountMale++;} // viewer = male
-        else{this.viewCountFemale++;} //viewer = female
-
-
-        int totalViewCount = this.viewCountFemale + this.viewCountMale;
-        float totalAge = this.avgAge * (totalViewCount - 1) + member.getAge();
-        this.avgAge = totalAge / totalViewCount;
+    public void updateStatsInfoByViewer(Optional<Member> member) {
+        this.statsInfo.updateViewCount(member);
     }
 
-    public void increaseViewCount() {this.viewCount++;}
-
-    public void increaseScrapCount() {this.scrapCount++;}
-    public void decreaseScrapCount() {if(this.scrapCount > 0) this.scrapCount--;}
+    public void increaseScrapCount() {this.statsInfo.increaseScrapCount();}
+    public void decreaseScrapCount() {if(this.statsInfo.getScrapCount() > 0) this.statsInfo.decreaseScrapCount();}
 
     //====== 연관관계 메서드======//
     public void setOwner(Member member){

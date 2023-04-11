@@ -58,12 +58,12 @@ public class ChecklistPostDetailDto {
         dto.title = checklist.getTitle();
         dto.brief = checklist.getBrief();
         dto.stepCount = checklist.getStepCount();
-        dto.viewCount = checklist.getViewCount();
-        dto.scrapCount = checklist.getScrapCount();
+        dto.viewCount = checklist.getStatsInfo().getViewCount();
+        dto.scrapCount = checklist.getStatsInfo().getScrapCount();
         if(checklist.getCategory() != null) dto.category = SubCategoryDto.createDto(checklist.getCategory());
-        if(checklist.getViewCount() >= 10) { // 조회수 10회 이상일 경우만
-            dto.avgAge = checklist.getAvgAge();
-            dto.avgSex = checklist.getViewCountFemale() > checklist.getViewCountMale();
+        if(checklist.getStatsInfo().getViewCount() >= 10) { // 조회수 10회 이상일 경우만
+            dto.avgAge = checklist.getStatsInfo().getAvgAge();
+            dto.avgSex = checklist.getStatsInfo().getViewCountFemale() > checklist.getStatsInfo().getViewCountMale();
         }
 
         if(findOne.isEmpty()){

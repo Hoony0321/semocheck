@@ -163,7 +163,7 @@ public class ChecklistService {
         //TODO : temporary / publish false 빼고 조회하도록 변경.
         List<Checklist> checklists = findPublishedChecklists();
 
-        checklists.sort(Comparator.comparing(Checklist::getViewCount));
+        checklists.sort(Comparator.comparing(chk -> chk.getStatsInfo().getViewCount()));
         checklists = checklists.stream().limit(10).collect(Collectors.toList());
 
         return checklists;
@@ -329,11 +329,6 @@ public class ChecklistService {
         return checklist.getId();
     }
 
-    @Transactional
-    public void increaseViewCount(Checklist checklist) {
-        checklist.increaseViewCount();
-    }
-
     public List<Checklist> sortChecklists(List<Checklist> checklists, String sort, String direction) {
         if (sort.equals("date")) {
             if (direction.equals("asc")) {
@@ -344,16 +339,16 @@ public class ChecklistService {
         }
         else if (sort.equals("view")) {
             if (direction.equals("asc")) {
-                checklists.sort(Comparator.comparing(Checklist::getViewCount));
+                checklists.sort(Comparator.comparing(chk -> chk.getStatsInfo().getViewCount()));
             } else {
-                checklists.sort(Comparator.comparing(Checklist::getViewCount).reversed());
+                checklists.sort(Comparator.comparing((Checklist chk) -> chk.getStatsInfo().getViewCount()).reversed());
             }
         }
         else if (sort.equals("scrap")) {
             if (direction.equals("asc")) {
-                checklists.sort(Comparator.comparing(Checklist::getScrapCount));
+                checklists.sort(Comparator.comparing(chk -> chk.getStatsInfo().getScrapCount()));
             } else {
-                checklists.sort(Comparator.comparing(Checklist::getScrapCount).reversed());
+                checklists.sort(Comparator.comparing((Checklist chk) -> chk.getStatsInfo().getScrapCount()).reversed());
             }
         }
 
@@ -366,15 +361,12 @@ public class ChecklistService {
         Checklist checklist = findById(checklistId);
         if(!checklist.getPublish()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_CHECKLIST);
 
-        //increase view count
-        checklist.increaseViewCount();
-
         return checklist;
     }
 
     @Transactional
-    public void updateChecklistByViewer(Checklist checklist, Member member) {
-        checklist.updateInfoByViewer(member);
+    public void updateChecklistStatsByViewer(Checklist checklist, Optional<Member> member) {
+        checklist.updateStatsInfoByViewer(member);
     }
 
     @Transactional

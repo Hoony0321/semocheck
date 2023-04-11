@@ -115,7 +115,7 @@ public class ChecklistController {
         Checklist checklist = checklistService.getPublishedChecklistById(checklistId);
 
         //modify checklist's avgAge & avgSex
-        if(findOne.isPresent()){checklistService.updateChecklistByViewer(checklist, findOne.get());}
+        checklistService.updateChecklistStatsByViewer(checklist, findOne);
 
         //create dto
         ChecklistPostDetailDto dto = ChecklistPostDetailDto.createDto(checklist, findOne);

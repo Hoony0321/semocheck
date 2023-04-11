@@ -47,9 +47,9 @@ public class ChecklistOwnerSimpleDto {
         dto.stepCount = checklist.getStepCount();
         dto.progress = checklist.getUsageInfo().getProgress();
         if(checklist.getCategory() != null) dto.category = SubCategoryDto.createDto(checklist.getCategory());
-        if(checklist.getViewCount() >= 10){ // 조회수 10회 이상일 경우만
-            dto.avgAge = checklist.getAvgAge();
-            dto.avgSex = checklist.getViewCountFemale() > checklist.getViewCountMale();
+        if(checklist.getStatsInfo().getViewCount() >= 10){ // 조회수 10회 이상일 경우만
+            dto.avgAge = checklist.getStatsInfo().getAvgAge();
+            dto.avgSex = checklist.getStatsInfo().getViewCountFemale() > checklist.getStatsInfo().getViewCountMale();
         }
 
         //Image
