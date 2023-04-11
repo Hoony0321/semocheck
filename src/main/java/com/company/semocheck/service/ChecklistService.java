@@ -6,6 +6,7 @@ import com.company.semocheck.domain.*;
 import com.company.semocheck.domain.request.checklist.*;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.ChecklistRepository;
+import com.company.semocheck.repository.ChecklistUsageRepository;
 import com.company.semocheck.repository.StepRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class ChecklistService {
 
     private final ChecklistRepository checklistRepository;
+    private final ChecklistUsageRepository checklistUsageRepository;
     private final CategoryService categoryService;
     private final FileService fileService;
     private final StepRepository stepRepository;
@@ -118,7 +120,7 @@ public class ChecklistService {
         //Checklist completed
         if(completed != null){
             checklists = checklists.stream()
-                    .filter(chk -> chk.getComplete() == completed)
+                    .filter(chk -> chk.getUsageInfo().getComplete() == completed)
                     .collect(Collectors.toList());
         }
 
@@ -305,7 +307,6 @@ public class ChecklistService {
 
         //checklist progress 수정
         checklist.updateProgress();
-        checklist.updateCheckedDate();
     }
 
     @Transactional

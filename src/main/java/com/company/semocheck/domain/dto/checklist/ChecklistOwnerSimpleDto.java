@@ -45,7 +45,7 @@ public class ChecklistOwnerSimpleDto {
         //Info
         dto.title = checklist.getTitle();
         dto.stepCount = checklist.getStepCount();
-        dto.progress = checklist.getProgress();
+        dto.progress = checklist.getUsageInfo().getProgress();
         if(checklist.getCategory() != null) dto.category = SubCategoryDto.createDto(checklist.getCategory());
         if(checklist.getViewCount() >= 10){ // 조회수 10회 이상일 경우만
             dto.avgAge = checklist.getAvgAge();
@@ -60,7 +60,8 @@ public class ChecklistOwnerSimpleDto {
         //Date
         dto.createdDate = checklist.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
         dto.modifiedDate = checklist.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
-        dto.checkedDate = checklist.getCheckedDate() != null ? checklist.getCheckedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) : null;
+        dto.checkedDate = checklist.getUsageInfo().getCheckedDate() != null ?
+                checklist.getUsageInfo().getCheckedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) : null;
 
         return dto;
     }

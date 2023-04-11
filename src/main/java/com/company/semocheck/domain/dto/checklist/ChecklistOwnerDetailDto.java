@@ -74,8 +74,8 @@ public class ChecklistOwnerDetailDto {
 
         //Detail Info
         dto.publish = checklist.getPublish();
-        dto.complete = checklist.getComplete();
-        dto.progress = checklist.getProgress();
+        dto.complete = checklist.getUsageInfo().getComplete();
+        dto.progress = checklist.getUsageInfo().getProgress();
         for (Step step : checklist.getSteps()) {
             dto.steps.add(StepDto.createDto(step));
         }
@@ -89,7 +89,7 @@ public class ChecklistOwnerDetailDto {
         //Date
         dto.createdDate = checklist.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
         dto.modifiedDate = checklist.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
-        dto.checkedDate = checklist.getCheckedDate() != null ? checklist.getCheckedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) : null;
+        dto.checkedDate = checklist.getUsageInfo().getCheckedDate() != null ? checklist.getUsageInfo().getCheckedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) : null;
 
         return dto;
     }

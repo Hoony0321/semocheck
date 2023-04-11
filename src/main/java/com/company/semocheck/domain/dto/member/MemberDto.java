@@ -30,8 +30,8 @@ public class MemberDto {
         dto.scrapCount = member.getScraps().size();
 
         List<Checklist> checklists = member.getChecklists();
-        dto.inProgressCount = checklists.stream().filter(chk -> !chk.getComplete()).toList().size();
-        dto.completeCount = checklists.stream().filter(chk -> chk.getComplete()).toList().size();
+        dto.inProgressCount = checklists.stream().filter(chk -> !chk.getUsageInfo().getComplete()).toList().size();
+        dto.completeCount = checklists.stream().filter(chk -> chk.getUsageInfo().getComplete()).toList().size();
         dto.ownerCount = checklists.stream().filter(chk -> chk.getOrigin() == null).toList().size();
 
         for (MemberCategory category : member.getCategories()) {

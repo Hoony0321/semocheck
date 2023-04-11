@@ -62,21 +62,6 @@ public class Checklist extends BaseTimeEntity{
     @ColumnDefault("0")
     private Integer stepCount;
 
-    @ColumnDefault("0")
-    private Integer viewCount;
-
-    @ColumnDefault("0")
-    private Integer scrapCount;
-
-    @ColumnDefault("0")
-    private Float avgAge;
-
-    @ColumnDefault("0")
-    private Integer viewCountMale;
-
-    @ColumnDefault("0")
-    private Integer viewCountFemale;
-
     //====== 이미지 관련 정보 =======//
 
     @OneToOne(cascade = CascadeType.REMOVE)
@@ -88,27 +73,34 @@ public class Checklist extends BaseTimeEntity{
 
     private String colorCode;
 
-    //임시저장 페이지
-    private Integer temporary;
+    private Integer temporary; //임시저장 페이지
+
+    //====== 카운트 정보 =======//
+    @ColumnDefault("0")
+    private Integer scrapCount;
+    @ColumnDefault("0")
+    private Integer viewCount;
+    @ColumnDefault("0")
+    private Integer viewCountMale;
+    @ColumnDefault("0")
+    private Integer viewCountFemale;
+    @ColumnDefault("0")
+    private Float avgAge;
 
     //====== 진행 정보 =====//
-    @ColumnDefault("0")
-    private Boolean complete;
-
-    @ColumnDefault("0")
-    private Integer progress;
-
-    @Column(name = "checked_date")
-    private LocalDateTime checkedDate;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "checklist", cascade = CascadeType.ALL)
+    private ChecklistUsage usageInfo;
 
     //====== 생성 메서드 ======//
     static public Checklist createEntity(CreateChecklistRequest requestDto, Member member, SubCategory category){
         Checklist entity = new Checklist();
+        ChecklistUsage usageInfo = new ChecklistUsage(entity);
 
         entity.title = requestDto.getTitle();
         entity.brief = requestDto.getBrief();
         entity.publish = requestDto.getPublish();
         entity.colorCode = requestDto.getColorCode();
+        entity.usageInfo = usageInfo;
 
         //연관관계 설정
         entity.setOwner(member); //owner
@@ -186,11 +178,8 @@ public class Checklist extends BaseTimeEntity{
 
     public void updateProgress(){
         long count = this.steps.stream().filter(step -> step.getIsCheck()).count();
-        this.progress = (int) (count * 100 / this.stepCount);
-        if(this.progress == 100) this.complete = true; //진행도 100%일 경우 complete true로 변경
+        this.usageInfo.setProgress((int) (count * 100 / this.stepCount));
     }
-
-    public void updateCheckedDate() {this.checkedDate = LocalDateTime.now();}
 
     public void updateTempInfo(UpdateTempChecklistRequest requestDto, SubCategory subCategory) {
         this.title = requestDto.getTitle();
