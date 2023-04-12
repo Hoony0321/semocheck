@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Tag(name = "체크리스트", description = "체크리스트 관련 API 모음입니다.")
 @RestController
@@ -53,6 +54,11 @@ public class ChecklistController {
 
         //get checklists by query
         List<Checklist> checklists = checklistService.getPublishedChecklistByQuery(categoryMain, categorySub, title, owner);
+
+        if(findOne.isPresent()){ // 회원 조회일 경우
+            List<Checklist> blockList = findOne.get().getReports().stream().map(report -> report.getChecklist()).collect(Collectors.toList());
+            checklists = checklists.stream().filter(chk -> !blockList.contains(chk)).collect(Collectors.toList());
+        }
 
         //sorting checklists
         checklists = checklistService.sortChecklists(checklists, sort, direction);
