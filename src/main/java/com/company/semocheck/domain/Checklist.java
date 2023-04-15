@@ -1,6 +1,5 @@
 package com.company.semocheck.domain;
 
-import com.company.semocheck.domain.dto.FileDto;
 import com.company.semocheck.domain.request.checklist.CreateChecklistRequest;
 import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
@@ -15,7 +14,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -85,7 +83,7 @@ public class Checklist extends BaseTimeEntity{
     private ChecklistUsage usageInfo;
 
     //====== 생성 메서드 ======//
-    static public Checklist createEntity(CreateChecklistRequest requestDto, Member member, SubCategory category){
+    static public Checklist createTempEntity(CreateChecklistRequest requestDto, Member member, SubCategory category){
         Checklist entity = new Checklist();
         ChecklistUsage usageInfo = new ChecklistUsage(entity);
         ChecklistStats statsInfo = new ChecklistStats(entity);
@@ -112,7 +110,7 @@ public class Checklist extends BaseTimeEntity{
         return entity;
     }
 
-    static public Checklist createEntity(CreateTempChecklistRequest requestDto, Member member, SubCategory category){
+    static public Checklist createTempEntity(CreateTempChecklistRequest requestDto, Member member, SubCategory category){
         Checklist entity = new Checklist();
         ChecklistUsage usageInfo = new ChecklistUsage(entity);
         ChecklistStats statsInfo = new ChecklistStats(entity);

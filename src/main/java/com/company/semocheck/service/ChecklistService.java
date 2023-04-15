@@ -193,7 +193,7 @@ public class ChecklistService {
         }
 
         //Checklist 생성
-        Checklist checklist = Checklist.createEntity(requestDto, member, category);
+        Checklist checklist = Checklist.createTempEntity(requestDto, member, category);
 
         //image setting
         if(requestDto.getImageId() != null){

@@ -4,7 +4,6 @@ import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.*;
 import com.company.semocheck.domain.request.checklist.StepRequestDto;
-import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
 import com.company.semocheck.domain.request.tempChecklist.CreateTempChecklistRequest;
 import com.company.semocheck.domain.request.tempChecklist.UpdateTempChecklistRequest;
 import com.company.semocheck.exception.GeneralException;
@@ -128,7 +127,7 @@ public class TempChecklistService {
         }
 
         //Checklist 생성
-        Checklist checklist = Checklist.createEntity(requestDto, member, category);
+        Checklist checklist = Checklist.createTempEntity(requestDto, member, category);
 
         //image file
         if(requestDto.getImageId() != null){
