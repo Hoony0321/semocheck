@@ -1,7 +1,7 @@
 package com.company.semocheck.domain.dto.checklist;
 
-import com.company.semocheck.domain.Checklist;
-import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.checklist.Checklist;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.Scrap;
 import com.company.semocheck.domain.Step;
 import com.company.semocheck.domain.dto.FileDto;

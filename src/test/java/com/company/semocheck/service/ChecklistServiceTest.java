@@ -1,8 +1,6 @@
 package com.company.semocheck.service;
 
-import com.company.semocheck.domain.Checklist;
-import com.company.semocheck.domain.request.checklist.CreateChecklistRequest;
-import com.company.semocheck.domain.request.checklist.StepRequestDto;
+import com.company.semocheck.domain.checklist.Checklist;
 import com.company.semocheck.repository.ChecklistRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -90,6 +90,7 @@ public class FileService {
     public void removeFile(FileDetail fileDetail){
         //delete file on aws
         amazonS3Client.deleteObject(bucket, fileDetail.getPath());
+        //delete entity on db
         fileDetailRepository.delete(fileDetail);
     }
 

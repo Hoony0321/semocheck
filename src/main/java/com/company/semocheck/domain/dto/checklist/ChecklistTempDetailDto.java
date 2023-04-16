@@ -1,6 +1,6 @@
 package com.company.semocheck.domain.dto.checklist;
 
-import com.company.semocheck.domain.Checklist;
+import com.company.semocheck.domain.checklist.Checklist;
 import com.company.semocheck.domain.Step;
 import com.company.semocheck.domain.dto.FileDto;
 import com.company.semocheck.domain.dto.category.SubCategoryDto;

@@ -2,10 +2,9 @@ package com.company.semocheck.service;
 
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
-import com.company.semocheck.domain.Checklist;
-import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.checklist.Checklist;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.Scrap;
-import com.company.semocheck.domain.dto.ScrapDto;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.ScrapRepository;
 import lombok.RequiredArgsConstructor;

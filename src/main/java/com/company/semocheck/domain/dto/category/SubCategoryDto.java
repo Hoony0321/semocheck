@@ -1,6 +1,6 @@
 package com.company.semocheck.domain.dto.category;
 
-import com.company.semocheck.domain.SubCategory;
+import com.company.semocheck.domain.category.SubCategory;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

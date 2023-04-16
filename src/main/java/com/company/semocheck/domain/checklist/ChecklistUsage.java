@@ -1,4 +1,4 @@
-package com.company.semocheck.domain;
+package com.company.semocheck.domain.checklist;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

@@ -1,8 +1,8 @@
 package com.company.semocheck.service;
 
 import com.company.semocheck.common.response.Code;
-import com.company.semocheck.domain.Inquiry;
-import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.inquiry.Inquiry;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.request.inquiry.CreateInquiryRequest;
 import com.company.semocheck.domain.request.inquiry.UpdateInquiryRequest;
 import com.company.semocheck.exception.GeneralException;

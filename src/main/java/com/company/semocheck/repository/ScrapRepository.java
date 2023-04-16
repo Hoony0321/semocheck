@@ -1,6 +1,6 @@
 package com.company.semocheck.repository;
 
-import com.company.semocheck.domain.Checklist;
+import com.company.semocheck.domain.checklist.Checklist;
 import com.company.semocheck.domain.Scrap;
 import org.springframework.data.jpa.repository.JpaRepository;
 

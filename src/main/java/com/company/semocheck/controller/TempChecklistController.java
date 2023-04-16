@@ -1,13 +1,12 @@
 package com.company.semocheck.controller;
 
 import com.company.semocheck.common.response.*;
-import com.company.semocheck.domain.Checklist;
-import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.checklist.Checklist;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.dto.SearchResultDto;
 import com.company.semocheck.domain.dto.checklist.ChecklistTempDetailDto;
 import com.company.semocheck.domain.dto.checklist.ChecklistTempSimpleDto;
 import com.company.semocheck.domain.request.tempChecklist.DeleteTempChecklistRequest;
-import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
 import com.company.semocheck.domain.request.tempChecklist.CreateTempChecklistRequest;
 import com.company.semocheck.domain.request.tempChecklist.UpdateTempChecklistRequest;
 import com.company.semocheck.exception.GeneralException;

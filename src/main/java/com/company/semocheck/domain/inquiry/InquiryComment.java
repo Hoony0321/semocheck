@@ -1,5 +1,7 @@
-package com.company.semocheck.domain;
+package com.company.semocheck.domain.inquiry;
 
+import com.company.semocheck.domain.BaseTimeEntity;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.request.inquiry.CreateInquiryCommentRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -11,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class InquiryComment extends BaseTimeEntity{
+public class InquiryComment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,8 @@
-package com.company.semocheck.domain;
+package com.company.semocheck.domain.checklist;
 
+import com.company.semocheck.domain.*;
+import com.company.semocheck.domain.category.SubCategory;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.request.checklist.CreateChecklistRequest;
 import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
@@ -23,7 +26,7 @@ import java.util.Optional;
 @NoArgsConstructor
 @DynamicInsert
 @Table(name = "checklist")
-public class Checklist extends BaseTimeEntity{
+public class Checklist extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

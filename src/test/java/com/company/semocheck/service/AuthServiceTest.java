@@ -1,14 +1,12 @@
 package com.company.semocheck.service;
 
 import com.company.semocheck.auth.jwt.JwtProvider;
-import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.dto.Token;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class AuthServiceTest {

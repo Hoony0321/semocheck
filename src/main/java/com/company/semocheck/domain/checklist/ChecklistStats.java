@@ -1,5 +1,6 @@
-package com.company.semocheck.domain;
+package com.company.semocheck.domain.checklist;
 
+import com.company.semocheck.domain.member.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;

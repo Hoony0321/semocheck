@@ -3,6 +3,10 @@ package com.company.semocheck.service;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.*;
+import com.company.semocheck.domain.category.SubCategory;
+import com.company.semocheck.domain.checklist.Checklist;
+import com.company.semocheck.domain.member.Member;
+import com.company.semocheck.domain.member.MemberCategory;
 import com.company.semocheck.domain.request.checklist.*;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.ChecklistRepository;
@@ -219,6 +223,7 @@ public class ChecklistService {
     @Transactional
     public void deleteChecklist(Checklist checklist, Member member) {
         member.removeChecklist(checklist);
+
         checklistRepository.delete(checklist);
     }
 

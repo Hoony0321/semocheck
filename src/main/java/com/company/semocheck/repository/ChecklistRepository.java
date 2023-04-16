@@ -1,11 +1,8 @@
 package com.company.semocheck.repository;
 
-import com.company.semocheck.domain.Checklist;
-import com.company.semocheck.domain.Member;
-import org.hibernate.annotations.Check;
+import com.company.semocheck.domain.checklist.Checklist;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 

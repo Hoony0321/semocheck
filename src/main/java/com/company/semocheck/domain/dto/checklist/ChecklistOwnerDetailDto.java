@@ -1,7 +1,6 @@
 package com.company.semocheck.domain.dto.checklist;
 
-import com.company.semocheck.domain.Checklist;
-import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.checklist.Checklist;
 import com.company.semocheck.domain.Step;
 import com.company.semocheck.domain.dto.FileDto;
 import com.company.semocheck.domain.dto.step.StepDto;
@@ -13,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Data
 @NoArgsConstructor

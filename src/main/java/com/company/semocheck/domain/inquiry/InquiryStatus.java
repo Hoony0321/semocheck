@@ -1,4 +1,4 @@
-package com.company.semocheck.domain;
+package com.company.semocheck.domain.inquiry;
 
 
 public enum InquiryStatus {

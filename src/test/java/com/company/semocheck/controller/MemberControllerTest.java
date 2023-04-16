@@ -1,22 +1,17 @@
 package com.company.semocheck.controller;
 
-import com.company.semocheck.common.response.Code;
-import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.dto.member.MemberDetailDto;
 import com.company.semocheck.domain.dto.member.MemberDto;
 import com.company.semocheck.domain.request.member.UpdateMemberRequest;
-import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.service.MemberService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class MemberControllerTest {

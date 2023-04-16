@@ -1,4 +1,4 @@
-package com.company.semocheck.domain;
+package com.company.semocheck.domain.category;
 
 import com.company.semocheck.domain.request.category.CreateCategoryRequestDto;
 import com.company.semocheck.domain.request.category.UpdateMainCategoryRequestDto;

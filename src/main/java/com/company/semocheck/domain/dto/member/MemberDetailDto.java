@@ -1,6 +1,6 @@
 package com.company.semocheck.domain.dto.member;
 
-import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.member.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

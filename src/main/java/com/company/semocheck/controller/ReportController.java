@@ -1,8 +1,8 @@
 package com.company.semocheck.controller;
 
 import com.company.semocheck.common.response.*;
-import com.company.semocheck.domain.Checklist;
-import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.checklist.Checklist;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.Report;
 import com.company.semocheck.domain.dto.SearchResultDto;
 import com.company.semocheck.domain.dto.report.ReportDto;

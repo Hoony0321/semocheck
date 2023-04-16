@@ -1,7 +1,5 @@
 package com.company.semocheck.auth.jwt;
 
-import com.company.semocheck.domain.Member;
-import com.company.semocheck.service.MemberService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

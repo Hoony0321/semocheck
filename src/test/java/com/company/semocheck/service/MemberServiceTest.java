@@ -4,20 +4,16 @@ import com.company.semocheck.auth.oauth2.OAuth2Attributes;
 import com.company.semocheck.common.TestUtils;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
-import com.company.semocheck.domain.Member;
-import com.company.semocheck.domain.SubCategory;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.dto.category.SubCategoryDto;
 import com.company.semocheck.domain.request.member.CreateMemberRequest;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.MemberRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

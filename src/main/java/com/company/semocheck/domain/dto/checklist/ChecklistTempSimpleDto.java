@@ -1,17 +1,12 @@
 package com.company.semocheck.domain.dto.checklist;
 
-import com.company.semocheck.domain.Checklist;
-import com.company.semocheck.domain.Step;
+import com.company.semocheck.domain.checklist.Checklist;
 import com.company.semocheck.domain.dto.FileDto;
 import com.company.semocheck.domain.dto.category.SubCategoryDto;
-import com.company.semocheck.domain.dto.step.StepPostDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 @Data
 @NoArgsConstructor

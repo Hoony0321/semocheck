@@ -3,14 +3,13 @@ package com.company.semocheck.service;
 import com.company.semocheck.auth.jwt.JwtProvider;
 import com.company.semocheck.auth.jwt.JwtUtils;
 import com.company.semocheck.common.response.Code;
-import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.RefreshToken;
 import com.company.semocheck.domain.dto.Token;
 import com.company.semocheck.exception.AuthException;
 import com.company.semocheck.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

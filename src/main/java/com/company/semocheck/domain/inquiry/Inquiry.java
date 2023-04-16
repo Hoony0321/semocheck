@@ -1,5 +1,7 @@
-package com.company.semocheck.domain;
+package com.company.semocheck.domain.inquiry;
 
+import com.company.semocheck.domain.BaseTimeEntity;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.request.inquiry.CreateInquiryRequest;
 import com.company.semocheck.domain.request.inquiry.UpdateInquiryRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;

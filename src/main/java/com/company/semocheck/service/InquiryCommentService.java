@@ -1,8 +1,8 @@
 package com.company.semocheck.service;
 
-import com.company.semocheck.domain.Inquiry;
-import com.company.semocheck.domain.InquiryComment;
-import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.inquiry.Inquiry;
+import com.company.semocheck.domain.inquiry.InquiryComment;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.request.inquiry.CreateInquiryCommentRequest;
 import com.company.semocheck.repository.InquiryCommentRepository;
 import lombok.RequiredArgsConstructor;

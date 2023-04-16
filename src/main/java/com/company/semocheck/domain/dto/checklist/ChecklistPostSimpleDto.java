@@ -1,7 +1,7 @@
 package com.company.semocheck.domain.dto.checklist;
 
-import com.company.semocheck.domain.Checklist;
-import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.checklist.Checklist;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.Scrap;
 import com.company.semocheck.domain.dto.FileDto;
 import com.company.semocheck.domain.dto.category.SubCategoryDto;
@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Optional;
 
 @Data

@@ -2,7 +2,6 @@ package com.company.semocheck.auth.oauth2;
 
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
-import com.company.semocheck.domain.Member;
 import com.company.semocheck.exception.GeneralException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;

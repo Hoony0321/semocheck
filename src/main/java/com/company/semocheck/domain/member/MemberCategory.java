@@ -1,5 +1,6 @@
-package com.company.semocheck.domain;
+package com.company.semocheck.domain.member;
 
+import com.company.semocheck.domain.category.SubCategory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

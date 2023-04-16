@@ -1,5 +1,6 @@
 package com.company.semocheck.domain;
 
+import com.company.semocheck.domain.checklist.Checklist;
 import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

@@ -1,7 +1,7 @@
 package com.company.semocheck.repository;
 
 
-import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

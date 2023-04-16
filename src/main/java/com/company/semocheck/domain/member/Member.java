@@ -1,7 +1,12 @@
-package com.company.semocheck.domain;
+package com.company.semocheck.domain.member;
 
 import com.company.semocheck.auth.oauth2.OAuth2Attributes;
+import com.company.semocheck.domain.BaseTimeEntity;
+import com.company.semocheck.domain.Report;
+import com.company.semocheck.domain.Scrap;
+import com.company.semocheck.domain.checklist.Checklist;
 import com.company.semocheck.domain.dto.Role;
+import com.company.semocheck.domain.inquiry.Inquiry;
 import com.company.semocheck.domain.request.member.CreateMemberRequest;
 import com.company.semocheck.domain.request.member.UpdateMemberRequest;
 import jakarta.persistence.*;
@@ -19,7 +24,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @DynamicInsert
-public class Member extends BaseTimeEntity{
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

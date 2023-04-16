@@ -1,8 +1,8 @@
 package com.company.semocheck.service;
 
 import com.company.semocheck.common.response.Code;
-import com.company.semocheck.domain.Checklist;
-import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.checklist.Checklist;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.Report;
 import com.company.semocheck.domain.request.report.CreateReportRequest;
 import com.company.semocheck.domain.request.report.UpdateReportRequest;

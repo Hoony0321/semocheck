@@ -2,8 +2,10 @@ package com.company.semocheck.domain;
 
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
+import com.company.semocheck.domain.checklist.Checklist;
 import com.company.semocheck.domain.dto.ReportStatus;
 import com.company.semocheck.domain.dto.ReportType;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.request.report.CreateReportRequest;
 import com.company.semocheck.domain.request.report.UpdateReportRequest;
 import com.company.semocheck.exception.GeneralException;

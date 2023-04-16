@@ -3,7 +3,7 @@ package com.company.semocheck.controller;
 import com.company.semocheck.auth.jwt.JwtProvider;
 import com.company.semocheck.auth.oauth2.OAuth2Attributes;
 import com.company.semocheck.common.response.*;
-import com.company.semocheck.domain.Member;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.dto.member.MemberDetailDto;
 import com.company.semocheck.domain.dto.Token;
 import com.company.semocheck.domain.dto.member.MemberDto;

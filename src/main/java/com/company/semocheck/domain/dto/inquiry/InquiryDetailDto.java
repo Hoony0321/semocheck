@@ -1,7 +1,7 @@
 package com.company.semocheck.domain.dto.inquiry;
 
-import com.company.semocheck.domain.Inquiry;
-import com.company.semocheck.domain.InquiryComment;
+import com.company.semocheck.domain.inquiry.Inquiry;
+import com.company.semocheck.domain.inquiry.InquiryComment;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

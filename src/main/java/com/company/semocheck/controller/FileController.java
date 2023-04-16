@@ -1,22 +1,16 @@
 package com.company.semocheck.controller;
 
 import com.company.semocheck.common.response.*;
-import com.company.semocheck.domain.Checklist;
 import com.company.semocheck.domain.FileDetail;
-import com.company.semocheck.domain.Member;
 import com.company.semocheck.domain.dto.FileDto;
 import com.company.semocheck.exception.GeneralException;
-import com.company.semocheck.service.CategoryService;
 import com.company.semocheck.service.FileService;
-import com.company.semocheck.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
