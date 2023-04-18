@@ -44,7 +44,7 @@ public class ChecklistController {
             "sort : [date, view, scrap]\n\n" +
             "direction : [asc, desc]\n\n")
     @GetMapping("/api/checklists")
-    public DataResponseDto<SearchResultDto<ChecklistPostSimpleDto>> getChecklistsByQuery(@RequestParam(name = "category_main", required = false) String categoryMain, @RequestParam(name = "category_sub", required = false) String categorySub,
+    public DataResponseDto<SearchResultDto<ChecklistPostSimpleDto>> queryChecklists(@RequestParam(name = "category_main", required = false) String categoryMain, @RequestParam(name = "category_sub", required = false) String categorySub,
                                                                                          @RequestParam(required = false) String title, @RequestParam(required = false) String owner,
                                                                                          @RequestParam(required = false, defaultValue = "date") String sort,
                                                                                          @RequestParam(required = false, defaultValue = "desc") String direction,
@@ -53,7 +53,7 @@ public class ChecklistController {
         Optional<Member> findOne = memberService.getMemberByJwtNoError(request);
 
         //get checklists by query
-        List<Checklist> checklists = checklistService.getPublishedChecklistByQuery(categoryMain, categorySub, title, owner);
+        List<Checklist> checklists = checklistService.queryPublishedChecklist(categoryMain, categorySub, title, owner);
 
         if(findOne.isPresent()){ // 회원 조회일 경우
             List<Checklist> blockList = findOne.get().getReports().stream().map(report -> report.getChecklist()).collect(Collectors.toList());
@@ -84,7 +84,7 @@ public class ChecklistController {
             "sort : [date, view, scrap]\n\n" +
             "direction : [asc, desc]\n\n")
     @GetMapping("/api/members/checklists")
-    public DataResponseDto<SearchResultDto<ChecklistPostSimpleDto>> getMemberChecklistsByQuery(HttpServletRequest request, @RequestParam(name = "category_main", required = false) String categoryMain, @RequestParam(name = "category_sub", required = false) String categorySub,
+    public DataResponseDto<SearchResultDto<ChecklistPostSimpleDto>> queryMemberChecklists(HttpServletRequest request, @RequestParam(name = "category_main", required = false) String categoryMain, @RequestParam(name = "category_sub", required = false) String categorySub,
                                                                                                @RequestParam(required = false) String title,
                                                                                                @RequestParam(required = false) Boolean published,
                                                                                                @RequestParam(required = false) Boolean completed,
@@ -96,7 +96,7 @@ public class ChecklistController {
         Member member = memberService.getMemberByJwt(request);
 
         //get checklists by query
-        List<Checklist> checklists = checklistService.getMemberChecklistsByQuery(member, categoryMain, categorySub, title, published, completed, owner);
+        List<Checklist> checklists = checklistService.queryMemberChecklists(member, categoryMain, categorySub, title, published, completed, owner);
 
         //sorting checklists
         checklists = checklistService.sortChecklists(checklists, sort, direction);
@@ -113,7 +113,7 @@ public class ChecklistController {
     @Operation(summary = "Get checklist by id API (Not need login)", description = "체크리스트 id를 통해 조회합니다.\n\n" +
             "회원의 체크리스트가 아니더라도 조회 가능합니다.")
     @GetMapping("/api/checklists/{checklist_id}")
-    public DataResponseDto<ChecklistPostDetailDto> getChecklistsById(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId){
+    public DataResponseDto<ChecklistPostDetailDto> getChecklistById(HttpServletRequest request, @PathVariable("checklist_id") Long checklistId){
         //get member by jwt token
         Optional<Member> findOne = memberService.getMemberByJwtNoError(request);
 

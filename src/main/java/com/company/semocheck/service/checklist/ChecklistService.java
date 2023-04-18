@@ -52,7 +52,7 @@ public class ChecklistService {
     }
 
     //service method
-    public List<Checklist> getPublishedChecklistByQuery(String categoryMain, String categorySub, String title, String owner) {
+    public List<Checklist> queryPublishedChecklist(String categoryMain, String categorySub, String title, String owner) {
         List<Checklist> checklists = checklistRepository.findChecklistIsPublished();
 
         //Category MainName
@@ -86,7 +86,7 @@ public class ChecklistService {
         return checklists;
     }
 
-    public List<Checklist> getMemberChecklistsByQuery(Member member, String categoryMain, String categorySub, String title, Boolean published, Boolean completed, Boolean owner) {
+    public List<Checklist> queryMemberChecklists(Member member, String categoryMain, String categorySub, String title, Boolean published, Boolean completed, Boolean owner) {
         List<Checklist> checklists = checklistRepository.findChecklistByOwner(member);
 
         //Category MainName
@@ -156,7 +156,6 @@ public class ChecklistService {
                 .collect(Collectors.toList());
 
         return checklists;
-
     }
 
     public List<Checklist> getPopularChecklist() {
