@@ -32,7 +32,7 @@ public class MemberDto {
         List<Checklist> checklists = member.getChecklists();
         dto.inProgressCount = checklists.stream().filter(chk -> !chk.getUsageInfo().getComplete()).toList().size();
         dto.completeCount = checklists.stream().filter(chk -> chk.getUsageInfo().getComplete()).toList().size();
-        dto.ownerCount = checklists.stream().filter(chk -> chk.getOrigin() == null).toList().size();
+        dto.ownerCount = checklists.stream().filter(chk -> !chk.getIsCopied()).toList().size();
 
         for (MemberCategory category : member.getCategories()) {
             dto.categories.add(MemberCategoryDto.createDto(category));
