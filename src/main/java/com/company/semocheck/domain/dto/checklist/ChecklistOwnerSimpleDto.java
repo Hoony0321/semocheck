@@ -22,6 +22,7 @@ public class ChecklistOwnerSimpleDto {
     private Float avgAge;
     private Boolean avgSex;
     private Integer progress;
+    private Boolean isCopied;
 
     //Image
     private FileDto image;
@@ -41,6 +42,7 @@ public class ChecklistOwnerSimpleDto {
         //Info
         dto.title = checklist.getTitle();
         dto.stepCount = checklist.getStepCount();
+        dto.isCopied = checklist.getIsCopied();
         dto.progress = checklist.getUsageInfo().getProgress();
         if(checklist.getCategory() != null) dto.category = SubCategoryDto.createDto(checklist.getCategory());
         if(checklist.getStatsInfo().getViewCount() >= 10){ // 조회수 10회 이상일 경우만

@@ -32,6 +32,7 @@ public class ChecklistOwnerDetailDto {
     private Integer scrapCount;
     private Float avgAge;
     private Boolean avgSex;
+    private Boolean isCopied;
 
     //Image
     private FileDto image;
@@ -64,6 +65,7 @@ public class ChecklistOwnerDetailDto {
         dto.stepCount = checklist.getStepCount();
         dto.viewCount = checklist.getStatsInfo().getViewCount();
         dto.scrapCount = checklist.getStatsInfo().getScrapCount();
+        dto.isCopied = checklist.getIsCopied();
         if(checklist.getCategory() != null) dto.category = SubCategoryDto.createDto(checklist.getCategory());
         if(checklist.getStatsInfo().getViewCount() >= 10){ // 조회수 10회 이상일 경우만
             dto.avgAge = checklist.getStatsInfo().getAvgAge();
