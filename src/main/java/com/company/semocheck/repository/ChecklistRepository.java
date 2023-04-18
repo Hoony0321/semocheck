@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public interface ChecklistRepository extends JpaRepository<Checklist, Long> {
 
+    @Query("SELECT chk FROM Checklist chk WHERE chk.type = 0 and chk.isCopied = true and chk.origin = ?1")
+    List<Checklist> findCopiedChecklistByChecklist(Checklist checklist);
 
     //======일반 체크리스트 TYPE:0 ======//
     @Query("SELECT chk FROM Checklist chk WHERE chk.type = 0")

@@ -45,7 +45,10 @@ public class ScrapService {
 
     @Transactional
     public void deleteScrap(Member member, Checklist checklist) {
-        Optional<Scrap> findOne = scrapRepository.findByChecklist(checklist);
+
+        Optional<Scrap> findOne = member.getScraps().stream()
+                .filter(scrap -> scrap.getChecklist().getId()
+                        .equals(checklist.getId())).findFirst();
         if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_SCRAP);
 
 

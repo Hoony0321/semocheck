@@ -10,9 +10,12 @@ import com.company.semocheck.domain.member.MemberCategory;
 import com.company.semocheck.domain.request.checklist.*;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.ChecklistRepository;
+import com.company.semocheck.repository.ReportRepository;
+import com.company.semocheck.repository.ScrapRepository;
 import com.company.semocheck.repository.StepRepository;
 import com.company.semocheck.service.CategoryService;
 import com.company.semocheck.service.FileService;
+import com.company.semocheck.service.ScrapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +29,14 @@ import java.util.stream.Collectors;
 public class ChecklistService {
 
     private final ChecklistRepository checklistRepository;
+    private final StepRepository stepRepository;
+
+    private final ScrapRepository scrapRepository;
+    private final ReportRepository reportRepository;
+
     private final CategoryService categoryService;
     private final FileService fileService;
-    private final StepRepository stepRepository;
+
 
     //transactional method
     public Checklist findById(Long id){
@@ -210,7 +218,15 @@ public class ChecklistService {
 
     @Transactional
     public void deleteChecklist(Checklist checklist, Member member) {
-        member.removeChecklist(checklist);
+
+        member.removeChecklist(checklist); // 회원 체크리스트 배열에서 삭제
+        scrapRepository.deleteAll(scrapRepository.findByChecklist(checklist));// 해당 체크리스트와 연관된 스크랩 삭제
+        reportRepository.deleteAll(reportRepository.findByChecklist(checklist));// 해당 체크리스트와 연관된 신고 삭제
+
+        List<Checklist> copiedChecklists = checklistRepository.findCopiedChecklistByChecklist(checklist);// 해당 체크리스트를 복사한 체크리스트들을 가져옴
+        for(Checklist copiedChecklist : copiedChecklists){
+            copiedChecklist.setOrigin(null);
+        }
 
         checklistRepository.delete(checklist);
     }
