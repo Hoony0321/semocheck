@@ -1,5 +1,7 @@
 package com.company.semocheck.domain.checklist;
 
+import com.company.semocheck.common.response.Code;
+import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.*;
 import com.company.semocheck.domain.category.SubCategory;
 import com.company.semocheck.domain.member.Member;
@@ -8,6 +10,7 @@ import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
 import com.company.semocheck.domain.request.tempChecklist.CreateTempChecklistRequest;
 import com.company.semocheck.domain.request.tempChecklist.UpdateTempChecklistRequest;
+import com.company.semocheck.exception.GeneralException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -75,6 +78,13 @@ public class Checklist extends BaseTimeEntity {
 
     private String colorCode;
 
+    //===== 체크리스트 종류 ======//
+    @NotNull
+    @Enumerated(EnumType.ORDINAL)
+    private ChecklistType type;
+
+    @NotNull
+    private Boolean isCopied = false;
     private Integer temporary; //임시저장 페이지
 
     //====== 카운트 정보 =======//
@@ -86,7 +96,7 @@ public class Checklist extends BaseTimeEntity {
     private ChecklistUsage usageInfo;
 
     //====== 생성 메서드 ======//
-    static public Checklist createTempEntity(CreateChecklistRequest requestDto, Member member, SubCategory category){
+    static public Checklist createEntity(CreateChecklistRequest requestDto, Member member, SubCategory category){
         Checklist entity = new Checklist();
         ChecklistUsage usageInfo = new ChecklistUsage(entity);
         ChecklistStats statsInfo = new ChecklistStats(entity);
@@ -95,6 +105,8 @@ public class Checklist extends BaseTimeEntity {
         entity.brief = requestDto.getBrief();
         entity.publish = requestDto.getPublish();
         entity.colorCode = requestDto.getColorCode();
+        entity.isCopied = Boolean.FALSE;
+        entity.type = ChecklistType.NORMAL;
         entity.usageInfo = usageInfo;
         entity.statsInfo = statsInfo;
 
@@ -123,6 +135,8 @@ public class Checklist extends BaseTimeEntity {
         entity.publish = requestDto.getPublish();
         entity.temporary = requestDto.getTemporary();
         entity.colorCode = requestDto.getColorCode();
+        entity.isCopied = Boolean.FALSE;
+        entity.type = ChecklistType.TEMPORARY;
         entity.usageInfo = usageInfo;
         entity.statsInfo = statsInfo;
 
@@ -141,14 +155,16 @@ public class Checklist extends BaseTimeEntity {
         return entity;
     }
 
-    static public Checklist copyEntity(Checklist checklist, Member member){
+    static public Checklist createCopyEntity(Checklist checklist, Member member){
         Checklist entity = new Checklist();
         ChecklistUsage usageInfo = new ChecklistUsage(entity);
         ChecklistStats statsInfo = new ChecklistStats(entity);
 
         entity.title = checklist.getTitle();
         entity.brief = checklist.getBrief();
+        entity.type = ChecklistType.NORMAL;
         entity.publish = false;
+        entity.isCopied = true;
         entity.colorCode = checklist.getColorCode();
         entity.usageInfo = usageInfo;
         entity.statsInfo = statsInfo;
@@ -169,15 +185,30 @@ public class Checklist extends BaseTimeEntity {
     }
 
     //====== 수정 메서드 ======//
+
+    public void updatePublish(Boolean publish){
+        if(this.isCopied && publish) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_PUBLISHED);
+        this.publish = publish;
+    }
     public void updateInfo(UpdateChecklistRequestDto requestDto, SubCategory subCategory) {
         this.title = requestDto.getTitle();
         this.brief = requestDto.getBrief();
-        this.publish = requestDto.getPublish();
         this.colorCode = requestDto.getColorCode();
-        this.setCategory(subCategory);
         this.stepCount = this.steps.size();
+        this.updatePublish(requestDto.getPublish());
+        this.setCategory(subCategory);
+    }
 
-        if(requestDto.getTemporary() != null) this.temporary = temporary;
+    public void updateTempInfo(UpdateTempChecklistRequest requestDto, SubCategory subCategory) {
+        this.title = requestDto.getTitle();
+        this.brief = requestDto.getBrief();
+        this.colorCode = requestDto.getColorCode();
+        this.stepCount = this.steps.size();
+        this.updatePublish(requestDto.getPublish());
+        this.setCategory(subCategory);
+
+        this.temporary = requestDto.getTemporary();
+        if(this.temporary == null){ this.type = ChecklistType.NORMAL; }
     }
 
     public void updateProgress(){
@@ -185,15 +216,7 @@ public class Checklist extends BaseTimeEntity {
         this.usageInfo.setProgress((int) (count * 100 / this.stepCount));
     }
 
-    public void updateTempInfo(UpdateTempChecklistRequest requestDto, SubCategory subCategory) {
-        this.title = requestDto.getTitle();
-        this.brief = requestDto.getBrief();
-        this.publish = requestDto.getPublish();
-        this.temporary = requestDto.getTemporary();
-        this.colorCode = requestDto.getColorCode();
-        this.setCategory(subCategory);
-        this.stepCount = this.steps.size();
-    }
+
 
     public void updateStatsInfoByViewer(Optional<Member> member) {
         this.statsInfo.updateViewCount(member);

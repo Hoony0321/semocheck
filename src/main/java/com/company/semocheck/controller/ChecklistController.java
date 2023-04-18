@@ -9,7 +9,7 @@ import com.company.semocheck.domain.request.checklist.CreateChecklistRequest;
 import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
 import com.company.semocheck.domain.request.checklist.UpdateStepRequestDto;
 import com.company.semocheck.exception.GeneralException;
-import com.company.semocheck.service.ChecklistService;
+import com.company.semocheck.service.checklist.ChecklistService;
 import com.company.semocheck.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

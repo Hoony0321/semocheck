@@ -9,7 +9,7 @@ import com.company.semocheck.domain.dto.report.ReportDto;
 import com.company.semocheck.domain.request.report.CreateReportRequest;
 import com.company.semocheck.domain.request.report.UpdateReportRequest;
 import com.company.semocheck.exception.GeneralException;
-import com.company.semocheck.service.ChecklistService;
+import com.company.semocheck.service.checklist.ChecklistService;
 import com.company.semocheck.service.MemberService;
 import com.company.semocheck.service.ReportService;
 import io.swagger.v3.oas.annotations.Operation;

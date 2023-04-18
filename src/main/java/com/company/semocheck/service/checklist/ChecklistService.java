@@ -1,4 +1,4 @@
-package com.company.semocheck.service;
+package com.company.semocheck.service.checklist;
 
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
@@ -10,8 +10,9 @@ import com.company.semocheck.domain.member.MemberCategory;
 import com.company.semocheck.domain.request.checklist.*;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.ChecklistRepository;
-import com.company.semocheck.repository.ChecklistUsageRepository;
 import com.company.semocheck.repository.StepRepository;
+import com.company.semocheck.service.CategoryService;
+import com.company.semocheck.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,39 +26,26 @@ import java.util.stream.Collectors;
 public class ChecklistService {
 
     private final ChecklistRepository checklistRepository;
-    private final ChecklistUsageRepository checklistUsageRepository;
     private final CategoryService categoryService;
     private final FileService fileService;
     private final StepRepository stepRepository;
 
     //transactional method
     public Checklist findById(Long id){
-        Optional<Checklist> findOne = checklistRepository.findByIdAndTemporaryIsNull(id);
+        Optional<Checklist> findOne = checklistRepository.findChecklistById(id);
         if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_CHECKLIST);
 
         return findOne.get();
     }
 
     //transactional method
-    public List<Checklist> findByMember(Member member){
-        return member.getChecklists().stream()
-                .filter(chk -> chk.getTemporary() == null)
-                .collect(Collectors.toList());
-    }
-
-    //transactional method
     public List<Checklist> findAllChecklists(){
-        return checklistRepository.findByTemporaryIsNull();
-    }
-
-    //transactional method
-    public List<Checklist> findPublishedChecklists(){
-        return checklistRepository.findByTemporaryIsNullAndPublishIsTrue();
+        return checklistRepository.findAllChecklist();
     }
 
     //service method
     public List<Checklist> getPublishedChecklistByQuery(String categoryMain, String categorySub, String title, String owner) {
-        List<Checklist> checklists = findPublishedChecklists();
+        List<Checklist> checklists = checklistRepository.findChecklistIsPublished();
 
         //Category MainName
         if(categoryMain != null){
@@ -91,7 +79,7 @@ public class ChecklistService {
     }
 
     public List<Checklist> getMemberChecklistsByQuery(Member member, String categoryMain, String categorySub, String title, Boolean published, Boolean completed, Boolean owner) {
-        List<Checklist> checklists = findByMember(member);
+        List<Checklist> checklists = checklistRepository.findChecklistByOwner(member);
 
         //Category MainName
         if(categoryMain != null){
@@ -146,7 +134,7 @@ public class ChecklistService {
     }
 
     public List<Checklist> getRecommendChecklist(Member member) {
-        List<Checklist> checklists = findPublishedChecklists();
+        List<Checklist> checklists = checklistRepository.findChecklistIsPublished();
 
         //filtering checklist by member's category
         List<SubCategory> subCategories = new ArrayList<>();
@@ -165,7 +153,7 @@ public class ChecklistService {
 
     public List<Checklist> getPopularChecklist() {
         //TODO : temporary / publish false 빼고 조회하도록 변경.
-        List<Checklist> checklists = findPublishedChecklists();
+        List<Checklist> checklists = checklistRepository.findChecklistIsPublished();
 
         checklists.sort(Comparator.comparing(chk -> chk.getStatsInfo().getViewCount()));
         checklists = checklists.stream().limit(10).collect(Collectors.toList());
@@ -175,7 +163,7 @@ public class ChecklistService {
 
     public List<Checklist> getSimilarChecklist(Checklist checklist) {
         //TODO : 카테고리 말고도 그 외 정보를 토대로 조회하도록 변경
-        List<Checklist> checklists = findPublishedChecklists();
+        List<Checklist> checklists = checklistRepository.findChecklistIsPublished();
 
         checklists = checklists.stream().filter(chk -> chk.getCategory().equals(checklist.getCategory()))
                                         .limit(5)
@@ -197,7 +185,7 @@ public class ChecklistService {
         }
 
         //Checklist 생성
-        Checklist checklist = Checklist.createTempEntity(requestDto, member, category);
+        Checklist checklist = Checklist.createEntity(requestDto, member, category);
 
         //image setting
         if(requestDto.getImageId() != null){
@@ -317,7 +305,7 @@ public class ChecklistService {
     @Transactional
     public Long useChecklist(Checklist existedChecklist, Member member) {
         //체크리스트 생성
-        Checklist checklist = Checklist.copyEntity(existedChecklist, member); //기존 체크리스트 정보를 토대로 새로운 체크리스트 생성
+        Checklist checklist = Checklist.createCopyEntity(existedChecklist, member); //기존 체크리스트 정보를 토대로 새로운 체크리스트 생성
 
         //이미지 설정
         if(existedChecklist.getImage() != null){

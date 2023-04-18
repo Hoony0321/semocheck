@@ -11,7 +11,7 @@ import com.company.semocheck.domain.request.tempChecklist.CreateTempChecklistReq
 import com.company.semocheck.domain.request.tempChecklist.UpdateTempChecklistRequest;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.service.MemberService;
-import com.company.semocheck.service.TempChecklistService;
+import com.company.semocheck.service.checklist.TempChecklistService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;

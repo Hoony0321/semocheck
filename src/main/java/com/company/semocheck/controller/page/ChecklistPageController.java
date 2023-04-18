@@ -12,7 +12,7 @@ import com.company.semocheck.domain.request.checklist.CreateChecklistRequest;
 import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.service.CategoryService;
-import com.company.semocheck.service.ChecklistService;
+import com.company.semocheck.service.checklist.ChecklistService;
 import com.company.semocheck.service.FileService;
 import com.company.semocheck.service.MemberService;
 import lombok.RequiredArgsConstructor;

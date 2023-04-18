@@ -6,7 +6,7 @@ import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.dto.SearchResultDto;
 import com.company.semocheck.domain.dto.checklist.ChecklistPostSimpleDto;
 import com.company.semocheck.exception.GeneralException;
-import com.company.semocheck.service.ChecklistService;
+import com.company.semocheck.service.checklist.ChecklistService;
 import com.company.semocheck.service.MemberService;
 import com.company.semocheck.service.ScrapService;
 import io.swagger.v3.oas.annotations.Operation;

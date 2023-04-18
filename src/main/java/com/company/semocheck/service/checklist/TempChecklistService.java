@@ -1,4 +1,4 @@
-package com.company.semocheck.service;
+package com.company.semocheck.service.checklist;
 
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
@@ -12,6 +12,8 @@ import com.company.semocheck.domain.request.tempChecklist.UpdateTempChecklistReq
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.ChecklistRepository;
 import com.company.semocheck.repository.StepRepository;
+import com.company.semocheck.service.CategoryService;
+import com.company.semocheck.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,10 +34,40 @@ public class TempChecklistService {
     private final StepRepository stepRepository;
 
     public Checklist findById(Long id) {
-        Optional<Checklist> findOne = checklistRepository.findByIdAndTemporaryIsNotNull(id);
+        Optional<Checklist> findOne = checklistRepository.findTempChecklistById(id);
         if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_CHECKLIST);
-
         return findOne.get();
+    }
+
+    @Transactional
+    public Long createChecklist(CreateTempChecklistRequest requestDto, Member member) {
+        SubCategory category = null;
+
+        //Category Entity 찾기
+        if(requestDto.getMainCategoryName() != null && requestDto.getSubCategoryName() != null){
+            category = categoryService.findSubCategoryByName(requestDto.getMainCategoryName(), requestDto.getSubCategoryName());
+        }
+        else if(requestDto.getSubCategoryName() != null) {
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_CATEGORY);
+        }
+
+        //Checklist 생성
+        Checklist checklist = Checklist.createTempEntity(requestDto, member, category);
+
+        //image file
+        if(requestDto.getImageId() != null){
+            FileDetail fileDetail = fileService.findById(requestDto.getImageId());
+            checklist.setImage(fileDetail);
+        } else if (requestDto.getDefaultImageId() != null) {
+            FileDetail fileDetail = fileService.findById(requestDto.getDefaultImageId());
+            checklist.setDefaultImage(fileDetail);
+        }
+
+        //Checklist 저장
+        checklistRepository.save(checklist);
+
+        return checklist.getId();
+
     }
 
     @Transactional
@@ -115,36 +147,5 @@ public class TempChecklistService {
     public void deleteChecklist(Checklist checklist, Member member) {
         member.removeChecklist(checklist);
         checklistRepository.delete(checklist);
-    }
-
-    @Transactional
-    public Long createChecklist(CreateTempChecklistRequest requestDto, Member member) {
-        SubCategory category = null;
-
-        //Category Entity 찾기
-        if(requestDto.getMainCategoryName() != null && requestDto.getSubCategoryName() != null){
-            category = categoryService.findSubCategoryByName(requestDto.getMainCategoryName(), requestDto.getSubCategoryName());
-        }
-        else if(requestDto.getSubCategoryName() != null) {
-            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_CATEGORY);
-        }
-
-        //Checklist 생성
-        Checklist checklist = Checklist.createTempEntity(requestDto, member, category);
-
-        //image file
-        if(requestDto.getImageId() != null){
-            FileDetail fileDetail = fileService.findById(requestDto.getImageId());
-            checklist.setImage(fileDetail);
-        } else if (requestDto.getDefaultImageId() != null) {
-            FileDetail fileDetail = fileService.findById(requestDto.getDefaultImageId());
-            checklist.setDefaultImage(fileDetail);
-        }
-
-        //Checklist 저장
-        checklistRepository.save(checklist);
-
-        return checklist.getId();
-
     }
 }

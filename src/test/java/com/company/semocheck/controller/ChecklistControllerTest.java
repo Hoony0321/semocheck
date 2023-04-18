@@ -1,6 +1,6 @@
 package com.company.semocheck.controller;
 
-import com.company.semocheck.service.ChecklistService;
+import com.company.semocheck.service.checklist.ChecklistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
