@@ -62,6 +62,10 @@ public class Report {
         ReportType reportType = entity.getType(requestDto.getType());
         entity.type = reportType;
 
+        //연관관계 설정
+        entity.setWriter(member);
+        member.addReport(entity);
+
         return entity;
     }
 

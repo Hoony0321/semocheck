@@ -37,10 +37,6 @@ public class ReportService {
     public Long createReport(Member member, Checklist checklist, CreateReportRequest requestDto){
         Report report = Report.createEntity(member, checklist, requestDto);
 
-        //연관관계 설정
-        report.setWriter(member);
-        member.addReport(report);
-
         reportRepository.save(report);
 
         return report.getId();
