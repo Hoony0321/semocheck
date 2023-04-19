@@ -36,6 +36,7 @@ public enum ErrorMessages {
     NOT_PUBLISHED("해당 체크리스트는 공개할 수 없습니다."),
     INVALID_STEP("스텝 정보가 유효하지 않습니다."),
     REQUIRED_FIELD_IMAGE("이미지 필드는 필수입니다."),
+    ALEADY_BLOCKED_CHECKLIST("이미 차단된 체크리스트입니다."),
 
     //files
     NOT_FOUND_FILE("파일을 찾을 수 없습니다"),

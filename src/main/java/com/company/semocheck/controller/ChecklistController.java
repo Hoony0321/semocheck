@@ -1,6 +1,7 @@
 package com.company.semocheck.controller;
 
 import com.company.semocheck.common.response.*;
+import com.company.semocheck.domain.checklist.BlockedChecklist;
 import com.company.semocheck.domain.checklist.Checklist;
 import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.dto.SearchResultDto;
@@ -55,9 +56,10 @@ public class ChecklistController {
         //get checklists by query
         List<Checklist> checklists = checklistService.queryPublishedChecklist(categoryMain, categorySub, title, owner);
 
-        if(findOne.isPresent()){ // 회원 조회일 경우
-            List<Checklist> blockList = findOne.get().getReports().stream().map(report -> report.getChecklist()).collect(Collectors.toList());
-            checklists = checklists.stream().filter(chk -> !blockList.contains(chk)).collect(Collectors.toList());
+        //block checklist if it is in blocklist
+        if(findOne.isPresent()){
+            List<Checklist> blocklist = findOne.get().getBlocklist().stream().map(BlockedChecklist::getChecklist).collect(Collectors.toList());
+            checklists = checklists.stream().filter(chk -> !blocklist.contains(chk)).collect(Collectors.toList());
         }
 
         //sorting checklists
