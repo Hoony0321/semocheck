@@ -21,7 +21,7 @@ public class FileController {
 
     private final FileService fileService;
 
-    private final List<String> availableObjects = Arrays.asList("checklists", "members", "reports");
+    private final List<String> availableObjects = Arrays.asList("checklists", "members", "reports", "docs");
 
     @Operation(summary = "Get a file's detail info API", description = "해당 번호에 해당하는 파일에 대한 자세한 정보를 조회합니다.")
     @GetMapping("/api/files/{id}")
@@ -40,7 +40,7 @@ public class FileController {
         if(!availableObjects.contains(object)) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_OBJECT);
 
         //file upload
-        String location = String.format("%s/files", object);
+        String location = String.format("%s", object);
         FileDetail fileDetail = fileService.upload(location, file);
 
         return DataResponseDto.of(FileDto.createDto(fileDetail));

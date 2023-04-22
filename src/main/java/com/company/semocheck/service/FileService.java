@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.*;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.FileDetail;
+import com.company.semocheck.domain.dto.FileDto;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.FileDetailRepository;
 import com.company.semocheck.utils.MultipartUtil;
@@ -105,6 +106,15 @@ public class FileService {
         List<FileDetail> fileDetails = fileDetailRepository.findAllByFolder(folder);
         if(fileDetails.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_FILE);
         return fileDetails;
+    }
+
+    public FileDetail findDocsByName(String name){
+        List<FileDetail> docs = fileDetailRepository.findAllByFolder("docs");
+
+        Optional<FileDetail> findOne = docs.stream().filter(doc -> doc.getName().equals(name)).findFirst();
+        if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_FILE);
+
+        return findOne.get();
     }
 
 }
