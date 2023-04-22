@@ -4,7 +4,7 @@ import com.company.semocheck.auth.oauth2.OAuth2Attributes;
 import com.company.semocheck.domain.BaseTimeEntity;
 import com.company.semocheck.domain.Report;
 import com.company.semocheck.domain.Scrap;
-import com.company.semocheck.domain.checklist.BlockedChecklist;
+import com.company.semocheck.domain.checklist.Block;
 import com.company.semocheck.domain.checklist.Checklist;
 import com.company.semocheck.domain.dto.Role;
 import com.company.semocheck.domain.inquiry.Inquiry;
@@ -84,7 +84,7 @@ public class Member extends BaseTimeEntity {
     private List<Inquiry> inquiries = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<BlockedChecklist> blocklist = new ArrayList<>();
+    private List<Block> blocks = new ArrayList<>();
 
     @Builder
     public Member(String oAuthId, String provider, String email, String name, String picture, Role role, Boolean agreeNotify, Boolean sex, Integer age) {
@@ -143,8 +143,8 @@ public class Member extends BaseTimeEntity {
     public void addInquiry(Inquiry inquiry){this.inquiries.add(inquiry);}
     public void removeInquiry(Inquiry inquiry) {this.inquiries.remove(inquiry);}
 
-    public void addBlockedChecklist(BlockedChecklist blockedChecklist) {this.blocklist.add(blockedChecklist);}
-    public void removeBlockedChecklist(BlockedChecklist blockedChecklist) {this.blocklist.remove(blockedChecklist);}
+    public void addBlock(Block block) {this.blocks.add(block);}
+    public void removeBlock(Block block) {this.blocks.remove(block);}
 
     //====== 정보 수정 메서드 ======//
     public void setInfoNewMember(CreateMemberRequest createMemberRequest){

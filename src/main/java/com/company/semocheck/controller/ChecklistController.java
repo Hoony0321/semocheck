@@ -1,7 +1,7 @@
 package com.company.semocheck.controller;
 
 import com.company.semocheck.common.response.*;
-import com.company.semocheck.domain.checklist.BlockedChecklist;
+import com.company.semocheck.domain.checklist.Block;
 import com.company.semocheck.domain.checklist.Checklist;
 import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.dto.SearchResultDto;
@@ -58,7 +58,7 @@ public class ChecklistController {
 
         //block checklist if it is in blocklist
         if(findOne.isPresent()){
-            List<Checklist> blocklist = findOne.get().getBlocklist().stream().map(BlockedChecklist::getChecklist).collect(Collectors.toList());
+            List<Checklist> blocklist = findOne.get().getBlocks().stream().map(Block::getChecklist).collect(Collectors.toList());
             checklists = checklists.stream().filter(chk -> !blocklist.contains(chk)).collect(Collectors.toList());
         }
 

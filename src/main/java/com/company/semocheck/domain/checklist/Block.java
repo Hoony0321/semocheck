@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "blocked_checklist")
-public class BlockedChecklist {
+@Table(name = "block")
+public class Block {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "blocked_checklist_id")
+    @Column(name = "block_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,8 +29,8 @@ public class BlockedChecklist {
     @NotNull
     private Member member;
 
-    static public BlockedChecklist createEntity(Member member, Checklist checklist){
-        BlockedChecklist entity = new BlockedChecklist();
+    static public Block createEntity(Member member, Checklist checklist){
+        Block entity = new Block();
         entity.setMember(member);
         entity.setChecklist(checklist);
         return entity;
