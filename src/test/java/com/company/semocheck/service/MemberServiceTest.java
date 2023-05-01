@@ -30,6 +30,7 @@ class MemberServiceTest {
 
     @Autowired private MemberRepository memberRepository;
     @Autowired private MemberService memberService;
+    @Autowired private MemberCategoryService memberCategoryService;
 
 
     @Autowired private TestMemberUtils testMemberUtils;
@@ -64,6 +65,7 @@ class MemberServiceTest {
         //when
         Long memberId = memberService.createMember(oAuth2Attributes, provider, request, fcmToken);
         Member member = memberRepository.findById(memberId).get();
+        memberCategoryService.initMemberCategory(member, request.getCategories());
 
         //then
         assertThat(member.getId()).isEqualTo(memberId);
@@ -110,7 +112,9 @@ class MemberServiceTest {
 
         //then
         GeneralException exception = assertThrows(GeneralException.class, () -> {
-            memberService.createMember(oAuth2Attributes, provider, request, fcmToken);
+            Long memberId = memberService.createMember(oAuth2Attributes, provider, request, fcmToken);
+            Member member = memberService.findById(memberId);
+            memberCategoryService.initMemberCategory(member, request.getCategories());
         });
         assertThat(exception.getErrorCode()).isEqualTo(Code.NOT_FOUND);
         assertThat(exception.getMessage()).isEqualTo(ErrorMessages.NOT_FOUND_CATEGORY.getMessage());

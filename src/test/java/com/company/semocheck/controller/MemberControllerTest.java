@@ -25,6 +25,16 @@ class MemberControllerTest {
 
     @Test
     @Transactional
+    public void 회원가입() throws Exception {
+        //given
+
+        //when
+
+        //then
+    }
+
+    @Test
+    @Transactional
     public void 회원정보_간단조회() throws Exception {
         //given
         Member member = memberService.findById(memberId);
