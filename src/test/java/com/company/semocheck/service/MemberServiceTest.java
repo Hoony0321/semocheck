@@ -5,6 +5,7 @@ import com.company.semocheck.common.TestCategoryUtils;
 import com.company.semocheck.common.TestMemberUtils;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
+import com.company.semocheck.controller.MemberCategoryController;
 import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.dto.category.SubCategoryDto;
 import com.company.semocheck.domain.request.member.CreateMemberRequest;
@@ -29,6 +30,7 @@ class MemberServiceTest {
 
     @Autowired private MemberRepository memberRepository;
     @Autowired private MemberService memberService;
+
 
     @Autowired private TestMemberUtils testMemberUtils;
     @Autowired private TestCategoryUtils testCategoryUtils;

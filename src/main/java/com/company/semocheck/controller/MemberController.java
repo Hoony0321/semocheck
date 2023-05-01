@@ -3,6 +3,8 @@ package com.company.semocheck.controller;
 import com.company.semocheck.auth.jwt.JwtProvider;
 import com.company.semocheck.auth.oauth2.OAuth2Attributes;
 import com.company.semocheck.common.response.*;
+import com.company.semocheck.domain.category.SubCategory;
+import com.company.semocheck.domain.dto.category.SubCategoryDto;
 import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.dto.member.MemberDetailDto;
 import com.company.semocheck.domain.dto.Token;
@@ -11,6 +13,7 @@ import com.company.semocheck.domain.request.member.CreateMemberRequest;
 import com.company.semocheck.domain.request.member.UpdateMemberRequest;
 import com.company.semocheck.domain.response.LoginResponseDto;
 import com.company.semocheck.exception.GeneralException;
+import com.company.semocheck.service.MemberCategoryService;
 import com.company.semocheck.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +21,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,6 +34,8 @@ public class MemberController {
 
     private final JwtProvider jwtProvider;
     private final MemberService memberService;
+
+    private final MemberCategoryService memberCategoryService;
 
 
     @ApiDocumentResponse
@@ -42,9 +49,12 @@ public class MemberController {
 
         //새로운 회원 생성 & 초기 정보 세팅
         Long id = memberService.createMember(attributes, provider, createMemberRequest, fcmToken);
+        Member member = memberService.findById(id);
+
+        //회원 카테고리 연결
+        memberCategoryService.initMemberCategory(member, createMemberRequest.getCategories());
 
         //generate jwt token
-        Member member = memberService.findById(id);
         Token jwtToken = jwtProvider.generateToken(member);
 
         LoginResponseDto response = LoginResponseDto.builder()

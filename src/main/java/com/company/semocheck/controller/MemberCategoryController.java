@@ -12,6 +12,7 @@ import com.company.semocheck.domain.request.memberCategory.CreateMemberCategoryR
 import com.company.semocheck.domain.request.memberCategory.DeleteMemberCategoryRequest;
 import com.company.semocheck.domain.request.memberCategory.UpdateMemberCategoryRequest;
 import com.company.semocheck.service.CategoryService;
+import com.company.semocheck.service.MemberCategoryService;
 import com.company.semocheck.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,6 +30,7 @@ public class MemberCategoryController {
 
     private final JwtUtils jwtUtils;
     private final MemberService memberService;
+    private final MemberCategoryService memberCategoryService;
     private final CategoryService categoryService;
 
     @ApiDocumentResponse
@@ -38,7 +40,7 @@ public class MemberCategoryController {
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
-        List<MemberCategoryDto> categories = memberService.getCategories(member);
+        List<MemberCategoryDto> categories = memberCategoryService.getCategories(member);
 
         return DataResponseDto.of(categories, Code.SUCCESS_READ);
     }
@@ -56,7 +58,7 @@ public class MemberCategoryController {
             SubCategory category = categoryService.findSubCategoryByName(categoryDto.getMain(), categoryDto.getName());
             categories.add(category);
         }
-        memberService.addMemberCategory(member, categories);
+        memberCategoryService.addMemberCategory(member, categories);
 
         return ResponseDto.of(true, Code.SUCCESS_ADD);
     }
@@ -74,7 +76,7 @@ public class MemberCategoryController {
             SubCategory category = categoryService.findSubCategoryByName(categoryDto.getMain(), categoryDto.getName());
             categories.add(category);
         }
-        memberService.updateMemberCategory(member, categories);
+        memberCategoryService.updateMemberCategory(member, categories);
 
         return ResponseDto.of(true, Code.SUCCESS_UPDATE);
     }
@@ -92,7 +94,7 @@ public class MemberCategoryController {
             SubCategory category = categoryService.findSubCategoryByName(categoryDto.getMain(), categoryDto.getName());
             categories.add(category);
         }
-        memberService.deleteMemberCategory(member, categories);
+        memberCategoryService.deleteMemberCategory(member, categories);
 
         return ResponseDto.of(true, Code.SUCCESS_DELETE);
     }

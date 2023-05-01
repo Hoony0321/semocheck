@@ -31,7 +31,6 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final MemberCategoryRepository memberCategoryRepository;
     private final CategoryService categoryService;
     private final JwtUtils jwtUtils;
 
@@ -89,22 +88,9 @@ public class MemberService {
         //회원 기본정보 setting
         member.setInfoNewMember(createMemberRequest);
 
-        //category setting
-        List<SubCategory> categories = new ArrayList<>();
-        for (SubCategoryDto dto : createMemberRequest.getCategories()) {
-            SubCategory subCategory = categoryService.findSubCategoryByName(dto.getMain(), dto.getName());
-            categories.add(subCategory);
-        }
-        this.addMemberCategory(member, categories);
-
         memberRepository.save(member);
 
         return member.getId();
-    }
-
-    @Transactional
-    public void delete(Member member){
-        memberRepository.delete(member);
     }
 
     @Transactional
@@ -113,56 +99,9 @@ public class MemberService {
         return member;
     }
 
-    public List<MemberCategoryDto> getCategories(Member member) {
-        List<MemberCategoryDto> memberCategoryDtos = new ArrayList<>();
-        for (MemberCategory category : member.getCategories()) {
-            memberCategoryDtos.add(MemberCategoryDto.createDto(category));
-        }
-
-        return memberCategoryDtos;
-    }
-
     @Transactional
-    public void addMemberCategory(Member member, List<SubCategory> categories) {
-        for (SubCategory category : categories) {
-            Optional<MemberCategory> findOne = member.getCategories().stream()
-                    .filter(ct -> ct.getSubCategory().getId().equals(category.getId())).findFirst();
-            if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.EXISTED_CATEGORY);
-
-            MemberCategory memberCategory = MemberCategory.createEntity(member, category);
-            member.addCategory(memberCategory);
-        }
+    public void delete(Member member){
+        memberRepository.delete(member);
     }
-
-    @Transactional
-    public void updateMemberCategory(Member member, List<SubCategory> categories) {
-        // clear memberCategory
-        for (MemberCategory category : member.getCategories()) {
-            memberCategoryRepository.delete(category);
-        }
-
-        // add new memberCategory
-        List<MemberCategory> memberCategories = new ArrayList<>();
-        for(SubCategory category : categories){
-            MemberCategory memberCategory = MemberCategory.createEntity(member, category);
-            memberCategoryRepository.save(memberCategory);
-            memberCategories.add(memberCategory);
-        }
-
-        member.setCategory(memberCategories);
-    }
-
-    @Transactional
-    public void deleteMemberCategory(Member member, List<SubCategory> categories) {
-        for(SubCategory category : categories){
-            Optional<MemberCategory> findOne = member.getCategories().stream()
-                    .filter(ct -> ct.getSubCategory().getId().equals(category.getId())).findFirst();
-            if(findOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_CHECKLIST);
-
-            member.removeCategory(findOne.get());
-            memberCategoryRepository.delete(findOne.get());
-        }
-    }
-
 
 }
