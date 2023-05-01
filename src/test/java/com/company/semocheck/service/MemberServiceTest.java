@@ -1,19 +1,23 @@
 package com.company.semocheck.service;
 
 import com.company.semocheck.auth.oauth2.OAuth2Attributes;
-import com.company.semocheck.common.TestUtils;
+import com.company.semocheck.common.TestCategoryUtils;
+import com.company.semocheck.common.TestMemberUtils;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.dto.category.SubCategoryDto;
 import com.company.semocheck.domain.request.member.CreateMemberRequest;
+import com.company.semocheck.domain.request.member.UpdateMemberRequest;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.MemberRepository;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,66 +29,35 @@ class MemberServiceTest {
 
     @Autowired private MemberRepository memberRepository;
     @Autowired private MemberService memberService;
-    private TestUtils testUtils = new TestUtils();
 
-    @Test
-    public void test_findById() throws Exception {
-        //given
-        Long memberId = createMember("1");
+    @Autowired private TestMemberUtils testMemberUtils;
+    @Autowired private TestCategoryUtils testCategoryUtils;
 
-        //when
-        Member member = memberService.findById(memberId);
 
-        //then
-        assertThat("testName1").isEqualTo(member.getName());
-    }
+    private final int testMemberAge = 20;
+    private final boolean testMemberSex = false;
+    private final boolean testMemberAgreeNotify = true;
+    private final String testMemberName = "testName";
+    private final String testMemberEmail = "testEmail";
+    private final String testMemberPicture = "testPicture";
+    private final String testMemberProvider = "kakao";
+    private final String testMemberOAuthId = "testOAuthId";
+    private final String testMemberFcmToken = "testFcmToken";
 
-    @Test
-    public void test_findById_notFoundError() throws Exception {
-        //given
-        //when
-        //then
-        GeneralException exception = assertThrows(GeneralException.class, () -> {
-            memberService.findById(10000l);
-        });
-        assertThat(exception.getErrorCode()).isEqualTo(Code.NOT_FOUND);
-    }
-
-    @Test
-    public void test_findByOAuthIdAndProvider() throws Exception {
-        //given
-        Long memberId = createMember("1");
-
-        //when
-        Member member = memberService.findByOAuthIdAndProvider("testOAuthId1", "kakao");
-
-        //then
-        assertThat(memberId).isEqualTo(member.getId());
-        assertThat("testName1").isEqualTo(member.getName());
-    }
-
-    @Test
-    public void test_checkByOAuthIdAndProvider() throws Exception {
-        //given
-        Long memberId1 = createMember("1");
-
-        //when
-        Optional<Member> findOne1 = memberService.checkByOAuthIdAndProvider("testOAuthId1", "kakao");
-        Optional<Member> findOne2 = memberService.checkByOAuthIdAndProvider("testOAuthId2", "kakao");
-
-        //then
-        assertThat(findOne1.isPresent()).isEqualTo(true);
-        assertThat(findOne2.isPresent()).isEqualTo(false);
+    @Before
+    @Transactional
+    public void before() {
+        testCategoryUtils.initCategory();
     }
 
     @Test
     @Transactional
-    public void test_createMember() throws Exception {
+    public void 회원생성_SUCCESS() throws Exception {
         //given
-        OAuth2Attributes oAuth2Attributes = new OAuth2Attributes("testOAuthId", "testName", "testEmail", "testPicture");
-        String provider = "kakao";
-        String fcmToken = "test fcmToken";
-        CreateMemberRequest request = createRequest();
+        OAuth2Attributes oAuth2Attributes = new OAuth2Attributes(testMemberOAuthId, testMemberName, testMemberEmail, testMemberPicture);
+        String provider = testMemberProvider;
+        String fcmToken = testMemberFcmToken;
+        CreateMemberRequest request = createMemberRequest();
 
         //when
         Long memberId = memberService.createMember(oAuth2Attributes, provider, request, fcmToken);
@@ -92,28 +65,46 @@ class MemberServiceTest {
 
         //then
         assertThat(member.getId()).isEqualTo(memberId);
-        assertThat(member.getName()).isEqualTo("testName");
-        assertThat(member.getProvider()).isEqualTo("kakao");
-        assertThat(member.getPicture()).isEqualTo("testPicture");
-        assertThat(member.getEmail()).isEqualTo("testEmail");
-        assertThat(member.getOAuthId()).isEqualTo("testOAuthId");
-        assertThat(member.getSex()).isEqualTo(true);
-        assertThat(member.getAge()).isEqualTo(20);
-        assertThat(member.getAgreeNotify()).isEqualTo(true);
-        assertThat(member.getCategories().size()).isEqualTo(2);
+        assertThat(member.getName()).isEqualTo(testMemberName);
+        assertThat(member.getProvider()).isEqualTo(testMemberProvider);
+        assertThat(member.getPicture()).isEqualTo(testMemberPicture);
+        assertThat(member.getEmail()).isEqualTo(testMemberEmail);
+        assertThat(member.getOAuthId()).isEqualTo(testMemberOAuthId);
+        assertThat(member.getSex()).isEqualTo(testMemberSex);
+        assertThat(member.getAge()).isEqualTo(testMemberAge);
+        assertThat(member.getAgreeNotify()).isEqualTo(testMemberAgreeNotify);
+        assertThat(member.getCategories().size()).isEqualTo(3);
     }
 
     @Test
     @Transactional
-    public void test_createMember_notFoundCategory() throws Exception {
+    public void 회원생성_EXISTED() throws Exception {
         //given
-        OAuth2Attributes oAuth2Attributes = new OAuth2Attributes("testOAuthId", "testName", "testEmail", "testPicture");
-        String provider = "kakao";
-        String fcmToken = "test fcmToken";
-        CreateMemberRequest request = createRequest();
+        testMemberUtils.createMember();
 
         //when
-        request.getCategories().add(new SubCategoryDto("testName", "testMain"));
+
+
+        //then
+        GeneralException exception = assertThrows(GeneralException.class, () -> {
+            testMemberUtils.createMember();
+        });
+
+        assertThat(exception.getErrorCode()).isEqualTo(Code.BAD_REQUEST);
+        assertThat(exception.getMessage()).isEqualTo(ErrorMessages.EXISTED_MEMBER.getMessage());
+    }
+
+    @Test
+    @Transactional
+    public void 회원생성_INVALID_CATEGORY() throws Exception {
+        //given
+        OAuth2Attributes oAuth2Attributes = new OAuth2Attributes(testMemberOAuthId, testMemberName, testMemberEmail, testMemberPicture);
+        String provider = testMemberProvider;
+        String fcmToken = testMemberFcmToken;
+        CreateMemberRequest request = createMemberRequest();
+
+        //when
+        request.getCategories().add(new SubCategoryDto("wrongSubName", "wrongMainName"));
 
         //then
         GeneralException exception = assertThrows(GeneralException.class, () -> {
@@ -125,12 +116,12 @@ class MemberServiceTest {
 
     @Test
     @Transactional
-    public void test_createMember_invalidProvider() throws Exception {
+    public void 회원생성_INVALID_PROVIDER() throws Exception {
         //given
-        OAuth2Attributes oAuth2Attributes = new OAuth2Attributes("testOAuthId", "testName", "testEmail", "testPicture");
-        String provider = "invalid provider";
-        String fcmToken = "test fcmToken";
-        CreateMemberRequest request = createRequest();
+        OAuth2Attributes oAuth2Attributes = new OAuth2Attributes(testMemberOAuthId, testMemberName, testMemberEmail, testMemberPicture);
+        String provider = "wrongProvider";
+        String fcmToken = testMemberFcmToken;
+        CreateMemberRequest request = createMemberRequest();
 
         //when
         GeneralException exception = assertThrows(GeneralException.class, () -> {
@@ -142,22 +133,127 @@ class MemberServiceTest {
         assertThat(exception.getMessage()).isEqualTo(ErrorMessages.INVALID_PROVIDER.getMessage());
     }
 
-    private Long createMember(String number){
-        OAuth2Attributes oAuth2Attributes = new OAuth2Attributes("testOAuthId" + number, "testName" + number, "testEmail" + number, "testPicture" + number);
-        String provider = "kakao";
-        String fcmToken = "test fcmToken";
-        CreateMemberRequest request = createRequest();
+    @Test
+    @Transactional
+    public void 회원조회_SUCCESS() throws Exception {
+        //given
+        Long memberId = testMemberUtils.createMember();
 
-        return memberService.createMember(oAuth2Attributes, provider, request, fcmToken);
+        //when
+        Member member = memberService.findById(memberId);
+
+        //then
+        assertThat(testMemberName).isEqualTo(member.getName());
     }
 
-    private CreateMemberRequest createRequest(){
-        List<SubCategoryDto> testCategoryDtos = testUtils.getTestCategoryDtos();
+    @Test
+    @Transactional
+    public void 회원조회_NOT_FOUND() throws Exception {
+        //given
+
+        //when
+        Long wrongMemberId = 1000000000l;
+
+        //then
+        GeneralException exception = assertThrows(GeneralException.class, () -> {
+            memberService.findById(wrongMemberId);
+        });
+        assertThat(exception.getErrorCode()).isEqualTo(Code.NOT_FOUND);
+    }
+
+    @Test
+    @Transactional
+    public void 회원조회_WITH_OAUTHID_PROVIDER() throws Exception {
+        //given
+        Long memberId = testMemberUtils.createMember();
+
+        //when
+        Member member = memberService.findByOAuthIdAndProvider(testMemberOAuthId, testMemberProvider);
+
+        //then
+        assertThat(memberId).isEqualTo(member.getId());
+        assertThat(testMemberName).isEqualTo(member.getName());
+    }
+
+    @Test
+    @Transactional
+    public void 회원조회_CHECK_WITH_OAUTHID_PROVIDER() throws Exception {
+        //given
+        Long memberId = testMemberUtils.createMember();
+
+        //when
+        Optional<Member> findOne1 = memberService.checkByOAuthIdAndProvider(testMemberOAuthId, testMemberProvider);
+        Optional<Member> findOne2 = memberService.checkByOAuthIdAndProvider("wrongOAuthId", "wrongProvider");
+
+        //then
+        assertThat(findOne1.isPresent()).isEqualTo(true);
+        assertThat(findOne2.isPresent()).isEqualTo(false);
+    }
+
+    @Test
+    @Transactional
+    public void 회원정보수정_TOTAL() throws Exception {
+        //given
+        Long memberId = testMemberUtils.createMember();
+        Member member = memberRepository.findById(memberId).get();
+
+        //when
+        UpdateMemberRequest updateMemberRequest = UpdateMemberRequest.builder()
+                .age(30)
+                .agreeNotify(false)
+                .name("modifiedName")
+                .build();
+        memberService.updateInfo(member, updateMemberRequest);
+
+        //then
+        assertThat(member.getAge()).isEqualTo(30);
+        assertThat(member.getAgreeNotify()).isEqualTo(false);
+        assertThat(member.getName()).isEqualTo("modifiedName");
+    }
+
+    @Test
+    @Transactional
+    public void 회원정보수정_일부() throws Exception {
+        //given
+        Long memberId = testMemberUtils.createMember();
+        Member member = memberRepository.findById(memberId).get();
+        String originName = member.getName();
+
+        //when
+        UpdateMemberRequest updateMemberRequest = UpdateMemberRequest.builder()
+                .age(30)
+                .build();
+        memberService.updateInfo(member, updateMemberRequest);
+
+        //then
+        assertThat(member.getAge()).isEqualTo(30);
+        assertThat(member.getName()).isEqualTo(originName);
+    }
+
+
+    private CreateMemberRequest createMemberRequest(){
+        SubCategoryDto subCategoryDto1 = SubCategoryDto.builder()
+                .main("생활")
+                .name("부동산").build();
+
+        SubCategoryDto subCategoryDto2 = SubCategoryDto.builder()
+                .main("생활")
+                .name("결혼").build();
+
+        SubCategoryDto subCategoryDto3 = SubCategoryDto.builder()
+                .main("커리어")
+                .name("면접").build();
+
+        List<SubCategoryDto> subCategoryDtos = new ArrayList<>();
+        subCategoryDtos.add(subCategoryDto1);
+        subCategoryDtos.add(subCategoryDto2);
+        subCategoryDtos.add(subCategoryDto3);
+
         return CreateMemberRequest.builder()
-                .agreeNotify(true)
-                .sex(true)
-                .age(20)
-                .categories(testCategoryDtos).build();
+                .agreeNotify(testMemberAgreeNotify)
+                .sex(testMemberSex)
+                .age(testMemberAge)
+                .categories(subCategoryDtos).build();
     }
 
 }

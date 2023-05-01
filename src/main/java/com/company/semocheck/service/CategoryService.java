@@ -5,7 +5,7 @@ import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.FileDetail;
 import com.company.semocheck.domain.category.SubCategory;
 import com.company.semocheck.domain.category.MainCategory;
-import com.company.semocheck.domain.request.category.CreateCategoryRequestDto;
+import com.company.semocheck.domain.request.category.CreateCategoryRequest;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.SubCategoryRepository;
 import com.company.semocheck.repository.MainCategoryRepository;
@@ -56,7 +56,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public void createCategory(CreateCategoryRequestDto requestDto) {
+    public void createCategory(CreateCategoryRequest requestDto) {
         String mainName = requestDto.getMainName();
         String subName = requestDto.getSubName();
 

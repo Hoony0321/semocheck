@@ -1,6 +1,6 @@
 package com.company.semocheck.domain.category;
 
-import com.company.semocheck.domain.request.category.CreateCategoryRequestDto;
+import com.company.semocheck.domain.request.category.CreateCategoryRequest;
 import com.company.semocheck.domain.request.category.UpdateMainCategoryRequestDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -28,7 +28,7 @@ public class MainCategory {
     @OneToMany(mappedBy = "mainCategory")
     private List<SubCategory> subCategoryList = new ArrayList<>();
 
-    static public MainCategory createEntity(CreateCategoryRequestDto requestDto){
+    static public MainCategory createEntity(CreateCategoryRequest requestDto){
         MainCategory entity = new MainCategory();
         entity.name = requestDto.getMainName();
         return entity;

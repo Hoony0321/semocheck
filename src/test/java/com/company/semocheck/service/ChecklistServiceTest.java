@@ -37,27 +37,4 @@ class ChecklistServiceTest {
         //then
     }
 
-    @Test
-    @Transactional
-    public void 체크리스트_쿼리형식_조회() throws Exception {
-        //given
-        String mainCategoryName = "생활";
-        String subCategoryName = "부동산";
-        String title = "test1";
-        String ownerName = "고대훈";
-
-        //when
-        List<Checklist> checklists = checklistService.getPublishedChecklistByQuery(mainCategoryName, subCategoryName, title, ownerName);
-        System.out.println("조회 개수 : " + String.valueOf(checklists.size()));
-
-
-        //then
-        for(Checklist checklist : checklists){
-            assertThat(checklist.getCategory().getMainCategory().getName()).isEqualTo(mainCategoryName);
-            assertThat(checklist.getCategory().getName()).isEqualTo(subCategoryName);
-            assertThat(checklist.getTitle()).isEqualTo(title);
-            assertThat(checklist.getOwner().getName()).isEqualTo(ownerName);
-        }
-    }
-
 }

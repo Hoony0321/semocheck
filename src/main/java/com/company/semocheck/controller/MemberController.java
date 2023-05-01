@@ -40,9 +40,6 @@ public class MemberController {
         Map<String, Object> oAuth2Info = OAuth2Attributes.getOAuthInfo(oAuthToken, provider);
         OAuth2Attributes attributes = OAuth2Attributes.of(provider, oAuth2Info);
 
-        Optional<Member> findOne = memberService.checkByOAuthIdAndProvider(attributes.getId(), provider);
-        if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.EXISTED_MEMBER);
-
         //새로운 회원 생성 & 초기 정보 세팅
         Long id = memberService.createMember(attributes, provider, createMemberRequest, fcmToken);
 

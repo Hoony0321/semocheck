@@ -10,7 +10,7 @@ import com.company.semocheck.domain.category.MainCategory;
 import com.company.semocheck.domain.dto.FileDto;
 import com.company.semocheck.domain.dto.category.MainCategoryDto;
 import com.company.semocheck.domain.dto.category.SubCategoryDto;
-import com.company.semocheck.domain.request.category.CreateCategoryRequestDto;
+import com.company.semocheck.domain.request.category.CreateCategoryRequest;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.service.CategoryService;
 import com.company.semocheck.service.FileService;
@@ -88,7 +88,7 @@ public class CategoryController {
     @ApiDocumentResponse
     @Operation(summary = "Create categories API", description = "카테고리를 생성합니다.")
     @PostMapping("/api/categories")
-    public ResponseDto createCategories(@RequestBody CreateCategoryRequestDto requestDto){
+    public ResponseDto createCategories(@RequestBody CreateCategoryRequest requestDto){
         categoryService.createCategory(requestDto);
         return ResponseDto.of(true,  Code.SUCCESS_CREATE);
     }

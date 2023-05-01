@@ -35,8 +35,6 @@ public class MemberService {
     private final CategoryService categoryService;
     private final JwtUtils jwtUtils;
 
-    public List<Member> findAll(){ return memberRepository.findAll(); }
-
     public Member getMemberByJwt(HttpServletRequest request){
         String accessToken = jwtUtils.getAccessToken(request);
         Claims claims = jwtUtils.parseClaims(accessToken);
@@ -76,6 +74,10 @@ public class MemberService {
 
     @Transactional
     public Long createMember(OAuth2Attributes attributes, String provider, CreateMemberRequest createMemberRequest, String fcmToken){
+        //중복 회원 체크
+        Optional<Member> findOne = checkByOAuthIdAndProvider(attributes.getId(), provider);
+        if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.EXISTED_MEMBER);
+
         //verify provider
         if(!provider.equals(Constants.PROVIDER_KAKAO) && !provider.equals(Constants.PROVIDER_GOOGLE)){
             throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_PROVIDER);
