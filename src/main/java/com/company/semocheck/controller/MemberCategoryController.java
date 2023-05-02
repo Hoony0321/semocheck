@@ -8,6 +8,7 @@ import com.company.semocheck.common.response.ResponseDto;
 import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.category.SubCategory;
 import com.company.semocheck.domain.dto.category.MemberCategoryDto;
+import com.company.semocheck.domain.member.MemberCategory;
 import com.company.semocheck.domain.request.memberCategory.CreateMemberCategoryRequest;
 import com.company.semocheck.domain.request.memberCategory.DeleteMemberCategoryRequest;
 import com.company.semocheck.domain.request.memberCategory.UpdateMemberCategoryRequest;
@@ -40,9 +41,14 @@ public class MemberCategoryController {
         //Get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
-        List<MemberCategoryDto> categories = memberCategoryService.getCategories(member);
+        List<MemberCategory> categories = memberCategoryService.getCategories(member);
 
-        return DataResponseDto.of(categories, Code.SUCCESS_READ);
+        List<MemberCategoryDto> memberCategoryDtos = new ArrayList<>();
+        for (MemberCategory category : categories) {
+            memberCategoryDtos.add(MemberCategoryDto.createDto(category));
+        }
+
+        return DataResponseDto.of(memberCategoryDtos, Code.SUCCESS_READ);
     }
 
     @ApiDocumentResponse

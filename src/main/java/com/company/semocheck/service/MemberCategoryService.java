@@ -25,18 +25,14 @@ public class MemberCategoryService {
     private final MemberCategoryRepository memberCategoryRepository;
     private final CategoryService categoryService;
 
-    public List<MemberCategoryDto> getCategories(Member member) {
-        List<MemberCategoryDto> memberCategoryDtos = new ArrayList<>();
-        for (MemberCategory category : member.getCategories()) {
-            memberCategoryDtos.add(MemberCategoryDto.createDto(category));
-        }
-
-        return memberCategoryDtos;
+    public List<MemberCategory> getCategories(Member member) {
+        return member.getCategories();
     }
 
     @Transactional
     public void initMemberCategory(Member member, List<SubCategoryDto> subCategoryDtos){
         List<MemberCategory> memberCategories = new ArrayList<>();
+
         for(SubCategoryDto subCategoryDto : subCategoryDtos){
             SubCategory subCategory = categoryService.findSubCategoryByName(subCategoryDto.getMain(), subCategoryDto.getName());
             MemberCategory memberCategory = MemberCategory.createEntity(member, subCategory);

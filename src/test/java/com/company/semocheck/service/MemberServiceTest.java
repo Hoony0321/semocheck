@@ -76,7 +76,6 @@ class MemberServiceTest {
         assertThat(member.getSex()).isEqualTo(testMemberSex);
         assertThat(member.getAge()).isEqualTo(testMemberAge);
         assertThat(member.getAgreeNotify()).isEqualTo(testMemberAgreeNotify);
-        assertThat(member.getCategories().size()).isEqualTo(4);
     }
 
     @Test

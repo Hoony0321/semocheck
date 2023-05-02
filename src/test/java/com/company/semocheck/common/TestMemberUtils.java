@@ -52,21 +52,21 @@ public class TestMemberUtils {
 
     private CreateMemberRequest createMemberRequest(){
         SubCategoryDto subCategoryDto1 = SubCategoryDto.builder()
-                .main("생활")
-                .name("부동산").build();
+                .main("main1")
+                .name("test1").build();
 
         SubCategoryDto subCategoryDto2 = SubCategoryDto.builder()
-                .main("생활")
-                .name("결혼").build();
+                .main("main2")
+                .name("test3").build();
 
-        SubCategoryDto subCategoryDto3 = SubCategoryDto.builder()
-                .main("커리어")
-                .name("면접").build();
+        SubCategoryDto subCategoryDto4 = SubCategoryDto.builder()
+                .main("main3")
+                .name("test5").build();
 
         List<SubCategoryDto> subCategoryDtos = new ArrayList<>();
         subCategoryDtos.add(subCategoryDto1);
         subCategoryDtos.add(subCategoryDto2);
-        subCategoryDtos.add(subCategoryDto3);
+        subCategoryDtos.add(subCategoryDto4);
 
         return CreateMemberRequest.builder()
                 .agreeNotify(testMemberAgreeNotify)
