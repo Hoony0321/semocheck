@@ -3,9 +3,11 @@ package com.company.semocheck.common;
 
 import com.company.semocheck.auth.oauth2.OAuth2Attributes;
 import com.company.semocheck.domain.dto.category.SubCategoryDto;
+import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.request.category.CreateCategoryRequest;
 import com.company.semocheck.domain.request.member.CreateMemberRequest;
 import com.company.semocheck.service.CategoryService;
+import com.company.semocheck.service.MemberCategoryService;
 import com.company.semocheck.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import java.util.List;
 public class TestMemberUtils {
 
     @Autowired private MemberService memberService;
+    @Autowired private MemberCategoryService memberCategoryService;
 
     private final int testMemberAge = 20;
     private final boolean testMemberSex = false;
@@ -40,6 +43,9 @@ public class TestMemberUtils {
         CreateMemberRequest request = createMemberRequest();
 
         Long memberId = memberService.createMember(oAuth2Attributes, provider, request, fcmToken);
+        Member member = memberService.findById(memberId);
+
+        memberCategoryService.initMemberCategory(member, request.getCategories());
         return memberId;
     }
 

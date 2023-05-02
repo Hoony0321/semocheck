@@ -56,7 +56,16 @@ public class CategoryService {
     }
 
     @Transactional
-    public void createCategory(CreateCategoryRequest requestDto) {
+    public void createMainCategory(String mainCategoryName){
+        Optional<MainCategory> findOne = mainCategoryRepository.findByName(mainCategoryName);
+        if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.EXISTED_CATEGORY);
+
+        MainCategory mainCategory = MainCategory.createEntity(mainCategoryName);
+        mainCategoryRepository.save(mainCategory);
+    }
+
+    @Transactional
+    public void createSubCategory(CreateCategoryRequest requestDto) {
         String mainName = requestDto.getMainName();
         String subName = requestDto.getSubName();
 

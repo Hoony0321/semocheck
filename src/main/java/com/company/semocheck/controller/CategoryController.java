@@ -89,7 +89,7 @@ public class CategoryController {
     @Operation(summary = "Create categories API", description = "카테고리를 생성합니다.")
     @PostMapping("/api/categories")
     public ResponseDto createCategories(@RequestBody CreateCategoryRequest requestDto){
-        categoryService.createCategory(requestDto);
+        categoryService.createSubCategory(requestDto);
         return ResponseDto.of(true,  Code.SUCCESS_CREATE);
     }
 

@@ -5,14 +5,13 @@ import com.company.semocheck.common.TestCategoryUtils;
 import com.company.semocheck.common.TestMemberUtils;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
-import com.company.semocheck.controller.MemberCategoryController;
 import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.dto.category.SubCategoryDto;
 import com.company.semocheck.domain.request.member.CreateMemberRequest;
 import com.company.semocheck.domain.request.member.UpdateMemberRequest;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.MemberRepository;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,9 +46,9 @@ class MemberServiceTest {
     private final String testMemberOAuthId = "testOAuthId";
     private final String testMemberFcmToken = "testFcmToken";
 
-    @Before
+    @BeforeEach
     @Transactional
-    public void before() {
+    public void init(){
         testCategoryUtils.initCategory();
     }
 
@@ -77,7 +76,7 @@ class MemberServiceTest {
         assertThat(member.getSex()).isEqualTo(testMemberSex);
         assertThat(member.getAge()).isEqualTo(testMemberAge);
         assertThat(member.getAgreeNotify()).isEqualTo(testMemberAgreeNotify);
-        assertThat(member.getCategories().size()).isEqualTo(3);
+        assertThat(member.getCategories().size()).isEqualTo(4);
     }
 
     @Test
@@ -239,21 +238,26 @@ class MemberServiceTest {
 
     private CreateMemberRequest createMemberRequest(){
         SubCategoryDto subCategoryDto1 = SubCategoryDto.builder()
-                .main("생활")
-                .name("부동산").build();
+                .main("main1")
+                .name("test1").build();
 
         SubCategoryDto subCategoryDto2 = SubCategoryDto.builder()
-                .main("생활")
-                .name("결혼").build();
+                .main("main1")
+                .name("test2").build();
 
         SubCategoryDto subCategoryDto3 = SubCategoryDto.builder()
-                .main("커리어")
-                .name("면접").build();
+                .main("main2")
+                .name("test3").build();
+
+        SubCategoryDto subCategoryDto4 = SubCategoryDto.builder()
+                .main("main3")
+                .name("test5").build();
 
         List<SubCategoryDto> subCategoryDtos = new ArrayList<>();
         subCategoryDtos.add(subCategoryDto1);
         subCategoryDtos.add(subCategoryDto2);
         subCategoryDtos.add(subCategoryDto3);
+        subCategoryDtos.add(subCategoryDto4);
 
         return CreateMemberRequest.builder()
                 .agreeNotify(testMemberAgreeNotify)

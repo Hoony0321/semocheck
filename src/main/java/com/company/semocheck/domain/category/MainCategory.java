@@ -33,6 +33,13 @@ public class MainCategory {
         entity.name = requestDto.getMainName();
         return entity;
     }
+
+    public static MainCategory createEntity(String mainCategoryName) {
+        MainCategory mainCategory = new MainCategory();
+        mainCategory.name = mainCategoryName;
+        return mainCategory;
+    }
+
     //====== 수정 메서드 ======//
     public void update(UpdateMainCategoryRequestDto requestDto) {
         this.name = requestDto.getName();

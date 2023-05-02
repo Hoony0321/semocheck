@@ -2,7 +2,6 @@ package com.company.semocheck.common;
 
 import com.company.semocheck.domain.request.category.CreateCategoryRequest;
 import com.company.semocheck.service.CategoryService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,13 +15,15 @@ public class TestCategoryUtils {
     @Autowired
     private CategoryService categoryService;
 
-    @Transactional
     public void initCategory(){
-        CreateCategoryRequest createForm1 = new CreateCategoryRequest("생활", "결혼");
-        CreateCategoryRequest createForm2 = new CreateCategoryRequest("생활", "부동산");
-        CreateCategoryRequest createForm3 = new CreateCategoryRequest("생활", "인테리어");
-        CreateCategoryRequest createForm4 = new CreateCategoryRequest("커리어", "면접");
-        CreateCategoryRequest createForm5 = new CreateCategoryRequest("커리어", "이직");
+        categoryService.createMainCategory("main1");
+        categoryService.createMainCategory("main2");
+        categoryService.createMainCategory("main3");
+        CreateCategoryRequest createForm1 = new CreateCategoryRequest("main1", "test1");
+        CreateCategoryRequest createForm2 = new CreateCategoryRequest("main1", "test2");
+        CreateCategoryRequest createForm3 = new CreateCategoryRequest("main2", "test3");
+        CreateCategoryRequest createForm4 = new CreateCategoryRequest("main2", "test4");
+        CreateCategoryRequest createForm5 = new CreateCategoryRequest("main3", "test5");
 
         List<CreateCategoryRequest> createFormList = new ArrayList<>();
         createFormList.add(createForm1);
@@ -32,7 +33,7 @@ public class TestCategoryUtils {
         createFormList.add(createForm5);
 
         for(CreateCategoryRequest request : createFormList){
-            categoryService.createCategory(request);
+            categoryService.createSubCategory(request);
         }
     }
 }
