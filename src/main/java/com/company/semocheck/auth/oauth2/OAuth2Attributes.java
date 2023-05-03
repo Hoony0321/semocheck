@@ -43,7 +43,6 @@ public class OAuth2Attributes {
                         .path("/v2/user/me")
                         .encode().build().toUri();
 
-                //OAuth token을 통해 리소스 서버로 사용자 정보 요청
                 requestEntity = RequestEntity
                         .post(requestUrl)
                         .header("Authorization", "Bearer " + oAuthToken)
@@ -53,9 +52,10 @@ public class OAuth2Attributes {
                 requestUrl = UriComponentsBuilder.newInstance()
                         .scheme("https")
                         .host("www.googleapis.com")
-                        .path("/userinfo/v2/me")
+                        .path("/oauth2/v2/userinfo")
                         .queryParam("access_token", oAuthToken)
                         .encode().build().toUri();
+
                 break;
             default :
                 throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.JWT_INVALID_PROVIDER);
@@ -63,9 +63,11 @@ public class OAuth2Attributes {
 
         try{
             if(requestEntity == null) responseEntity = restTemplate.getForEntity(requestUrl, Object.class);
-            else responseEntity = restTemplate.postForEntity(requestUrl, requestEntity, Object.class);}
+            else responseEntity = restTemplate.postForEntity(requestUrl, requestEntity, Object.class);
+        }
         catch (Exception e){
-            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.FAIL_AUTHENTICATION_OAUTH);}
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.FAIL_AUTHENTICATION_OAUTH);
+        }
 
         //받아온 사용자 정보를 동일한 form으로 변환
         ObjectMapper objectMapper = new ObjectMapper();
