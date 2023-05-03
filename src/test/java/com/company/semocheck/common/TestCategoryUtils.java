@@ -12,8 +12,7 @@ import java.util.List;
 @Service
 public class TestCategoryUtils {
 
-    @Autowired
-    private CategoryService categoryService;
+    @Autowired private CategoryService categoryService;
 
     public void initCategory(){
         categoryService.createMainCategory("main1");
