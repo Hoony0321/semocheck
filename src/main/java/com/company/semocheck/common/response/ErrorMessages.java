@@ -13,6 +13,7 @@ public enum ErrorMessages {
     //jwt
     JWT_INVALID_PROVIDER("유효하지 않은 provider입니다."),
     FAIL_AUTHENTICATION_OAUTH("OAuth 인증에 실패했습니다"),
+    INVALID_OAUTH_SCOPE("유효하지 않은 OAuth scope입니다."),
 
 
     //reports

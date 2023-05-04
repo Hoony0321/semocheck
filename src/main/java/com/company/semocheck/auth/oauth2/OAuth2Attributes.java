@@ -117,7 +117,7 @@ public class OAuth2Attributes {
         String profile = (String) attributes.get("picture");
 
         if(oAuthId == null || name == null || email == null)
-            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVAILD_ARGUMENT);
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_OAUTH_SCOPE);
 
         return new OAuth2Attributes(oAuthId, name, email, profile);
     }

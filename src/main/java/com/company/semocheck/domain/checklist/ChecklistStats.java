@@ -27,16 +27,13 @@ public class ChecklistStats {
     @JsonIgnore
     private Checklist checklist;
 
-    @ColumnDefault("0")
-    private Integer scrapCount;
-    @ColumnDefault("0")
-    private Integer viewCount;
-    @ColumnDefault("0")
-    private Integer viewCountMale;
-    @ColumnDefault("0")
-    private Integer viewCountFemale;
-    @ColumnDefault("0")
-    private Float avgAge;
+    private Integer scrapCount = 0;
+
+    private Integer viewCount = 0;
+    private Integer viewCountMale = 0;
+    private Integer viewCountFemale = 0;
+
+    private Float avgAge = 0f;
 
     public ChecklistStats(Checklist checklist) {
         this.checklist = checklist;

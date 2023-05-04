@@ -26,11 +26,9 @@ public class ChecklistUsage {
     @JsonIgnore
     private Checklist checklist;
 
-    @ColumnDefault("0")
-    private Boolean complete;
+    private Boolean complete = false;
 
-    @ColumnDefault("0")
-    private Integer progress;
+    private Integer progress = 0;
 
     @Column(name = "checked_date")
     private LocalDateTime checkedDate;

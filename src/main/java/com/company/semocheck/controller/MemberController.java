@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
+@Slf4j
 public class MemberController {
 
     private final JwtProvider jwtProvider;
@@ -44,6 +46,8 @@ public class MemberController {
     @PostMapping("")
     public DataResponseDto<LoginResponseDto> joinMember(@RequestParam("oAuthToken") String oAuthToken, @RequestParam("provider") String provider,
                                                         @RequestParam("fcmToken") String fcmToken, @RequestBody CreateMemberRequest createMemberRequest){
+
+        log.info("oAuthToken : {}", oAuthToken);
         Map<String, Object> oAuth2Info = OAuth2Attributes.getOAuthInfo(oAuthToken, provider);
         OAuth2Attributes attributes = OAuth2Attributes.of(provider, oAuth2Info);
 
