@@ -45,7 +45,7 @@ public class CategoryService {
 
         MainCategory mainCategory = findMainOne.get();
         Optional<SubCategory> findSubOne = mainCategory.getSubCategoryList().stream().filter(sc -> sc.getName().equals(subName)).findAny();
-        if(findSubOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_MEMBER);
+        if(findSubOne.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_CATEGORY);
 
         return findSubOne.get();
     }

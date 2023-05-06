@@ -31,8 +31,6 @@ public class CategoryController {
 
     private final FileService fileService;
 
-
-    //TODO : TEST 필요
     @ApiDocumentResponse
     @Operation(summary = "query categories API", description = "쿼리문을 통해 카테고리를 조회합니다.\n\n" +
             "default : 모든 카테고리 정보 출력\n\n" +
