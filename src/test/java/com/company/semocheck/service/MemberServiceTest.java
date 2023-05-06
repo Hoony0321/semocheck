@@ -47,7 +47,6 @@ class MemberServiceTest {
     private final String testMemberFcmToken = "testFcmToken";
 
     @BeforeEach
-    @Transactional
     public void init(){
         testCategoryUtils.initCategory();
     }
@@ -246,11 +245,11 @@ class MemberServiceTest {
 
         SubCategoryDto subCategoryDto3 = SubCategoryDto.builder()
                 .main("main2")
-                .name("test3").build();
+                .name("test1").build();
 
         SubCategoryDto subCategoryDto4 = SubCategoryDto.builder()
                 .main("main3")
-                .name("test5").build();
+                .name("test1").build();
 
         List<SubCategoryDto> subCategoryDtos = new ArrayList<>();
         subCategoryDtos.add(subCategoryDto1);
