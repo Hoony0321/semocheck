@@ -34,7 +34,6 @@ public class OAuth2Attributes {
         ResponseEntity<Object> responseEntity;
         RequestEntity requestEntity = null;
 
-        // TODO : apple sns login 추가하기
         switch (provider) {
             case "kakao" :
                 requestUrl = UriComponentsBuilder.newInstance()
@@ -55,7 +54,13 @@ public class OAuth2Attributes {
                         .path("/oauth2/v2/userinfo")
                         .queryParam("access_token", oAuthToken)
                         .encode().build().toUri();
-
+                break;
+            case "apple" :
+                requestUrl = UriComponentsBuilder.newInstance()
+                        .scheme("https")
+                        .host("appleid.apple.com")
+                        .path("/auth/userinfo")
+                        .encode().build().toUri();
                 break;
             default :
                 throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.JWT_INVALID_PROVIDER);
@@ -80,17 +85,12 @@ public class OAuth2Attributes {
         return switch (registrationId) {
             case "google" -> ofGoogle(attributes);
             case "kakao" -> ofKakao(attributes);
-            default -> throw new GeneralException(Code.BAD_REQUEST);
+            case "apple" -> ofApple(attributes);
+            default -> throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_PROVIDER);
         };
     }
 
-//    private static OAuth2Attributes ofNaver(Map<String, Object> attributes) {
-//        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
-//
-//        return new OAuth2Attributes((String)response.get("name"), (String)response.get("email"),
-//                (String) response.get("profile_image"));
-//
-//    }
+
 
     private static OAuth2Attributes ofKakao(Map<String, Object> attributes) {
         // kakao는 kakao_account에 유저정보가 있다. (email)
@@ -104,7 +104,7 @@ public class OAuth2Attributes {
         String profile = (String) kakaoProfile.get("profile_image_url");
 
         if(oAuthId == null || name == null || email == null)
-            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVAILD_ARGUMENT);
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_OAUTH_SCOPE);
 
         return new OAuth2Attributes(oAuthId, name, email, profile);
     }
@@ -112,6 +112,18 @@ public class OAuth2Attributes {
     private static OAuth2Attributes ofGoogle(Map<String, Object> attributes) {
 
         String oAuthId = (String) attributes.get("id");
+        String name = (String) attributes.get("name");
+        String email = (String) attributes.get("email");
+        String profile = (String) attributes.get("picture");
+
+        if(oAuthId == null || name == null || email == null)
+            throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_OAUTH_SCOPE);
+
+        return new OAuth2Attributes(oAuthId, name, email, profile);
+    }
+
+    private static OAuth2Attributes ofApple(Map<String, Object> attributes) {
+        String oAuthId = (String) attributes.get("sub");
         String name = (String) attributes.get("name");
         String email = (String) attributes.get("email");
         String profile = (String) attributes.get("picture");
