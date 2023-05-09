@@ -20,6 +20,7 @@ public class ExceptionController {
 
     @ExceptionHandler(GeneralException.class)
     public ResponseEntity handleBaseException(GeneralException exception){
+        log.error(exception.getMessage() + " - " + exception.getCause());
         if(exception.getMessage() != null) return ErrorResponseDto.of(exception.getErrorCode(), exception);
         else{ return  ErrorResponseDto.of(exception.getErrorCode());}
 
@@ -27,16 +28,19 @@ public class ExceptionController {
 
     @ExceptionHandler(NoHandlerFoundException.class)
     protected ResponseEntity handleNoHandlerFoundException(NoHandlerFoundException exception) {
+        log.error(exception.getMessage() + " - " + exception.getCause());
         return ErrorResponseDto.of(Code.NOT_FOUND, exception);
     }
 
     @ExceptionHandler(AuthException.class)
     public ResponseEntity handleAuthException(AuthException exception){
+        log.error(exception.getMessage() + " - " + exception.getCause());
         return ErrorResponseDto.of(exception.getErrorCode(), exception);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity handleBaseException(BadCredentialsException exception){
+        log.error(exception.getMessage() + " - " + exception.getCause());
         return ErrorResponseDto.of(Code.UNAUTHORIZED, exception);
     }
 
