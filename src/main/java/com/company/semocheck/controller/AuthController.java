@@ -33,6 +33,8 @@ public class AuthController {
     @Operation(summary = "Login API", description = "OAuth Token 받아서 JWT access & refresh Token을 반환합니다.")
     @GetMapping("/login")
     public DataResponseDto<LoginResponseDto> login(@RequestParam("oAuthToken") String oAuthToken, @RequestParam("provider") String provider){
+        System.out.println("oAuthToken : " + oAuthToken);
+
         Member member;
         Map<String, Object> oAuth2Info = OAuth2Attributes.getOAuthInfo(oAuthToken, provider);
         OAuth2Attributes attributes = OAuth2Attributes.of(provider, oAuth2Info);

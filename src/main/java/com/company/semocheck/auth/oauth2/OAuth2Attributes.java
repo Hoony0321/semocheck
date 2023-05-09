@@ -4,6 +4,9 @@ import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.exception.GeneralException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTParser;
 import lombok.Getter;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -56,19 +59,40 @@ public class OAuth2Attributes {
                         .encode().build().toUri();
                 break;
             case "apple" :
+                String[] tokens = oAuthToken.split(",");
+                String authToken = tokens[0];
+                String identityToken = tokens[1];
+
+                String appleId = null;
+                try{
+                    JWT jwt = JWTParser.parse(identityToken);
+                    JWTClaimsSet jwtClaimsSet = jwt.getJWTClaimsSet();
+                    appleId = jwtClaimsSet.getSubject();
+                }catch (Exception e){
+                    throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.JWT_INVALID_TOKEN);
+                }
+
                 requestUrl = UriComponentsBuilder.newInstance()
                         .scheme("https")
                         .host("api.apple.com")
-                        .path("/apple/v1/users/")
+                        .path("/appleid/v1/users/" + appleId)
                         .encode().build().toUri();
+
+                requestEntity = RequestEntity
+                        .get(requestUrl)
+                        .header("Authorization", "Bearer " + authToken)
+                        .build();
                 break;
             default :
                 throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.JWT_INVALID_PROVIDER);
         }
 
         try{
-            if(requestEntity == null) responseEntity = restTemplate.getForEntity(requestUrl, Object.class);
-            else responseEntity = restTemplate.postForEntity(requestUrl, requestEntity, Object.class);
+            if(provider.equals("apple")) responseEntity= restTemplate.getForEntity(requestUrl, Object.class);
+            else{
+                if(requestEntity == null) responseEntity = restTemplate.getForEntity(requestUrl, Object.class);
+                else responseEntity = restTemplate.postForEntity(requestUrl, requestEntity, Object.class);
+            }
         }
         catch (Exception e){
             throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.FAIL_AUTHENTICATION_OAUTH);
