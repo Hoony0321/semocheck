@@ -42,16 +42,13 @@ public class Member extends BaseTimeEntity {
     private String provider;
 
     @Size(max = 50)
-    @NotNull
     @Column(nullable = false)
     private String email;
 
-    @NotNull
     @Size(max = 15)
     @Column(nullable = false)
     private String name;
 
-    @NotNull
     @Column(nullable = false)
     private String picture;
 

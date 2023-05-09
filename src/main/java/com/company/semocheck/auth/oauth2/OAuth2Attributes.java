@@ -58,8 +58,8 @@ public class OAuth2Attributes {
             case "apple" :
                 requestUrl = UriComponentsBuilder.newInstance()
                         .scheme("https")
-                        .host("appleid.apple.com")
-                        .path("/auth/userinfo")
+                        .host("api.apple.com")
+                        .path("/apple/v1/users/")
                         .encode().build().toUri();
                 break;
             default :
@@ -103,7 +103,7 @@ public class OAuth2Attributes {
         String email = (String) kakaoAccount.get("email");
         String profile = (String) kakaoProfile.get("profile_image_url");
 
-        if(oAuthId == null || name == null || email == null)
+        if(oAuthId == null)
             throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_OAUTH_SCOPE);
 
         return new OAuth2Attributes(oAuthId, name, email, profile);
@@ -116,7 +116,7 @@ public class OAuth2Attributes {
         String email = (String) attributes.get("email");
         String profile = (String) attributes.get("picture");
 
-        if(oAuthId == null || name == null || email == null)
+        if(oAuthId == null)
             throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_OAUTH_SCOPE);
 
         return new OAuth2Attributes(oAuthId, name, email, profile);
@@ -128,7 +128,7 @@ public class OAuth2Attributes {
         String email = (String) attributes.get("email");
         String profile = (String) attributes.get("picture");
 
-        if(oAuthId == null || name == null || email == null)
+        if(oAuthId == null)
             throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_OAUTH_SCOPE);
 
         return new OAuth2Attributes(oAuthId, name, email, profile);
