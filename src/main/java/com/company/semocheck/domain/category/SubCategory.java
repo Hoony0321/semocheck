@@ -21,7 +21,7 @@ public class SubCategory {
     @Size(max = 15)
     @NotNull
     private String name;
-
+    private Integer count = 0;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "main_category_id")
     @JsonIgnore
@@ -39,5 +39,9 @@ public class SubCategory {
     public void setMainCategory(MainCategory mainCategory) {
         this.mainCategory = mainCategory;
         mainCategory.addSubCategory(this);
+    }
+
+    public void increaseCount() {
+        this.count++;
     }
 }

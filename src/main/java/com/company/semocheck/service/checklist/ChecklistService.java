@@ -375,6 +375,8 @@ public class ChecklistService {
     @Transactional
     public void updateChecklistStatsByViewer(Checklist checklist, Optional<Member> member) {
         checklist.updateStatsInfoByViewer(member);
+        checklist.getCategory().increaseCount();
+        checklist.getCategory().getMainCategory().increaseCount();
     }
 
     @Transactional

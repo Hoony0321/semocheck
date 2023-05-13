@@ -69,7 +69,7 @@ public class CategoryController {
     }
 
     @ApiDocumentResponse
-    @Operation(summary = "Get main categories's name API", description = "메인 카테고리 이름을 조회합니다.")
+    @Operation(summary = "Get main categories's name API", description = "1차 카테고리 이름을 조회합니다.")
     @GetMapping("/api/categories/main")
     public ResponseDto getMainCategories(){
         List<MainCategory> allMainCategories = categoryService.getAllMainCategories();
@@ -84,7 +84,7 @@ public class CategoryController {
 
 
     @ApiDocumentResponse
-    @Operation(summary = "Create categories API", description = "카테고리를 생성합니다.")
+    @Operation(summary = "Create categories API", description = "2차 카테고리를 생성합니다.")
     @PostMapping("/api/categories")
     public ResponseDto createCategories(@RequestBody CreateCategoryRequest requestDto){
         categoryService.createSubCategory(requestDto);

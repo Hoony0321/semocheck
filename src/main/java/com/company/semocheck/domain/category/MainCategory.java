@@ -25,6 +25,7 @@ public class MainCategory {
     @NotNull
     private String name;
 
+    private Integer count = 0;
     @OneToMany(mappedBy = "mainCategory")
     private List<SubCategory> subCategoryList = new ArrayList<>();
 
@@ -52,4 +53,7 @@ public class MainCategory {
     public void removeSubCategory(SubCategory subCategory){ this.subCategoryList.remove(subCategory); }
 
 
+    public void increaseCount() {
+        this.count++;
+    }
 }
