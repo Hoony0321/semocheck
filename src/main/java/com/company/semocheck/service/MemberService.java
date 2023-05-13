@@ -15,6 +15,7 @@ import com.company.semocheck.domain.request.member.UpdateMemberRequest;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.MemberCategoryRepository;
 import com.company.semocheck.repository.MemberRepository;
+import com.company.semocheck.service.checklist.ChecklistService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final CategoryService categoryService;
+    private final ChecklistService checklistService;
     private final JwtUtils jwtUtils;
 
     public Member getMemberByJwt(HttpServletRequest request){
@@ -78,7 +79,7 @@ public class MemberService {
         if(findOne.isPresent()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.EXISTED_MEMBER);
 
         //verify provider
-        if(!provider.equals(Constants.PROVIDER_KAKAO) && !provider.equals(Constants.PROVIDER_GOOGLE)){
+        if(!provider.equals(Constants.PROVIDER_KAKAO) && !provider.equals(Constants.PROVIDER_GOOGLE) && !provider.equals(Constants.PROVIDER_APPLE)){
             throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_PROVIDER);
         }
 
@@ -101,6 +102,9 @@ public class MemberService {
 
     @Transactional
     public void delete(Member member){
+        member.getChecklists().forEach(checklist -> {
+            checklistService.deleteChecklist(checklist, member);
+        });
         memberRepository.delete(member);
     }
 
