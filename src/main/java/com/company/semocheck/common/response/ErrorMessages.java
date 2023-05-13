@@ -58,7 +58,8 @@ public enum ErrorMessages {
     REQUIRED_FIELD_TEMPORARY("임시 여부 필드는 필수입니다."),
 
     //general
-    INVAILD_ARGUMENT("유효하지 않은 인자입니다.");
+    INVAILD_ARGUMENT("유효하지 않은 인자입니다."),
+    INVALID_ACCESS_TOKEN("유효하지 않은 access token입니다.");
 
     private final String message;
     ErrorMessages(String message){

@@ -3,6 +3,7 @@ package com.company.semocheck.auth.oauth2;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.exception.GeneralException;
+import com.company.semocheck.utils.AppleLoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -14,11 +15,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
 public class OAuth2Attributes {
-
     private String id;
     private String name;
     private String email;
@@ -58,7 +59,8 @@ public class OAuth2Attributes {
                         .queryParam("access_token", oAuthToken)
                         .encode().build().toUri();
                 break;
-            case "apple" :
+            case "apple" : //TODO : apple login 추후에 수정 필요.
+                AppleLoginService appleLoginService = new AppleLoginService();
                 String[] tokens = oAuthToken.split(",");
                 String authToken = tokens[0];
                 String identityToken = tokens[1];
@@ -71,28 +73,17 @@ public class OAuth2Attributes {
                 }catch (Exception e){
                     throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.JWT_INVALID_TOKEN);
                 }
-
-                requestUrl = UriComponentsBuilder.newInstance()
-                        .scheme("https")
-                        .host("api.apple.com")
-                        .path("/appleid/v1/users/" + appleId)
-                        .encode().build().toUri();
-
-                requestEntity = RequestEntity
-                        .get(requestUrl)
-                        .header("Authorization", "Bearer " + authToken)
-                        .build();
-                break;
+                Map<String, Object> oAuth2Info = new HashMap<>();
+                oAuth2Info.put("id", appleId);
+                return oAuth2Info;
+                //break;
             default :
                 throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.JWT_INVALID_PROVIDER);
         }
 
         try{
-            if(provider.equals("apple")) responseEntity= restTemplate.getForEntity(requestUrl, Object.class);
-            else{
-                if(requestEntity == null) responseEntity = restTemplate.getForEntity(requestUrl, Object.class);
-                else responseEntity = restTemplate.postForEntity(requestUrl, requestEntity, Object.class);
-            }
+            if(requestEntity == null) responseEntity = restTemplate.getForEntity(requestUrl, Object.class);
+            else responseEntity = restTemplate.postForEntity(requestUrl, requestEntity, Object.class);
         }
         catch (Exception e){
             throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.FAIL_AUTHENTICATION_OAUTH);
@@ -105,8 +96,8 @@ public class OAuth2Attributes {
         return oAuth2Info;
     }
 
-    public static OAuth2Attributes of(String registrationId, Map<String, Object> attributes){
-        return switch (registrationId) {
+    public static OAuth2Attributes of(String provider, Map<String, Object> attributes){
+        return switch (provider) {
             case "google" -> ofGoogle(attributes);
             case "kakao" -> ofKakao(attributes);
             case "apple" -> ofApple(attributes);
@@ -147,15 +138,14 @@ public class OAuth2Attributes {
     }
 
     private static OAuth2Attributes ofApple(Map<String, Object> attributes) {
-        String oAuthId = (String) attributes.get("sub");
+        String oAuthId = (String) attributes.get("id");
         String name = (String) attributes.get("name");
         String email = (String) attributes.get("email");
-        String profile = (String) attributes.get("picture");
 
         if(oAuthId == null)
             throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.INVALID_OAUTH_SCOPE);
 
-        return new OAuth2Attributes(oAuthId, name, email, profile);
+        return new OAuth2Attributes(oAuthId, name, email, null);
     }
 
 }
