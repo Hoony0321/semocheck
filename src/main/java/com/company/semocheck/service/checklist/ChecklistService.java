@@ -158,13 +158,20 @@ public class ChecklistService {
         return checklists;
     }
 
-    public List<Checklist> getPopularChecklist() {
-        //TODO : temporary / publish false 빼고 조회하도록 변경.
+    public List<Checklist> getPopularChecklist(String categoryMain, String categorySub) {
         List<Checklist> checklists = checklistRepository.findChecklistIsPublished();
-
-        checklists.sort(Comparator.comparing(chk -> chk.getStatsInfo().getViewCount()));
-        checklists = checklists.stream().limit(10).collect(Collectors.toList());
-
+        if(categoryMain.equals(null) || categorySub.equals(null)){ //전체 카테고리에서 조회
+            checklists.sort(Comparator.comparing(chk -> chk.getStatsInfo().getViewCount()));
+            checklists = checklists.stream().limit(10).collect(Collectors.toList());
+        }
+        else{ //카테고리별 조회
+            checklists = checklists.stream()
+                    .filter(chk -> chk.getCategory().getMainCategory().getName().equals(categoryMain))
+                    .filter(chk -> chk.getCategory().getName().equals(categorySub))
+                    .sorted(Comparator.comparing(chk -> chk.getStatsInfo().getViewCount()))
+                    .limit(10)
+                    .collect(Collectors.toList());
+        }
         return checklists;
     }
 

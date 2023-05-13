@@ -9,10 +9,12 @@ import com.company.semocheck.domain.request.category.CreateCategoryRequest;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.SubCategoryRepository;
 import com.company.semocheck.repository.MainCategoryRepository;
+import com.company.semocheck.service.checklist.ChecklistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,6 +55,15 @@ public class CategoryService {
     public List<SubCategory> findSubCategoryByOnlySubName(String subName) {
         List<SubCategory> categories = subCategoryRepository.findByName(subName);
         return categories;
+    }
+
+    public List<SubCategory> getPopualrSubCategories(){
+        List<SubCategory> categories = subCategoryRepository.findAll();
+
+        //sort by count
+        categories.sort(Comparator.comparing(SubCategory::getCount).reversed());
+
+        return categories.subList(0,6);
     }
 
     @Transactional

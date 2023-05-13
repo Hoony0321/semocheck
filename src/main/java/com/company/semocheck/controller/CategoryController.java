@@ -8,6 +8,7 @@ import com.company.semocheck.domain.FileDetail;
 import com.company.semocheck.domain.category.SubCategory;
 import com.company.semocheck.domain.category.MainCategory;
 import com.company.semocheck.domain.dto.FileDto;
+import com.company.semocheck.domain.dto.SearchResultDto;
 import com.company.semocheck.domain.dto.category.MainCategoryDto;
 import com.company.semocheck.domain.dto.category.SubCategoryDto;
 import com.company.semocheck.domain.request.category.CreateCategoryRequest;
@@ -104,6 +105,20 @@ public class CategoryController {
         else categoryService.removeSubCategory(mainName, subName);
 
         return ResponseDto.of(true, Code.SUCCESS_DELETE);
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "Get top category API", description = "상위 카테고리를 조회합니다.")
+    @GetMapping("/api/categories/top")
+    public DataResponseDto<SearchResultDto> getTopCategories(){
+        List<SubCategory> categories = categoryService.getPopualrSubCategories();
+        List<SubCategoryDto> categoryDtos = new ArrayList<>();
+
+        for(SubCategory category : categories){
+            categoryDtos.add(SubCategoryDto.createDto(category));
+        }
+
+        return DataResponseDto.of(SearchResultDto.createDto(categoryDtos), Code.SUCCESS_READ);
     }
 
     @ApiDocumentResponse
