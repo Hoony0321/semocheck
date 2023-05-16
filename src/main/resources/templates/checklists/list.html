@@ -5,6 +5,14 @@
 <div class="container">
     <div th:replace="fragments/bodyHeader :: bodyHeader"/>
     <div>
+        <div class="form-group">
+            <label for="categoryFilter">Category:</label>
+            <select class="form-control" id="categoryFilter" onchange="applyCategoryFilter(this.value)">
+                <option value="">All</option>
+                <option th:each="category : ${categories}" th:value="${category.id}"
+                        th:text="${category.name}" th:selected="${category.id == selected}"></option>
+            </select>
+        </div>
         <table class="table table-striped">
             <thead>
             <tr>
@@ -32,4 +40,14 @@
     <div th:replace="fragments/footer :: footer"/>
 </div> <!-- /container -->
 </body>
+<script th:inline="javascript">
+    function applyCategoryFilter(category) {
+        var url = '/checklists';
+        if (category) {
+            url += '?category=' + category;
+        }
+        location.href = url;
+    }
+</script>
 </html>
+

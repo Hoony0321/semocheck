@@ -1,16 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>TEST</title>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>Admin</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-
-<ul>
-    <li><a href="/oauth2/authorization/google" class="btn btn-success active" role="button">Google Login</a></li>
-    <li><a href="/oauth2/authorization/naver" class="btn btn-secondary active" role="button">Naver Login</a></li>
-    <li><a href="/oauth2/authorization/kakao" class="btn btn-third active" role="button">Kakao Login</a></li>
-</ul>
-
+    <div class="container">
+        <div th:replace="fragments/bodyHeader :: bodyHeader" />
+        <div class="jumbotron">
+            <h1>로그인</h1>
+            <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 30px;">
+                <a href="/oauth2/authorization/google" class="btn btn-secondary active" role="button">Google Login</a>
+                <a href="/oauth2/authorization/kakao" class="btn btn-secondary active" role="button">Kakao Login</a>
+            </div>
+        </div>
+        <div th:replace="fragments/footer :: footer" />
+    </div>
 </body>
 </html>

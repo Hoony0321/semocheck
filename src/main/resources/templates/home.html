@@ -11,8 +11,8 @@
         <h1>세모체</h1>
         <p class="lead">회원 기능</p>
         <p>
-            <a class="btn btn-lg btn-secondary" href="/members/new">회원 가입</a>
-            <a class="btn btn-lg btn-secondary" href="/members">회원 목록</a>-
+            <button class="btn btn-lg btn-secondary" href="/members/new" th:disabled="${true}">회원 가입</button>
+            <button class="btn btn-lg btn-secondary" href="/members" th:disabled="${true}">회원 목록</button>-
         </p>
         <p class="lead">체크리스트 기능</p>
         <p>
@@ -21,5 +21,6 @@
         </p>
     </div>
     <div th:replace="fragments/footer :: footer" />
-</div> <!-- /container --></body>
+</div> <!-- /container -->
+</body>
 </html>

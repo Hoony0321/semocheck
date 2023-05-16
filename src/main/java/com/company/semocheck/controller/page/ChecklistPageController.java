@@ -24,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -51,7 +53,7 @@ public class ChecklistPageController {
 
     @PostMapping("/checklists/new")
     public String create(@ModelAttribute CreateChecklistForm form, @RequestParam("image") MultipartFile image){
-        Member admin = memberService.findById(1l);
+        Member admin = memberService.findById(1l); //TODO : 추후에 HttpRequest에서 admin member 정보로 대체
         SubCategory subCategory = categoryService.findSubCategoryById(Long.parseLong(form.getSubCategoryId()));
 
         //delete not used steps
@@ -64,24 +66,33 @@ public class ChecklistPageController {
         }
         form.setSteps(steps);
 
-
-        //check validation
-        if (image == null || image.isEmpty()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_FILE);
-
-        //file upload
-        String location = String.format("%s/files", "checklists");
-        FileDetail fileDetail = fileService.upload(location, image);
-
         //Create a checklist request
         CreateChecklistRequest requestDto = CreateChecklistRequest.builder()
                 .title(form.getTitle())
                 .brief(form.getBrief())
                 .publish(form.getPublish())
-                .imageId(fileDetail.getId())
                 .mainCategoryName(subCategory.getMainCategory().getName())
                 .subCategoryName(subCategory.getName())
                 .steps(form.getSteps())
                 .build();
+
+        // image setting
+        if (image == null || image.isEmpty()){ // use default category image
+            String folderName = "categories/" +  subCategory.getMainCategory().getName() + "/" + subCategory.getName();
+            List<FileDetail> files = fileService.findByFolder(folderName);
+            if(files.size() == 0) throw new GeneralException(Code.NOT_FOUND);
+
+            // get random element of files
+            Random rand = new Random();
+            int randomIndex = rand.nextInt(files.size());
+            FileDetail fileDetail = files.get(randomIndex);
+            requestDto.setDefaultImageId(fileDetail.getId());
+        }
+        else{ //file upload
+            String location = String.format("%s/files", "checklists");
+            FileDetail fileDetail = fileService.upload(location, image);
+            requestDto.setImageId(fileDetail.getId());
+        }
 
         //Create a checklist Entity
         checklistService.createChecklist(requestDto, admin);
@@ -90,10 +101,17 @@ public class ChecklistPageController {
     }
 
     @GetMapping("/checklists")
-    public String checklists(Model model){
+    public String checklists(@RequestParam(value = "category", required = false) Long categoryId, Model model){
         List<Checklist> checklists = checklistService.findAllChecklists();
+        if(categoryId != null) {
+            checklists = checklists.stream().filter(chk -> chk.getCategory().getId().equals(categoryId)).collect(Collectors.toList());
+        }
+
+        List<SubCategory> categories = categoryService.getAllSubCategories();
         Collections.reverse(checklists);
+        model.addAttribute("selected", categoryId);
         model.addAttribute("checklists", checklists);
+        model.addAttribute("categories", categories);
         return "checklists/list";
     }
 

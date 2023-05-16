@@ -1,30 +1,29 @@
-package com.company.semocheck.controller;
+package com.company.semocheck.controller.page;
 
-import com.company.semocheck.common.response.DataResponseDto;
-import com.company.semocheck.domain.request.TestRequestDto;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-
-@Tag(name = "테스트", description = "로컬 환경 테스트 관련 API 모음입니다.")
-@RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/test")
-public class TestController {
+@Controller
+public class LoginPageController {
 
-    @PostMapping("/request")
-    public DataResponseDto<List<String>> testRequestBody(@RequestBody TestRequestDto requestDto){
-        List<String> datas = requestDto.getDatas();
-        return DataResponseDto.of(datas);
+    @GetMapping("/login")
+    public String login(){
+        return "login";
     }
 
-    @GetMapping("/code/kakao")
+    @GetMapping("/login/error")
+    public String loginError(){
+        return "loginError";
+    }
+
+    @GetMapping("login/code/kakao")
     public ResponseEntity<String> codeKakao(@RequestParam("code") String code, @RequestParam("state") String state){
         RestTemplate restTemplate = new RestTemplate();
 
@@ -36,7 +35,7 @@ public class TestController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "617e6fd9bd129dd5c62945bf7fd8ea95");
-        params.add("redirect_uri", "http://localhost:8080/api/test/code/kakao");
+        params.add("redirect_uri", "http://localhost:8080/login/code/kakao");
         params.add("code", code);
         params.add("state", state);
 
@@ -47,7 +46,7 @@ public class TestController {
         return response;
     }
 
-    @GetMapping("/code/google")
+    @GetMapping("login/code/google")
     public ResponseEntity<String> codeGoogle(@RequestParam("code") String code, @RequestParam("state") String state){
         RestTemplate restTemplate = new RestTemplate();
 
@@ -60,7 +59,7 @@ public class TestController {
         params.add("code", code);
         params.add("client_id", "983039958847-rma5uoq5atl44ch82t9a0k3cga7vs6p2.apps.googleusercontent.com");
         params.add("client_secret", "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");
-        params.add("redirect_uri", "http://localhost:8080/api/test/code/google");
+        params.add("redirect_uri", "http://localhost:8080/login/code/google");
         params.add("grant_type", "authorization_code");
         params.add("state", state);
 
@@ -70,5 +69,4 @@ public class TestController {
 
         return response;
     }
-
 }

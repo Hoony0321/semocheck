@@ -2,6 +2,7 @@ package com.company.semocheck.config;
 
 import com.company.semocheck.auth.jwt.*;
 import com.company.semocheck.auth.oauth2.CustomOAuth2UserService;
+import com.company.semocheck.auth.oauth2.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,7 @@ public class SecurityConfig{
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         // CSRF 설정 disable
@@ -58,11 +60,11 @@ public class SecurityConfig{
                 .and()
                     .authorizeHttpRequests()
                     .requestMatchers("/api/members/**").authenticated()
-
+                    .requestMatchers("**/admin/**").authenticated()
                 // ROLE url 모음
                 .and()
                     .authorizeHttpRequests()
-                    .requestMatchers("/api/admin").hasRole("ADMIN")
+                    .requestMatchers("**/admin/**").hasRole("ADMIN")
                     .anyRequest().permitAll()
 
                 .and()
@@ -79,8 +81,9 @@ public class SecurityConfig{
                     .and()
                     .userInfoEndpoint()
                     .userService(customOAuth2UserService)
-
-                .and()
+                    .and()
+                    .successHandler(oAuth2SuccessHandler)
+                    .failureUrl("/login/error")
                 .and()
                 .apply(new JwtSecurityConfig(jwtProvider));
 
