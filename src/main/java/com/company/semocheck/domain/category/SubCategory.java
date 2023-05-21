@@ -21,6 +21,9 @@ public class SubCategory {
     @Size(max = 15)
     @NotNull
     private String name;
+
+    @Size(max = 250)
+    private String description;
     private Integer count = 0;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "main_category_id")
