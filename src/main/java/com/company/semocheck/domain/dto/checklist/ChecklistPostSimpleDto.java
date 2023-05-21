@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Data
@@ -66,5 +68,13 @@ public class ChecklistPostSimpleDto {
         dto.modifiedDate = checklist.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
 
         return dto;
+    }
+
+    static public List<ChecklistPostSimpleDto> createDtos(List<Checklist> checklists, Optional<Member> findOne){
+        List<ChecklistPostSimpleDto> checklistPostSimpleDtos = new ArrayList<>();
+        for(Checklist checklist : checklists){
+            checklistPostSimpleDtos.add(createDto(checklist, findOne));
+        }
+        return checklistPostSimpleDtos;
     }
 }

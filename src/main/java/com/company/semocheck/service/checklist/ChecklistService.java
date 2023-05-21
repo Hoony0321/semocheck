@@ -5,17 +5,16 @@ import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.*;
 import com.company.semocheck.domain.category.SubCategory;
 import com.company.semocheck.domain.checklist.Checklist;
+import com.company.semocheck.domain.dto.category.SubCategoryDetailDto;
+import com.company.semocheck.domain.dto.checklist.ChecklistPostSimpleDto;
+import com.company.semocheck.domain.dto.checklist.HomeChecklistDto;
 import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.member.MemberCategory;
 import com.company.semocheck.domain.request.checklist.*;
 import com.company.semocheck.exception.GeneralException;
-import com.company.semocheck.repository.ChecklistRepository;
-import com.company.semocheck.repository.ReportRepository;
-import com.company.semocheck.repository.ScrapRepository;
-import com.company.semocheck.repository.StepRepository;
+import com.company.semocheck.repository.*;
 import com.company.semocheck.service.CategoryService;
 import com.company.semocheck.service.FileService;
-import com.company.semocheck.service.ScrapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -392,5 +391,24 @@ public class ChecklistService {
         checklist.getSteps().stream().forEach(step -> step.update(false));
         // progress reset
         checklist.updateProgress();
+    }
+
+    public List<HomeChecklistDto> getHomeContent(Optional<Member> member) {
+        final SubCategory category1 = categoryService.findSubCategoryByName("생활", "결혼");
+        final SubCategory category2 = categoryService.findSubCategoryByName("생활", "인테리어");
+
+        List<Checklist> checklists1 = new ArrayList<>();
+        List<Checklist> checklists2 = new ArrayList<>();
+
+        List<Checklist> allChecklists = checklistRepository.findAllChecklist();
+        checklists1 = allChecklists.stream().filter(chk -> chk.getCategory().equals(category1)).collect(Collectors.toList()).subList(0,2);
+        checklists2 = allChecklists.stream().filter(chk -> chk.getCategory().equals(category2)).collect(Collectors.toList()).subList(0,2);
+
+        List<HomeChecklistDto> homeChecklistDtos = new ArrayList<>();
+
+        homeChecklistDtos.add(new HomeChecklistDto(SubCategoryDetailDto.createDto(category1), ChecklistPostSimpleDto.createDtos(checklists1, member)));
+        homeChecklistDtos.add(new HomeChecklistDto(SubCategoryDetailDto.createDto(category2), ChecklistPostSimpleDto.createDtos(checklists2, member)));
+
+        return homeChecklistDtos;
     }
 }

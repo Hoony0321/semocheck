@@ -169,8 +169,8 @@ public class ChecklistController {
             "조회수 순으로 10개의 체크리스트가 반환됩니다.\n\n" +
             "category filter를 적용할 수 있습니다. -> categoryMain, categorySub 입력하면 해당 카테고리에서 인기 체크리스트 반환됨.")
     @GetMapping("/api/checklists/popular")
-    public DataResponseDto<SearchResultDto<ChecklistPostSimpleDto>> getPopularChecklists(@RequestParam(required = false) String categoryMain,
-                                                                                         @RequestParam(required = false) String categorySub){
+    public DataResponseDto<SearchResultDto<ChecklistPostSimpleDto>> getPopularChecklists(@RequestParam(name = "categroy_main", required = false) String categoryMain,
+                                                                                         @RequestParam(name = "category_sub", required = false) String categorySub){
         List<Checklist> checklists = checklistService.getPopularChecklist(categoryMain, categorySub);
 
         List<ChecklistPostSimpleDto> checklistPostSimpleDtos = new ArrayList<>();
@@ -196,6 +196,20 @@ public class ChecklistController {
 
         return DataResponseDto.of(SearchResultDto.createDto(checklistPostSimpleDtos), Code.SUCCESS_READ);
     }
+
+    @ApiDocumentResponse
+    @Operation(summary = "Get home content API", description = "홈 화면에 노출될 체크리스트를 반환합니다.\n\n" +
+            "카테고리 2개가 반환됩니다.")
+    @GetMapping("/api/checklists/home")
+    public DataResponseDto<SearchResultDto> getHomeContent(HttpServletRequest request){
+        //Get member by jwt token
+        Optional<Member> member = memberService.getMemberByJwtNoError(request);
+        List<HomeChecklistDto> homeContent = checklistService.getHomeContent(member);
+
+
+        return DataResponseDto.of(SearchResultDto.createDto(homeContent), Code.SUCCESS_READ);
+    }
+
 
 
     //======= create method ======//
