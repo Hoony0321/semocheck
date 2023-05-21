@@ -145,6 +145,7 @@ public class Member extends BaseTimeEntity {
 
     //====== 정보 수정 메서드 ======//
     public void setInfoNewMember(CreateMemberRequest createMemberRequest){
+        this.name = createMemberRequest.getName();
         this.age = createMemberRequest.getAge();
         this.sex = createMemberRequest.getSex();
         this.agreeNotify = createMemberRequest.getAgreeNotify();

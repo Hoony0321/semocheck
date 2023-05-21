@@ -11,13 +11,15 @@ import java.util.List;
 @NoArgsConstructor
 public class CreateMemberRequest {
     private Boolean agreeNotify;
+    private String name;
     private Boolean sex;
     private Integer age;
     private List<SubCategoryDto> categories;
 
     @Builder
-    public CreateMemberRequest(Boolean agreeNotify, Boolean sex, Integer age, List<SubCategoryDto> categories) {
+    public CreateMemberRequest(Boolean agreeNotify, String name, Boolean sex, Integer age, List<SubCategoryDto> categories) {
         this.agreeNotify = agreeNotify;
+        this.name = name;
         this.sex = sex;
         this.age = age;
         this.categories = categories;

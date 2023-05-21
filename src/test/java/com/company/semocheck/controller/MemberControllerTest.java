@@ -51,7 +51,7 @@ class MemberControllerTest {
         categories.add(SubCategoryDto.builder().main("main2").name("test3").build());
         categories.add(SubCategoryDto.builder().main("main2").name("test4").build());
 
-        CreateMemberRequest createMemberRequest = new CreateMemberRequest(false, false, 22, categories);
+        CreateMemberRequest createMemberRequest = new CreateMemberRequest(false, "testUser", false, 22, categories);
 
         //when
         memberController.joinMember(oAuthToken, provider, fcmToken, createMemberRequest);
