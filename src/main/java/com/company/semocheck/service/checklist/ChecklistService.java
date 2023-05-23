@@ -325,6 +325,13 @@ public class ChecklistService {
 
     @Transactional
     public Long useChecklist(Checklist existedChecklist, Member member) {
+        //중복된 체크리스트 정보 확인
+        member.getChecklists().stream().forEach(checklist -> {
+            if(checklist.getOrigin() != null && checklist.getOrigin().getId().equals(existedChecklist.getId())){
+                throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.ALREADY_USED_CHECKLIST);
+            }
+        });
+
         //체크리스트 생성
         Checklist checklist = Checklist.createCopyEntity(existedChecklist, member); //기존 체크리스트 정보를 토대로 새로운 체크리스트 생성
 
