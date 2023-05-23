@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+    <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+
+    <h2>1차 카테고리 목록</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="mainCategory : ${mainCategories}">
+            <td th:text="${mainCategory.id}"></td>
+            <td th:text="${mainCategory.name}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>1차 카테고리 생성</h2>
+    <form th:action="@{/categories/new}" th:object="${form}" method="post">
+        <div class="form-group">
+            <label th:for="mainName">1차 카테고리명</label>
+            <input type="text" th:field="*{mainName}" class="form-control"
+                   placeholder="1차 카테고리명을 입력하세요."/>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <br>
+    <br>
+    <br>
+
+    <h2>2차 카테고리 목록</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>name</th>
+            <th>이미지 설정</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="subCategory : ${subCategories}">
+            <td th:text="${subCategory.id}"></td>
+            <td th:text="${subCategory.mainCategory.name} + ' - ' + ${subCategory.name}"></td>
+            <td>
+                <a href="#" th:href="@{/categories/{id}/image (id=${subCategory.id})}"
+                   class="btn btn-primary" role="button">이미지 설정</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>2차 카테고리 생성</h2>
+    <form th:action="@{/categories/new}" th:object="${form}" method="post">
+        <div class="form-group">
+            <label th:for="mainCategory">1차 카테고리</label>
+            <select id="mainCategory" th:field="*{mainName}">
+                <option value="">--Select an Category--</option>
+                <option th:each="category : ${mainCategories}"
+                        th:value="${category.name}"
+                        th:text="${category.name}">
+                </option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label th:for="name">2차 카테고리명</label>
+            <input type="text" th:field="*{subName}" class="form-control"
+                   placeholder="2차 카테고리명을 입력하세요."/>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <br/>
+    <div th:replace="fragments/footer :: footer" />
+</div> <!-- /container -->
+</body>
+</html>

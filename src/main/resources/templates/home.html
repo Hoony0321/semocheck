@@ -9,16 +9,22 @@
     <div th:replace="fragments/bodyHeader :: bodyHeader" />
     <div class="jumbotron">
         <h1>세모체</h1>
-        <p class="lead">회원 기능</p>
+        <p class="lead">회원 관리</p>
         <p>
             <button class="btn btn-lg btn-secondary" href="/members/new" th:disabled="${true}">회원 가입</button>
-            <button class="btn btn-lg btn-secondary" href="/members" th:disabled="${true}">회원 목록</button>-
+            <button class="btn btn-lg btn-secondary" href="/members" th:disabled="${true}">회원 목록</button>
         </p>
-        <p class="lead">체크리스트 기능</p>
+        <p class="lead">체크리스트 관리</p>
         <p>
             <a class="btn btn-lg btn-dark" href="/checklists/new">체크리스트 등록</a>
             <a class="btn btn-lg btn-dark" href="/checklists">체크리스트 목록</a>
         </p>
+        <p class="lead">카테고리 관리</p>
+        <p>
+            <a class="btn btn-lg btn-dark" href="/categories/new">카테고리 등록</a>
+            <a class="btn btn-lg btn-dark" href="/categories">카테고리 목록</a>
+        </p>
+
     </div>
     <div th:replace="fragments/footer :: footer" />
 </div> <!-- /container -->

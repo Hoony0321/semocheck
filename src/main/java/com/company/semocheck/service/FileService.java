@@ -5,9 +5,11 @@ import com.amazonaws.services.s3.model.*;
 import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.FileDetail;
+import com.company.semocheck.domain.checklist.Checklist;
 import com.company.semocheck.domain.dto.FileDto;
 import com.company.semocheck.exception.GeneralException;
 import com.company.semocheck.repository.FileDetailRepository;
+import com.company.semocheck.service.checklist.ChecklistService;
 import com.company.semocheck.utils.MultipartUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -104,7 +106,6 @@ public class FileService {
 
     public List<FileDetail> findByFolder(String folder){
         List<FileDetail> fileDetails = fileDetailRepository.findAllByFolder(folder);
-        if(fileDetails.isEmpty()) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_FOUND_FILE);
         return fileDetails;
     }
 

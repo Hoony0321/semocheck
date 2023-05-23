@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+  <div>
+    <h2>1차 카테고리 목록</h2>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>name</th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr th:each="mainCategory : ${mainCategories}">
+          <td th:text="${mainCategory.id}"></td>
+          <td th:text="${mainCategory.name}"></td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <h2>2차 카테고리 목록</h2>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>name</th>
+        <th>이미지 설정</th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr th:each="subCategory : ${subCategories}">
+          <td th:text="${subCategory.id}"></td>
+          <td th:text="${subCategory.mainCategory.name} + ' - ' + ${subCategory.name}"></td>
+          <td>
+            <a href="#" th:href="@{/categories/{id}/image (id=${subCategory.id})}"
+               class="btn btn-primary" role="button">이미지 설정</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div th:replace="fragments/footer :: footer"/>
+</div> <!-- /container -->
+</body>
+</html>
+

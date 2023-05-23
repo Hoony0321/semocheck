@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header" />
+<body>
+<div class="container">
+  <div th:replace="fragments/bodyHeader :: bodyHeader"/>
+  <div>
+    <h2>디폴트 이미지 목록</h2>
+    <ul th:each="image : ${images}">
+      <li>
+        <p class="lead" th:text="${image.name}"/>
+        <img th:src="${image.path}" style="max-width: 300px;"/>
+        <a href="#" th:href="@{/categories/{category_id}/image/{image_id}/delete(category_id=${subCategory.id}, image_id=${image.id})}"
+           class="btn btn-primary" role="button">이미지 삭제</a>
+      </li>
+    </ul>
+
+    <h3>upload image</h3>
+    <form th:action="@{/categories/{category_id}/image/new(category_id=${subCategory.id})}" method="post" enctype="multipart/form-data">
+      <input type="file" name="imageFile" accept="image/*">
+      <input type="submit" value="Upload">
+    </form>
+  </div>
+  <div th:replace="fragments/footer :: footer"/>
+</div> <!-- /container -->
+</body>
+</html>
+

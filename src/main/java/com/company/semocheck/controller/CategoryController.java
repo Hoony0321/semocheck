@@ -1,9 +1,6 @@
 package com.company.semocheck.controller;
 
-import com.company.semocheck.common.response.ApiDocumentResponse;
-import com.company.semocheck.common.response.Code;
-import com.company.semocheck.common.response.DataResponseDto;
-import com.company.semocheck.common.response.ResponseDto;
+import com.company.semocheck.common.response.*;
 import com.company.semocheck.domain.FileDetail;
 import com.company.semocheck.domain.category.SubCategory;
 import com.company.semocheck.domain.category.MainCategory;
@@ -19,6 +16,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,6 +133,21 @@ public class CategoryController {
         FileDetail fileDetail = files.get(randomIndex);
 
         return DataResponseDto.of(FileDto.createDto(fileDetail), Code.SUCCESS_READ);
+    }
+
+    @ApiDocumentResponse
+    @Operation(summary = "upload category default image api", description = "카테고리 디폴트 이미지 파일을 업로드합니다.")
+    @PostMapping("/api/categories/image")
+    public DataResponseDto<FileDto> uploadDefaultImageFile(@RequestParam(value = "file", required = false) MultipartFile file, @RequestParam(value = "main") String mainCategoryName, @RequestParam(value = "sub") String subCategoryName) {
+        //check validation
+        if (file == null || file.isEmpty()) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_FILE);
+        if (mainCategoryName == null || subCategoryName == null) throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_OBJECT);
+
+        //file upload
+        String location = String.format("categories/%s/%s", mainCategoryName, subCategoryName);
+        FileDetail fileDetail = fileService.upload(location, file);
+
+        return DataResponseDto.of(FileDto.createDto(fileDetail));
     }
 
     //=== 추후에 category 정보 업데이트가 필요한 경우 사용 ===//

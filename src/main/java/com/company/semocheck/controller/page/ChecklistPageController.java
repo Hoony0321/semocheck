@@ -1,7 +1,9 @@
 package com.company.semocheck.controller.page;
 
 import com.company.semocheck.common.response.Code;
+import com.company.semocheck.common.response.DataResponseDto;
 import com.company.semocheck.common.response.ErrorMessages;
+import com.company.semocheck.controller.CategoryController;
 import com.company.semocheck.controller.page.forms.CreateChecklistForm;
 import com.company.semocheck.domain.checklist.Checklist;
 import com.company.semocheck.domain.FileDetail;
@@ -36,6 +38,8 @@ public class ChecklistPageController {
     private final MemberService memberService;
     private final FileService fileService;
 
+    private final CategoryController categoryController;
+
     @GetMapping("/checklists/new")
     public String createForm(Model model){
         List<SubCategory> categories = categoryService.getAllSubCategories();
@@ -46,6 +50,7 @@ public class ChecklistPageController {
             stepDto.setOrder(i+1);
             form.getSteps().add(stepDto);
         }
+
         model.addAttribute("form", form);
         model.addAttribute("categories", categories);
         return "checklists/createChecklistForm";
@@ -77,16 +82,10 @@ public class ChecklistPageController {
                 .build();
 
         // image setting
-        if (image == null || image.isEmpty()){ // use default category image
-            String folderName = "categories/" +  subCategory.getMainCategory().getName() + "/" + subCategory.getName();
-            List<FileDetail> files = fileService.findByFolder(folderName);
-            if(files.size() == 0) throw new GeneralException(Code.NOT_FOUND);
-
-            // get random element of files
-            Random rand = new Random();
-            int randomIndex = rand.nextInt(files.size());
-            FileDetail fileDetail = files.get(randomIndex);
-            requestDto.setDefaultImageId(fileDetail.getId());
+        if (image.isEmpty() || image == null){ // use default category image
+            DataResponseDto<FileDto> response = categoryController.getDefaultImage(subCategory.getMainCategory().getName(), subCategory.getName());
+            FileDto fileDto = response.getData();
+            requestDto.setImageId(fileDto.getId());
         }
         else{ //file upload
             String location = String.format("%s/files", "checklists");
@@ -121,7 +120,10 @@ public class ChecklistPageController {
         FileDto fileDto = FileDto.createDto(checklist.getImage());
 
         model.addAttribute("checklist", checklist);
-        model.addAttribute("imageUrl", fileDto.getPath());
+
+        if(fileDto != null){
+            model.addAttribute("imageUrl", fileDto.getPath());
+        }
         return "checklists/detail";
     }
 

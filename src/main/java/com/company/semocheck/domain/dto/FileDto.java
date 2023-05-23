@@ -4,6 +4,9 @@ import com.company.semocheck.domain.FileDetail;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 public class FileDto {
@@ -32,5 +35,11 @@ public class FileDto {
         dto.path = awsLink + fileDetail.getPath();
 
         return dto;
+    }
+
+    public static List<FileDto> createDtos(List<FileDetail> fileDetails) {
+        return fileDetails.stream()
+                .map(FileDto::createDto)
+                .toList();
     }
 }
