@@ -159,7 +159,7 @@ public class ChecklistService {
 
     public List<Checklist> getPopularChecklist(String categoryMain, String categorySub) {
         List<Checklist> checklists = checklistRepository.findChecklistIsPublished();
-        if(categoryMain.equals(null) || categorySub.equals(null)){ //전체 카테고리에서 조회
+        if(categoryMain == null || categorySub == null){ //전체 카테고리에서 조회
             checklists.sort(Comparator.comparing(chk -> chk.getStatsInfo().getViewCount()));
             checklists = checklists.stream().limit(10).collect(Collectors.toList());
         }
