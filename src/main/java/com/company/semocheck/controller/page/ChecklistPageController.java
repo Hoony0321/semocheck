@@ -85,7 +85,7 @@ public class ChecklistPageController {
         if (image.isEmpty() || image == null){ // use default category image
             DataResponseDto<FileDto> response = categoryController.getDefaultImage(subCategory.getMainCategory().getName(), subCategory.getName());
             FileDto fileDto = response.getData();
-            requestDto.setImageId(fileDto.getId());
+            requestDto.setDefaultImageId(fileDto.getId());
         }
         else{ //file upload
             String location = String.format("%s/files", "checklists");

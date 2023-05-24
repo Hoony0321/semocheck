@@ -96,10 +96,9 @@ public class CategoryController {
     @DeleteMapping("/api/categories")
     public ResponseDto deleteMainCategories(@RequestParam(required = false, name = "main") String mainName,
                                             @RequestParam(required = false, name = "sub") String subName){
-
         if(mainName == null) throw new GeneralException(Code.BAD_REQUEST);
-        if(subName == null) categoryService.removeMainCategory(mainName);
 
+        if(subName == null) categoryService.removeMainCategory(mainName);
         else categoryService.removeSubCategory(mainName, subName);
 
         return ResponseDto.of(true, Code.SUCCESS_DELETE);
@@ -149,6 +148,8 @@ public class CategoryController {
 
         return DataResponseDto.of(FileDto.createDto(fileDetail));
     }
+
+
 
     //=== 추후에 category 정보 업데이트가 필요한 경우 사용 ===//
 //    @ApiDocumentResponse
