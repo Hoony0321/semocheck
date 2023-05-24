@@ -53,7 +53,7 @@
                         <input type="text" th:field="*{steps[__${status.index}__].name}" class="form-control" />
                     </td>
                     <td>
-                        <input type="text" th:field="*{steps[__${status.index}__].description}" class="form-control" />
+                        <textarea type="text" th:field="*{steps[__${status.index}__].description}" class="form-control" placeholder="설명을 입력해주세요." />
                     </td>
                 </tr>
                 </tbody>
