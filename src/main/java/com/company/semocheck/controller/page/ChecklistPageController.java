@@ -45,7 +45,7 @@ public class ChecklistPageController {
         List<SubCategory> categories = categoryService.getAllSubCategories();
 
         CreateChecklistForm form = new CreateChecklistForm();
-        for(int i = 0; i < 20; i++){
+        for(int i = 0; i < 50; i++){
             StepRequestDto stepDto = new StepRequestDto();
             stepDto.setOrder(i+1);
             form.getSteps().add(stepDto);

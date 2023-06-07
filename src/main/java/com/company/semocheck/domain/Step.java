@@ -26,7 +26,7 @@ public class Step {
     private String name;
     @NotNull
     private Integer stepOrder;
-    @Size(max = 100)
+    @Size(max = 500)
     private String description;
 
     @NotNull
