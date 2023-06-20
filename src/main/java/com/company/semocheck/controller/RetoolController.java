@@ -29,7 +29,7 @@ public class RetoolController {
     @ApiDocumentResponse
     @Operation(summary = "Create new checklist API by admin", description = "[어드민 전용] 새로운 체크리스트를 생성합니다.\n\n" +
             "필수 목록 : [title]")
-    @PostMapping(value = "/api/checklists")
+    @PostMapping(value = "/checklists")
     private ResponseDto createChecklist(@RequestBody CreateChecklistRequest requestDto){
         // get member by jwt token
         Member admin = memberService.findById(1l);
