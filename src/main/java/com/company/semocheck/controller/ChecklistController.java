@@ -3,6 +3,7 @@ package com.company.semocheck.controller;
 import com.company.semocheck.common.response.*;
 import com.company.semocheck.domain.checklist.Block;
 import com.company.semocheck.domain.checklist.Checklist;
+import com.company.semocheck.domain.dto.Role;
 import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.dto.SearchResultDto;
 import com.company.semocheck.domain.dto.checklist.*;
@@ -322,7 +323,11 @@ public class ChecklistController {
 
         //Get checklist by id
         Checklist checklist = checklistService.findById(checklistId);
-        if(!checklist.getOwner().equals(member)) throw new GeneralException(Code.FORBIDDEN);
+
+        if(!member.getRole().equals(Role.ADMIN) && !checklist.getOwner().equals(member)){ //admin 계정이거나, 소유주인 경우만 삭제 가능.
+            throw new GeneralException(Code.FORBIDDEN);
+        }
+
 
         //Delete checklist
         checklistService.deleteChecklist(checklist, member);
