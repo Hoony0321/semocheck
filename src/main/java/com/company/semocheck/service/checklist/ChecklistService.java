@@ -8,10 +8,12 @@ import com.company.semocheck.domain.checklist.Checklist;
 import com.company.semocheck.domain.dto.category.SubCategoryDetailDto;
 import com.company.semocheck.domain.dto.checklist.ChecklistPostSimpleDto;
 import com.company.semocheck.domain.dto.checklist.HomeChecklistDto;
+import com.company.semocheck.form.CreateChecklistForm;
 import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.member.MemberCategory;
 import com.company.semocheck.domain.request.checklist.*;
 import com.company.semocheck.exception.GeneralException;
+import com.company.semocheck.form.CreateStepForm;
 import com.company.semocheck.repository.*;
 import com.company.semocheck.service.CategoryService;
 import com.company.semocheck.service.FileService;
@@ -77,8 +79,7 @@ public class ChecklistService {
 
         //Checklist ownerName
         if(owner != null){
-            checklists = checklists.stream()
-                    .filter(chk -> chk.getOwner().getName().equals(owner))
+            checklists.stream().filter(chk -> (chk.getOwner().getName() != null && chk.getOwner().getName().equals(owner)))
                     .collect(Collectors.toList());
         }
 
@@ -186,26 +187,26 @@ public class ChecklistService {
     }
 
     @Transactional
-    public Long createChecklist(CreateChecklistRequest requestDto, Member member){
+    public Long createChecklist(CreateChecklistForm form, Member member){
         SubCategory category = null;
 
         //Category Entity 찾기
-        if(requestDto.getMainCategoryName() != null && requestDto.getSubCategoryName() != null){
-            category = categoryService.findSubCategoryByName(requestDto.getMainCategoryName(), requestDto.getSubCategoryName());
+        if(form.getMainCategoryName() != null && form.getSubCategoryName() != null){
+            category = categoryService.findSubCategoryByName(form.getMainCategoryName(), form.getSubCategoryName());
         }
-        else if(requestDto.getSubCategoryName() != null) {
+        else if(form.getSubCategoryName() != null) {
             throw new GeneralException(Code.BAD_REQUEST, ErrorMessages.NOT_FOUND_CATEGORY);
         }
 
         //Checklist 생성
-        Checklist checklist = Checklist.createEntity(requestDto, member, category);
+        Checklist checklist = Checklist.createEntity(form, member, category);
 
         //image setting
-        if(requestDto.getImageId() != null){
-            FileDetail fileDetail = fileService.findById(requestDto.getImageId());
+        if(form.getImageId() != null){
+            FileDetail fileDetail = fileService.findById(form.getImageId());
             checklist.setImage(fileDetail);
-        } else if(requestDto.getDefaultImageId() != null){
-            FileDetail fileDetail = fileService.findById(requestDto.getDefaultImageId());
+        } else if(form.getDefaultImageId() != null){
+            FileDetail fileDetail = fileService.findById(form.getDefaultImageId());
             checklist.setDefaultImage(fileDetail);
         }
 
@@ -268,7 +269,10 @@ public class ChecklistService {
 
             for (StepRequestDto step : requestDto.getSteps()) {
                 if(step.getStepId() == -1){ //add new stepp
-                    Step stepEntity = Step.createEntity(step, checklist);
+                    Step stepEntity = Step.createEntity(
+                            CreateStepForm.builder().stepName(step.getName()).stepDescription(step.getDescription()).build(),
+                            checklist,
+                            step.getOrder());
                     checklist.addStep(stepEntity);
                 }
                 else{

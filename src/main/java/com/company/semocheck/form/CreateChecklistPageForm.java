@@ -1,6 +1,5 @@
-package com.company.semocheck.controller.page.forms;
+package com.company.semocheck.form;
 
-import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,10 +8,12 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class CreateChecklistForm {
+public class CreateChecklistPageForm {
+
     private String title;
     private String brief;
     private String subCategoryId;
     private Boolean publish;
-    private List<StepRequestDto> steps = new ArrayList<>();
+    private List<CreateStepForm> steps = new ArrayList<>();
+
 }

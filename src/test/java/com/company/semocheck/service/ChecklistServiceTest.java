@@ -11,6 +11,8 @@ import com.company.semocheck.domain.dto.step.StepDto;
 import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.request.checklist.CreateChecklistRequest;
 import com.company.semocheck.domain.request.checklist.StepRequestDto;
+import com.company.semocheck.form.CreateChecklistForm;
+import com.company.semocheck.form.CreateStepForm;
 import com.company.semocheck.repository.ChecklistRepository;
 import com.company.semocheck.service.checklist.ChecklistService;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,17 +52,17 @@ class ChecklistServiceTest {
     @Transactional
     public void 체크리스트_생성() throws Exception {
         //given
-        List<StepRequestDto> stepDtos = new ArrayList<>();
-        stepDtos.add(StepRequestDto.builder().name("step1").description("description1").order(1).build());
-        stepDtos.add(StepRequestDto.builder().name("step2").description("description2").order(2).build());
-        stepDtos.add(StepRequestDto.builder().name("step3").description("description3").order(3).build());
-        stepDtos.add(StepRequestDto.builder().name("step4").description("description4").order(4).build());
-        stepDtos.add(StepRequestDto.builder().name("step5").description("description5").order(5).build());
-        CreateChecklistRequest createChecklistRequest = new CreateChecklistRequest("test title", "test brief", "main1", "test1",
+        List<CreateStepForm> stepDtos = new ArrayList<>();
+        stepDtos.add(CreateStepForm.builder().stepName("step1").stepDescription("description1").build());
+        stepDtos.add(CreateStepForm.builder().stepName("step2").stepDescription("description2").build());
+        stepDtos.add(CreateStepForm.builder().stepName("step3").stepDescription("description3").build());
+        stepDtos.add(CreateStepForm.builder().stepName("step4").stepDescription("description4").build());
+        stepDtos.add(CreateStepForm.builder().stepName("step5").stepDescription("description5").build());
+        CreateChecklistForm createForm = new CreateChecklistForm("test title", "test brief", "main1", "test1",
                 true, stepDtos, null, null, "colorCode");
 
         //when
-        Long checklistId = checklistService.createChecklist(createChecklistRequest, member);
+        Long checklistId = checklistService.createChecklist(createForm, member);
 
         //then
         Checklist checklist = checklistService.findById(checklistId);

@@ -4,9 +4,9 @@ import com.company.semocheck.common.response.Code;
 import com.company.semocheck.common.response.ErrorMessages;
 import com.company.semocheck.domain.*;
 import com.company.semocheck.domain.category.SubCategory;
+import com.company.semocheck.form.CreateChecklistForm;
+import com.company.semocheck.form.CreateStepForm;
 import com.company.semocheck.domain.member.Member;
-import com.company.semocheck.domain.request.checklist.CreateChecklistRequest;
-import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
 import com.company.semocheck.domain.request.tempChecklist.CreateTempChecklistRequest;
 import com.company.semocheck.domain.request.tempChecklist.UpdateTempChecklistRequest;
@@ -96,15 +96,15 @@ public class Checklist extends BaseTimeEntity {
     private ChecklistUsage usageInfo;
 
     //====== 생성 메서드 ======//
-    static public Checklist createEntity(CreateChecklistRequest requestDto, Member member, SubCategory category){
+    static public Checklist createEntity(CreateChecklistForm form, Member member, SubCategory category){
         Checklist entity = new Checklist();
         ChecklistUsage usageInfo = new ChecklistUsage(entity);
         ChecklistStats statsInfo = new ChecklistStats(entity);
 
-        entity.title = requestDto.getTitle();
-        entity.brief = requestDto.getBrief();
-        entity.publish = requestDto.getPublish();
-        entity.colorCode = requestDto.getColorCode();
+        entity.title = form.getTitle();
+        entity.brief = form.getBrief();
+        entity.publish = form.getPublish();
+        entity.colorCode = form.getColorCode();
         entity.isCopied = Boolean.FALSE;
         entity.type = ChecklistType.NORMAL;
         entity.usageInfo = usageInfo;
@@ -113,13 +113,14 @@ public class Checklist extends BaseTimeEntity {
         //연관관계 설정
         entity.setOwner(member); //owner
         if(category != null) entity.setCategory(category); //category
-        if(requestDto.getSteps() != null){ //step
-            for (StepRequestDto stepRequestDto : requestDto.getSteps()) {
-                Step step = Step.createEntity(stepRequestDto, entity);
+        if(form.getSteps() != null){ //step
+
+            for(int order=1; order<=form.getSteps().size(); order++){
+                CreateStepForm createStepForm = form.getSteps().get(order-1);
+                Step step = Step.createEntity(createStepForm, entity, order);
                 entity.addStep(step);
             }
-
-            entity.stepCount = requestDto.getSteps().size();
+            entity.stepCount = form.getSteps().size();
         }
 
         return entity;
@@ -144,8 +145,9 @@ public class Checklist extends BaseTimeEntity {
         entity.setOwner(member); //owner
         if(category != null) entity.setCategory(category); //category
         if(requestDto.getSteps() != null){ //step
-            for (StepRequestDto stepRequestDto : requestDto.getSteps()) {
-                Step step = Step.createEntity(stepRequestDto, entity);
+            for(int order=1; order<=requestDto.getSteps().size(); order++){
+                CreateStepForm createStepForm = requestDto.getSteps().get(order-1);
+                Step step = Step.createEntity(createStepForm, entity, order);
                 entity.addStep(step);
             }
 

@@ -69,6 +69,7 @@ public class TestMemberUtils {
                 .agreeNotify(testMemberAgreeNotify)
                 .sex(testMemberSex)
                 .age(testMemberAge)
+                .name(testMemberName)
                 .categories(subCategoryDtos).build();
     }
 }

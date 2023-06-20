@@ -1,6 +1,7 @@
 package com.company.semocheck.domain;
 
 import com.company.semocheck.domain.checklist.Checklist;
+import com.company.semocheck.form.CreateStepForm;
 import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -39,11 +40,11 @@ public class Step {
     @NotNull
     private Checklist checklist;
 
-    static public Step createEntity(StepRequestDto requestDto, Checklist checklist){
+    static public Step createEntity(CreateStepForm form, Checklist checklist, Integer order){
         Step entity = new Step();
-        entity.name = requestDto.getName();
-        entity.stepOrder = requestDto.getOrder();
-        entity.description = requestDto.getDescription();
+        entity.name = form.getStepName();
+        entity.stepOrder = order;
+        entity.description = form.getStepDescription();
         entity.isCheck = false;
         entity.setChecklist(checklist);
         return entity;

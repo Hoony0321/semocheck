@@ -10,6 +10,7 @@ import com.company.semocheck.domain.request.checklist.StepRequestDto;
 import com.company.semocheck.domain.request.tempChecklist.CreateTempChecklistRequest;
 import com.company.semocheck.domain.request.tempChecklist.UpdateTempChecklistRequest;
 import com.company.semocheck.exception.GeneralException;
+import com.company.semocheck.form.CreateStepForm;
 import com.company.semocheck.repository.ChecklistRepository;
 import com.company.semocheck.repository.StepRepository;
 import com.company.semocheck.service.CategoryService;
@@ -102,7 +103,10 @@ public class TempChecklistService {
 
             for (StepRequestDto step : requestDto.getSteps()) {
                 if(step.getStepId() == -1){ //add new stepp
-                    Step stepEntity = Step.createEntity(step, checklist);
+                    Step stepEntity = Step.createEntity(
+                            CreateStepForm.builder().stepName(step.getName()).stepDescription(step.getDescription()).build(),
+                            checklist,
+                            step.getOrder());
                     checklist.addStep(stepEntity);
                 }
                 else{

@@ -1,4 +1,4 @@
-package com.company.semocheck.controller.page.forms;
+package com.company.semocheck.form;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

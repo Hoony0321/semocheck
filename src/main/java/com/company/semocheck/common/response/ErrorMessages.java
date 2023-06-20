@@ -60,7 +60,8 @@ public enum ErrorMessages {
 
     //general
     INVAILD_ARGUMENT("유효하지 않은 인자입니다."),
-    INVALID_ACCESS_TOKEN("유효하지 않은 access token입니다.");
+    INVALID_ACCESS_TOKEN("유효하지 않은 access token입니다."),
+    NOT_EXISTED_DEFAULT_IMAGE("기본 이미지가 존재하지 않습니다.");
 
     private final String message;
     ErrorMessages(String message){

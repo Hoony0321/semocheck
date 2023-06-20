@@ -4,10 +4,10 @@ import com.company.semocheck.common.response.*;
 import com.company.semocheck.domain.checklist.Block;
 import com.company.semocheck.domain.checklist.Checklist;
 import com.company.semocheck.domain.dto.Role;
+import com.company.semocheck.form.CreateChecklistForm;
 import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.dto.SearchResultDto;
 import com.company.semocheck.domain.dto.checklist.*;
-import com.company.semocheck.domain.request.checklist.CreateChecklistRequest;
 import com.company.semocheck.domain.request.checklist.UpdateChecklistRequestDto;
 import com.company.semocheck.domain.request.checklist.UpdateStepRequestDto;
 import com.company.semocheck.exception.GeneralException;
@@ -218,15 +218,15 @@ public class ChecklistController {
     @Operation(summary = "Create new checklist API", description = "새로운 체크리스트를 생성합니다.\n\n" +
             "필수 목록 : [title]")
     @PostMapping(value = "/api/members/checklists")
-    private ResponseDto createChecklist(HttpServletRequest request, @RequestBody CreateChecklistRequest requestDto){
+    private ResponseDto createChecklist(HttpServletRequest request, @RequestBody CreateChecklistForm form){
         // get member by jwt token
         Member member = memberService.getMemberByJwt(request);
 
         // validate requestDto
-        requestDto.validate();
+        form.validate();
 
         // create a checklist Entity
-        Long checklistId = checklistService.createChecklist(requestDto, member);
+        Long checklistId = checklistService.createChecklist(form, member);
 
         return DataResponseDto.of(checklistId, Code.SUCCESS_CREATE);
     }

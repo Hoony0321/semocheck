@@ -1,7 +1,7 @@
 package com.company.semocheck.controller.page;
 
 import com.company.semocheck.controller.CategoryController;
-import com.company.semocheck.controller.page.forms.CreateCategoryForm;
+import com.company.semocheck.form.CreateCategoryForm;
 import com.company.semocheck.domain.FileDetail;
 import com.company.semocheck.domain.category.MainCategory;
 import com.company.semocheck.domain.category.SubCategory;

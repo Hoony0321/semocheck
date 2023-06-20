@@ -1,6 +1,7 @@
-package com.company.semocheck.domain.request.tempChecklist;
+package com.company.semocheck.form;
 
-import com.company.semocheck.form.CreateStepForm;
+import com.company.semocheck.common.response.Code;
+import com.company.semocheck.exception.GeneralException;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,15 +10,13 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class CreateTempChecklistRequest {
+public class CreateChecklistForm {
     private String title;
     private String brief;
     private String mainCategoryName;
     private String subCategoryName;
     private Boolean publish;
     private List<CreateStepForm> steps;
-    private Integer defaultImage;
-    private Integer temporary;
 
     //image
     private String imageId;
@@ -25,17 +24,21 @@ public class CreateTempChecklistRequest {
     private String colorCode;
 
     @Builder
-    public CreateTempChecklistRequest(String title, String brief, String mainCategoryName, String subCategoryName, Boolean publish, List<CreateStepForm> steps, Integer defaultImage, Integer temporary, String imageId, String defaultImageId, String colorCode) {
+    public CreateChecklistForm(String title, String brief, String mainCategoryName, String subCategoryName, Boolean publish, List<CreateStepForm> steps, String imageId, String defaultImageId, String colorCode) {
         this.title = title;
         this.brief = brief;
         this.mainCategoryName = mainCategoryName;
         this.subCategoryName = subCategoryName;
         this.publish = publish;
         this.steps = steps;
-        this.defaultImage = defaultImage;
-        this.temporary = temporary;
         this.imageId = imageId;
         this.defaultImageId = defaultImageId;
         this.colorCode = colorCode;
+    }
+
+    public void validate() {
+        if(title == null || title.equals("")) throw new GeneralException(Code.ILLEGAL_ARGUMENT);
+        if(mainCategoryName == null || mainCategoryName.equals("")) throw new GeneralException(Code.ILLEGAL_ARGUMENT);
+        if(subCategoryName == null || subCategoryName.equals("")) throw new GeneralException(Code.ILLEGAL_ARGUMENT);
     }
 }

@@ -124,7 +124,7 @@ public class CategoryController {
     public DataResponseDto<FileDto> getDefaultImage(@RequestParam("main") String mainCategoryName, @RequestParam("sub") String subCategoryName){
         String folderName = "categories/" +  mainCategoryName + "/" + subCategoryName;
         List<FileDetail> files = fileService.findByFolder(folderName);
-        if(files.size() == 0) throw new GeneralException(Code.NOT_FOUND);
+        if(files.size() == 0) throw new GeneralException(Code.NOT_FOUND, ErrorMessages.NOT_EXISTED_DEFAULT_IMAGE);
 
         // get random element of files
         Random rand = new Random();

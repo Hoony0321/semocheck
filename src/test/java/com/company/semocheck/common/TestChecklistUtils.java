@@ -3,6 +3,8 @@ package com.company.semocheck.common;
 import com.company.semocheck.domain.member.Member;
 import com.company.semocheck.domain.request.checklist.CreateChecklistRequest;
 import com.company.semocheck.domain.request.checklist.StepRequestDto;
+import com.company.semocheck.form.CreateChecklistForm;
+import com.company.semocheck.form.CreateStepForm;
 import com.company.semocheck.service.MemberService;
 import com.company.semocheck.service.checklist.ChecklistService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,22 +19,22 @@ public class TestChecklistUtils {
 
     @Autowired MemberService memberService;
     @Autowired ChecklistService checklistService;
-    private List<StepRequestDto> stepDtos = new ArrayList<>();
+    private List<CreateStepForm> stepDtos = new ArrayList<>();
     Random random = new Random();
 
 
     public Long createChecklist(Member member, String title, String brieft, String mainCategory, String subCategory,
                                 boolean isPublic, String colorCode){
 
-        stepDtos.add(StepRequestDto.builder().name("step1").description("description1").order(1).build());
-        stepDtos.add(StepRequestDto.builder().name("step2").description("description2").order(2).build());
-        stepDtos.add(StepRequestDto.builder().name("step3").description("description3").order(3).build());
-        stepDtos.add(StepRequestDto.builder().name("step4").description("description4").order(4).build());
-        stepDtos.add(StepRequestDto.builder().name("step5").description("description5").order(5).build());
-        CreateChecklistRequest createChecklistRequest = new CreateChecklistRequest(title, brieft, mainCategory, subCategory,
+        stepDtos.add(CreateStepForm.builder().stepName("step1").stepDescription("description1").build());
+        stepDtos.add(CreateStepForm.builder().stepName("step2").stepDescription("description2").build());
+        stepDtos.add(CreateStepForm.builder().stepName("step3").stepDescription("description3").build());
+        stepDtos.add(CreateStepForm.builder().stepName("step4").stepDescription("description4").build());
+        stepDtos.add(CreateStepForm.builder().stepName("step5").stepDescription("description5").build());
+        CreateChecklistForm form = new CreateChecklistForm(title, brieft, mainCategory, subCategory,
                 isPublic, stepDtos, null, null, colorCode);
 
-        Long checklistId = checklistService.createChecklist(createChecklistRequest, member);
+        Long checklistId = checklistService.createChecklist(form, member);
 
         return checklistId;
     }
